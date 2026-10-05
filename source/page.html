@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Italie 2027 : trois façons de voyager avec Chantal et Norm</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Italie 2027">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#1f5f99">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef2f1; --ink:#1c2422; --muted:#56615d; --line:#d3dbd7; --card:#ffffff; --soft:#f6f2e7;
+  --b:#1f5f99; --o:#c4650c; --g:#2e7d4f; --s:#555b63;
+  --serif:"Alegreya", Georgia, "Times New Roman", serif;
+  --sans:"Alegreya Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --bg:#141a19; --ink:#e7ecea; --muted:#a4b0ab; --line:#2f3a37; --card:#1d2523; --soft:#26302d; } }
+:root[data-theme="dark"]{ --bg:#141a19; --ink:#e7ecea; --muted:#a4b0ab; --line:#2f3a37; --card:#1d2523; --soft:#26302d; }
+html{ scroll-padding-top:env(safe-area-inset-top,0px); }
+*,*::before,*::after{ box-sizing:inherit; }
+body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:18px; line-height:1.5; }
+img,svg{ max-width:100%; }
+.wrap{ max-width:1480px; margin:0 auto; padding:28px 28px 48px; }
+header{ margin-bottom:22px; }
+.intro{ display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:10px 48px; margin-top:14px; align-items:start; }
+.key{ flex-direction:column; margin-top:0; }
+h1{ font-family:var(--serif); font-weight:700; font-size:clamp(34px,4.2vw,58px); line-height:1.02; margin:0; letter-spacing:-0.01em; }
+h1 small{ display:block; font-size:0.48em; font-weight:500; color:var(--muted); margin-top:8px; letter-spacing:0; }
+.intro p{ margin:0 0 8px; max-width:70ch; }
+.intro .must{ color:var(--muted); font-size:16px; }
+.key{ display:flex; flex-wrap:wrap; gap:6px 18px; font-size:15px; color:var(--muted); margin-top:6px; }
+.key span{ display:inline-flex; align-items:center; gap:7px; }
+.sw{ width:26px; height:0; border-top:4px solid; display:inline-block; }
+.sw.dash{ border-top-style:dashed; } .sw.dot{ border-top:3px dotted #777; }
+.tabs{ display:flex; gap:6px; flex-wrap:wrap; border-bottom:2px solid var(--line); margin-bottom:20px; }
+.tab{ font:inherit; font-size:17px; background:none; border:0; border-bottom:4px solid transparent; margin-bottom:-2px; padding:10px 16px 10px 4px; color:var(--muted); cursor:pointer; text-align:left; }
+.tab b{ font-family:var(--serif); font-size:21px; color:var(--ink); display:block; font-weight:700; }
+.tab[aria-selected="true"]{ border-bottom-color:var(--ink); color:var(--ink); }
+.tab:focus-visible,.stop-btn:focus-visible,.close:focus-visible,.photos:focus-visible{ outline:3px solid var(--b); outline-offset:2px; }
+.grid{ display:grid; grid-template-columns:minmax(0,1.65fr) minmax(320px,1fr); gap:28px; align-items:start; }
+.mapbox{ background:#dce8ef; border-radius:14px; overflow:hidden; border:1px solid var(--line); position:relative; }
+.bigmap{ display:block; width:100%; height:auto; }
+.hint{ position:absolute; right:12px; bottom:12px; background:rgba(255,255,255,.92); color:#2a2a2a; font-size:15px; padding:6px 12px; border-radius:20px; }
+.stop{ cursor:pointer; }
+.stop:hover .dot,.stop:focus .dot{ stroke:#1c2422; stroke-width:4; }
+.stop:focus{ outline:none; }
+.panel h2{ font-family:var(--serif); font-size:30px; line-height:1.1; margin:2px 0 8px; }
+.panel .lead{ font-size:19px; margin:0 0 18px; }
+.panel h3{ font-family:var(--serif); font-size:20px; margin:18px 0 4px; }
+.panel p{ margin:0; max-width:60ch; }
+.stops{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:8px; margin:6px 0 0; }
+.stops-title{ font-family:var(--serif); font-size:21px; margin:18px 0 4px; }
+.stop-btn{ font:inherit; display:flex; align-items:center; gap:10px; width:100%; text-align:left; background:var(--card); color:var(--ink); border:1px solid var(--line); border-radius:10px; padding:9px 12px; cursor:pointer; }
+.stop-btn:hover{ border-color:var(--muted); }
+.stop-btn i{ width:14px; height:14px; border-radius:50%; flex:none; }
+.stop-btn em{ font-style:normal; color:var(--muted); margin-left:auto; font-size:16px; white-space:nowrap; }
+.next{ margin-top:36px; border-top:2px solid var(--line); padding-top:18px; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.4fr); gap:24px; }
+.next h2{ font-family:var(--serif); font-size:28px; margin:0; }
+.next ul{ margin:0; padding-left:20px; } .next li{ margin-bottom:6px; }
+dialog{ border:0; padding:0; border-radius:16px; width:min(760px,94vw); max-height:92vh; background:var(--card); color:var(--ink); box-shadow:0 20px 60px rgba(0,0,0,.35); }
+dialog::backdrop{ background:rgba(15,22,20,.55); }
+.dhead{ padding:20px 24px 16px; color:#fff; position:relative; }
+.dhead .who{ font-size:15px; opacity:.92; }
+.dhead h2{ font-family:var(--serif); font-size:32px; line-height:1.05; margin:2px 0 0; }
+.close{ position:absolute; top:12px; right:12px; width:40px; height:40px; border-radius:50%; border:0; background:rgba(255,255,255,.22); color:#fff; font-size:24px; line-height:1; cursor:pointer; }
+.dbody{ padding:18px 24px 24px; }
+.dbody > p{ margin:0 0 14px; max-width:64ch; }
+.dbody svg.spokes{ display:block; width:100%; height:auto; border-radius:10px; }
+.loops{ display:grid; grid-template-columns:1fr 1fr; gap:14px 22px; margin-top:16px; }
+.loops h4{ margin:0 0 4px; font-family:var(--serif); font-size:19px; display:flex; align-items:center; gap:8px; }
+.loops h4 i{ width:22px; height:5px; border-radius:3px; }
+.loops ol{ margin:0; padding-left:20px; font-size:16px; } .loops li{ margin-bottom:3px; }
+.dfoot{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:16px; }
+.photos{ display:inline-block; font-weight:700; color:#fff; background:var(--ink); padding:10px 18px; border-radius:24px; text-decoration:none; }
+:root[data-theme="dark"] .photos{ color:#141a19; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .photos{ color:#141a19; } }
+.small{ font-size:14px; color:var(--muted); }
+@media (max-width:980px){ .intro,.grid,.next{ grid-template-columns:1fr; } .wrap{ padding:18px 14px 40px; } .hint{ display:none; } .loops{ grid-template-columns:1fr; } }
+@media (prefers-reduced-motion:no-preference){ dialog[open]{ animation:pop .18s ease-out; } @keyframes pop{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } } }
+.ver{ margin-top:36px; padding-top:14px; border-top:1px solid var(--line); color:var(--muted); font-size:15px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Italie 2027<small>Trois façons de voyager avec Chantal et Norm</small></h1>
+    <div class="intro"><div>
+      <p>Ce sont de vraies pistes : les lieux, les distances et les durées sont réels. Rien n'est décidé. On regarde, on en jase, on mélange, et on choisit une direction ensemble.</p>
+      <p class="must">Environ 3 semaines en septembre 2027, au départ d'Ottawa. Nos incontournables pour l'instant : Rome (Colisée et Vatican), des randonnées dans les Dolomites, le Val d'Orcia avec un vignoble, et un bout tranquille avec Chantal et Norm. « n. » veut dire nuits : chaque arrêt est un port d'attache d'où on fait des sorties à la journée.</p></div>
+      <div class="key">
+        <span><i class="sw" style="border-color:var(--b)"></i>Nous deux</span>
+        <span><i class="sw" style="border-color:var(--o)"></i>Ensemble</span>
+        <span><i class="sw" style="border-color:var(--g)"></i>Chantal et Norm (exemple, à refaire à leur goût)</span>
+        <span><i class="sw" style="border-color:var(--muted)"></i>Train</span>
+        <span><i class="sw dash" style="border-color:var(--muted)"></i>Train de nuit</span>
+        <span><i class="sw dot"></i>Avion</span>
+        <span>🚗 En auto</span>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+  <main class="grid">
+    <div class="left"><div class="mapbox" id="map"></div><h3 class="stops-title">Les arrêts <span class="small">(cliquez pour voir les sorties)</span></h3><div class="stops" id="stops"></div></div>
+    <section class="panel" id="panel" aria-live="polite"></section>
+  </main>
+
+  <section class="next">
+    <h2>Et maintenant</h2>
+    <ul>
+      <li>Lequel vous tente le plus, à première vue ?</li>
+      <li>Il manque quelque chose d'important ?</li>
+      <li>Rome, c'est vraiment un incontournable, ou on pourrait le remplacer ?</li>
+      <li>La mer : les Cinque Terre ou Nice suffiraient, ou on pense à un autre coin de côte ?</li>
+      <li>Chantal et Norm : refaites la partie verte à votre goût, et on mélange le tout.</li>
+    </ul>
+  </section>
+  <footer class="ver">Version %%VERSION%% · mise à jour le %%VDATE%%</footer>
+</div>
+
+<dialog id="dlg" aria-labelledby="dtitle">
+  <div class="dhead" id="dhead"><div class="who" id="dwho"></div><h2 id="dtitle"></h2><button class="close" id="dclose" aria-label="Fermer">×</button></div>
+  <div class="dbody" id="dbody"></div>
+</dialog>
+
+<script>
+const MAPS=/*MAPS*/;
+const SPOKES=/*SPOKES*/;
+const LOOPSVG=/*LOOPSVG*/;
+const LOOPS=/*LOOPS*/;
+const PLACES=/*PLACES*/;
+const SCEN=/*SCEN*/;
+const COL=/*COLORS*/;
+const WHO=/*WHO*/;
+const $=(id)=>document.getElementById(id);
+const esc=(t)=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let current=1;
+
+function renderTabs(){
+  $('tabs').innerHTML=SCEN.map(s=>`<button class="tab" role="tab" aria-selected="${s.id===current}" data-id="${s.id}">Scénario ${s.id}<b>${esc(s.title)}</b></button>`).join('');
+  $('tabs').querySelectorAll('.tab').forEach(b=>b.onclick=()=>show(+b.dataset.id));
+}
+function show(id){
+  current=id; renderTabs();
+  const s=SCEN.find(x=>x.id===id);
+  $('map').innerHTML=MAPS[id]+'<div class="hint">Cliquez sur un arrêt pour voir les sorties à la journée</div>';
+  $('panel').innerHTML=`<h2>${esc(s.title)}</h2><p class="lead">${esc(s.short)}</p>
+  <h3>Ce que ça donne</h3><p>${esc(s.sees)}</p>
+  <h3>On se retrouve</h3><p>${esc(s.meet)}</p>
+  <h3>Chantal et Norm, de leur côté</h3><p>${esc(s.them)} <span class="small">(exemple)</span></p>
+  <h3>Le bon</h3><p>${esc(s.good)}</p>
+  <h3>Le moins bon</h3><p>${esc(s.bad)}</p>`;
+  $('stops').innerHTML=s.stops.map(([k,who,n])=>`<button class="stop-btn" data-key="${k}"><i style="background:${COL[who]}"></i>${esc(PLACES[k].name)}<em>${esc(n)}</em></button>`).join('');
+  document.querySelectorAll('#map .stop, #stops .stop-btn').forEach(el=>{
+    el.addEventListener('click',()=>openStop(el.dataset.key));
+    el.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openStop(el.dataset.key);} });
+  });
+}
+function openStop(k){
+  const s=SCEN.find(x=>x.id===current), st=s.stops.find(x=>x[0]===k), p=PLACES[k];
+  const who=st[1], color=COL[who];
+  $('dhead').style.background=color;
+  $('dwho').textContent=`${WHO[who]} · ${st[2]} · Scénario ${s.id}`;
+  $('dtitle').textContent=p.name;
+  let html=`<p>${esc(p.what)}</p>`;
+  if(k==='orcia'){
+    html+=LOOPSVG+`<div class="loops">${LOOPS.map(L=>`<div><h4><i style="background:${L.color}"></i>${esc(L.name)}</h4><ol>${L.steps.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>`).join('')}</div>`;
+  } else {
+    html+=SPOKES[k].split('#COLOR#').join(color);
+  }
+  const q=encodeURIComponent(p.photos);
+  html+=`<div class="dfoot"><a class="photos" href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">Voir des photos</a><span class="small">${k==='orcia'?'Quatre journées en boucle depuis Pienza. ':'Sorties à la journée depuis le port d’attache. '}Temps approximatifs.</span></div>`;
+  $('dbody').innerHTML=html;
+  $('dlg').showModal();
+}
+$('dclose').onclick=()=>$('dlg').close();
+$('dlg').addEventListener('click',e=>{ if(e.target===$('dlg')) $('dlg').close(); });
+show(1);
+</script>
+</body>
+</html>
