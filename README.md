@@ -1,14 +1,10 @@
 # Italie 2027
 
-Trip-planning page for Italy 2027 (David, Lise, Chantal and Norm).
+Trip-planning page for Italy 2027 (David and Lise).
 
-- `site/` is what Netlify publishes (index.html, manifest, icons). Do not edit index.html by hand.
-- `source/` builds the page. Content lives in `source/data.mjs` (version number at the top, places, day trips, scenarios).
+- `site/index.html` is the page (v0.3+). It reads the Google Sheet "Italie 2027 – Lieux" live: tabs Lieux, Trajet and Liens. Content changes happen in the sheet, not here.
+- `site/photos/` holds photos referenced from the sheet's Photo column (e.g. photos/seceda.jpg).
+- `site/v0.2/` is the earlier 3-scenario page, kept as is.
+- `archive/v0.2-source/` is the build script of the v0.2 page.
 
-To rebuild after editing data.mjs:
-
-    cd source
-    npm install
-    node build.mjs
-
-This writes `site/index.html`.
+Version number: at the bottom of site/index.html.
