@@ -191,7 +191,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture de la feuille Google…</div></section>
 </main>
 <footer>
-  <span>Version 0.4.2 · 6 octobre 2026</span>
+  <span>Version 0.4.3 · 6 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -506,10 +506,10 @@ function applyFilter() {
   const vis = (st, disc) => stOn[st] && (!onlyDisc || disc);
   for (const [p, mk] of markerOf) { const el = mk.getElement && mk.getElement(); if (el) el.style.display = vis(mk._st, p.disputed) ? '' : 'none'; }
   document.querySelectorAll('.card').forEach((c) => { c.style.display = vis(c.dataset.st, !!c.dataset.disc) ? '' : 'none'; });
-  const all = STS.every(([k]) => stOn[k]) && !onlyDisc;
   document.querySelectorAll('.group').forEach((g) => {
-    const n = [...g.querySelectorAll('.card')].filter((c) => vis(c.dataset.st, !!c.dataset.disc)).length;
-    g.querySelector('.count').textContent = all ? `${n} lieux` : `${n} affichés`;
+    const cards = [...g.querySelectorAll('.card')], total = cards.length;
+    const n = cards.filter((c) => vis(c.dataset.st, !!c.dataset.disc)).length;
+    g.querySelector('.count').textContent = n === total ? `${total} ${total > 1 ? 'lieux' : 'lieu'}` : `${n} sur ${total}`;
   });
 }
 function toggleOther() {
