@@ -173,7 +173,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <dt>Liens</dt><dd>Onglet <b>Liens</b>. Le texte affiché = colonne <b>Description</b>. Le lien apparaît sur chaque lieu choisi dans la colonne <b>Lieux</b>.</dd>
     <dt>Icônes des liens</dt><dd><svg class="ic"><use href="#i-play"/></svg> vidéo · <svg class="ic"><use href="#i-image"/></svg> image · <svg class="ic"><use href="#i-globe"/></svg> site Web</dd>
     <dt>Trajet (en haut)</dt><dd>Onglet <b>Trajet</b> : ordre, ports d'attache, nuits, comment on y arrive.</dd>
-    <dt>Chercher</dt><dd>La boîte de recherche trouve d'abord nos lieux. Pour n'importe quel autre endroit, choisir « Chercher … sur la carte » : la carte y va et met une épingle. Le bouton <b>Copier pour la feuille</b> copie le nom et les coordonnées : coller dans la colonne <b>Lieu</b> d'une nouvelle ligne de l'onglet Lieux, les deux cases se remplissent.</dd>
+    <dt>Chercher</dt><dd>La boîte de recherche trouve d'abord nos lieux. Pour n'importe quel autre endroit, choisir « Chercher … sur la carte » : la carte y va et met une épingle temporaire, de la couleur du port d'attache auquel l'endroit se rattacherait (gris = hors trajet). Le bouton <b>Copier pour la feuille</b> copie le nom et les coordonnées : coller dans la colonne <b>Lieu</b> d'une nouvelle ligne de l'onglet Lieux, les deux cases se remplissent.</dd>
     <dt>Mise à jour</dt><dd>La page lit la feuille chaque fois qu'on l'ouvre : tout le monde voit toujours la dernière version. <b>Recharger</b> sert à celui qui vient de modifier la feuille : attendre environ 5 minutes, puis cliquer sur Recharger.</dd>
   </dl>
   <a class="btn" href="https://docs.google.com/spreadsheets/d/1mnxZiexvV5cnWcc1inZzZCftosAQsTyMMMLsrFbjyuY/edit" target="_blank" rel="noopener"><svg class="ic"><use href="#i-note"/></svg>Ouvrir la feuille Google</a>
@@ -194,7 +194,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture de la feuille Google…</div></section>
 </main>
 <footer>
-  <span>Version 0.5 · 6 octobre 2026</span>
+  <span>Version 0.5.1 · 6 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -593,7 +593,13 @@ function showGeo(g) {
   $('results').style.display = 'none'; $('q').blur();
   const lat = (+g.lat).toFixed(4), lon = (+g.lon).toFixed(4), name = g.name || g.display_name.split(',')[0];
   if (geoPin) map.removeLayer(geoPin);
-  geoPin = L.marker([+g.lat, +g.lon]).addTo(map).bindPopup(`<b>${esc(name)}</b><br><span class="small">${esc(g.display_name.split(',').slice(1, 4).join(',').trim())}</span><br>${lat}, ${lon}
+  let best = null, bd = Infinity;
+  for (const h of model.hubs) { const d = km([+g.lat, +g.lon], h.at); if (d < bd) { bd = d; best = h; } }
+  const inHub = best && bd <= RADIUS_KM, col = inHub ? colorOf(best) : GREY;
+  const where = inHub ? `Se rattacherait à <b>${esc(best.name)}</b> (${Math.round(bd)} km)` : best ? `Hors trajet : ${Math.round(bd)} km de ${esc(best.name)}` : '';
+  const pin = `<svg width="30" height="42" viewBox="0 0 30 42"><path d="M15 1C7.3 1 1 7.2 1 14.8 1 25.5 15 41 15 41s14-15.5 14-26.2C29 7.2 22.7 1 15 1z" fill="${col}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="15" r="5.5" fill="#fff"/></svg>`;
+  geoPin = L.marker([+g.lat, +g.lon], { icon: L.divIcon({ className: '', html: pin, iconSize: [30, 42], iconAnchor: [15, 41], popupAnchor: [0, -36] }), zIndexOffset: 2000 })
+    .addTo(map).bindPopup(`<b>${esc(name)}</b><br><span class="small">${esc(g.display_name.split(',').slice(1, 4).join(',').trim())}</span><br>${where}<br>${lat}, ${lon}
     <br><button class="btn pbtn" id="copyGeo">Copier pour la feuille</button><div class="small" id="copyMsg">Coller dans la colonne Lieu d'une nouvelle ligne : le nom et les coordonnées se placent tout seuls.</div>`, { maxWidth: 260 });
   map.flyTo([+g.lat, +g.lon], 11, { duration: .8 });
   setTimeout(() => { geoPin.openPopup(); const b = $('copyGeo'); if (b) b.onclick = () => copyText(`${name}\t${lat}, ${lon}`); }, 850);
