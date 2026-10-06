@@ -71,8 +71,11 @@ main{ flex:1; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(340px,1
 .lbl{ display:flex; align-items:center; gap:5px; font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin:9px 0 2px; }
 .facts{ font-size:14px; color:var(--muted); margin-top:4px; }
 .facts b{ color:var(--ink); font-weight:500; }
-.facts .must{ color:#b5541c; font-weight:700; }
-.facts .rev{ color:#8a6a12; font-weight:700; }
+.facts .st-conf{ color:#b5541c; font-weight:700; }
+.facts .st-explore{ color:#8a6a12; font-weight:700; }
+.facts .st-aside{ color:var(--muted); font-weight:700; }
+.card.isaside{ opacity:.7; }
+.small{ font-size:13px; color:var(--muted); }
 .card.isrev{ border-style:dashed; }
 .sf{ display:flex; gap:4px; }
 .sf button{ font:inherit; font-size:14px; display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:8px; padding:5px 9px; cursor:pointer; }
@@ -115,6 +118,11 @@ dialog::backdrop{ background:rgba(15,22,20,.5); }
 .warn{ margin:0 0 10px; padding:8px 10px; border-radius:8px; background:#fff4e5; color:#6b3d00; font-size:14px; }
 footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px solid var(--line); display:flex; gap:14px; flex-wrap:wrap; }
 .hubpin{ display:grid; place-items:center; border-radius:50%; color:#fff; font-weight:700; font-size:13px; border:3px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.4); font-family:var(--sans); }
+.maplegend{ background:rgba(255,255,255,.94); color:#1c2422; padding:8px 10px; border-radius:8px; font:14px/1.5 var(--sans); box-shadow:0 1px 4px rgba(0,0,0,.25); }
+.maplegend div{ display:flex; align-items:center; gap:8px; }
+.maplegend i{ width:11px; height:11px; border-radius:50%; display:inline-block; box-sizing:border-box; flex:none; }
+.maplegend i.big{ width:14px; height:14px; }
+.maplegend .sep{ margin-top:4px; padding-top:4px; border-top:1px solid #ddd; font-size:12px; color:#555; }
 .carpin{ background:#fff; color:#1c2422; border-radius:50%; width:30px; height:30px; display:grid; place-items:center; border:1.5px solid #bbb; }
 .leaflet-popup-content{ font-family:var(--sans); font-size:15px; margin:10px 12px; }
 .leaflet-popup-content img{ width:200px; max-height:130px; object-fit:cover; border-radius:6px; display:block; margin-bottom:6px; }
@@ -149,7 +157,13 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <dt>Couleur</dt><dd>Celle du port d'attache. <b>Gris</b> = Hors trajet : à plus de 40 km de tous les ports d'attache du trajet actuel. Si on ajoute un port d'attache tout près (onglet Trajet), ces lieux s'y rattachent tout seuls.</dd>
     <dt>Nom</dt><dd>Onglet <b>Lieux</b>, colonne <b>Lieu</b>.</dd>
     <dt>Statut, Type</dt><dd>Onglet <b>Lieux</b>, colonnes <b>Statut</b> et <b>Type</b>.</dd>
-    <dt>Statut</dt><dd><b>À revoir</b> (point creux, fiche en pointillé) : trouvé mais pas encore regardé. C'est le choix par défaut, même si la case est vide. <b>Peut-être</b> (point plein) : on l'a regardé, ça vaut la peine. <b>Incontournable</b> (gros point cerclé). <b>Non</b> : n'est plus affiché, mais reste dans la feuille. Les trois boutons en haut (À revoir, Peut-être, Incontournable) cachent ou montrent chaque groupe, sur la carte et dans les fiches. Le chiffre = combien il y en a.</dd>
+    <dt>Statut</dt><dd>
+      <b>À explorer</b> (point creux) : on a trouvé l'endroit, mais on ne l'a pas encore vraiment regardé. C'est le choix par défaut.<br>
+      <b>Bon candidat</b> (point plein) : on a fait nos recherches, c'est un bon arrêt possible.<br>
+      <b>Confirmé</b> (gros point cerclé) : tout le monde a voté Oui, on y va. On peut aussi le mettre à la main pour un incontournable (ex. le Colisée).<br>
+      <b>Mis de côté</b> (point pâle, caché par défaut) : on n'y va pas. Tout le monde a voté Non, ou on l'a choisi à la main. La ligne reste dans la feuille.<br>
+      <b>À discuter</b> : nos votes ne sont pas pareils.<br>
+      Confirmé et Mis de côté se font tout seuls quand tous les voyageurs ont voté pareil. Les boutons en haut cachent ou montrent chaque groupe.</dd>
     <dt>Photo</dt><dd>Onglet <b>Lieux</b>, colonne <b>Photo</b> (un lien vers une image).</dd>
     <dt>Votes</dt><dd>Onglet <b>Votes</b> : une ligne par avis (Lieu, Qui, Vote, Commentaire). Si quelqu'un vote deux fois pour le même lieu, c'est le dernier vote qui compte. Les noms viennent de l'onglet <b>Voyageurs</b>. <b>À discuter</b> = nos votes diffèrent. <b>D'accord</b> = tout le monde a voté pareil. Le bouton « À discuter » en haut montre seulement ces lieux.</dd>
     <dt>Wikipédia</dt><dd>Ajouté automatiquement par la page quand Wikipédia connaît le lieu : un résumé et, s'il n'y a pas de photo à nous, la photo de Wikipédia. Rien n'est écrit dans la feuille. Notre photo, notre note et nos liens ont toujours priorité.</dd>
@@ -177,9 +191,9 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture de la feuille Google…</div></section>
 </main>
 <footer>
-  <span>Version 0.4.1 · 6 octobre 2026</span>
+  <span>Version 0.4.2 · 6 octobre 2026</span>
   <span id="stamp"></span>
-  <span>Point creux : à revoir · plein : peut-être · gros point cerclé : incontournable</span><span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
+  <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
 </footer>
 
@@ -223,6 +237,15 @@ function km([a, b], [c, d]) {
   const x = Math.sin((c - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin((d - b) * r / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(x));
 }
+// statuses (old words still understood)
+const ST_LABEL = { explore: 'À explorer', cand: 'Bon candidat', conf: 'Confirmé', aside: 'Mis de côté' };
+function baseKey(s) {
+  const n = norm(s);
+  if (n === 'bon candidat' || n === 'peut-etre' || n === 'peut etre') return 'cand';
+  if (n === 'confirme' || n === 'incontournable' || n === 'retenu') return 'conf';
+  if (n === 'mis de cote' || n === 'non' || n === 'ecarte') return 'aside';
+  return 'explore';
+}
 function legMode(how) {
   const h = norm(how);
   if (h.startsWith('avion')) return 'avion';
@@ -251,21 +274,14 @@ function buildModel(lieux, trajet, liens, votes, voyageurs) {
   const places = [], skipped = [];
   for (const r of lieux) {
     const name = r['Lieu']; if (!name) continue;
-    if (norm(r['Statut']) === 'non') continue;
     const at = parseCoords(r['Coordonnées']);
     if (!at) { skipped.push(name); continue; }
     let best = null, bd = Infinity;
     for (const h of hubs) { const d = km(at, h.at); if (d < bd) { bd = d; best = h; } }
-    const p = { name, at, statut: r['Statut'] || 'À revoir', type: r['Type'] || '', photo: r['Photo'] || '', note: r['Note'] || '', by: r['Ajouté par'] || '', wiki: r['Wikipédia'] || r['Wikipedia'] || '',
+    const p = { name, at, statut: r['Statut'] || '', type: r['Type'] || '', photo: r['Photo'] || '', note: r['Note'] || '', by: r['Ajouté par'] || '', wiki: r['Wikipédia'] || r['Wikipedia'] || '',
       links: linkRows.filter((l) => l.places.includes(norm(name))), dist: Math.round(bd) };
     const home = best && bd <= RADIUS_KM ? best : other;
     p.hub = home; p.near = best ? best.name : ''; home.places.push(p); places.push(p);
-  }
-  // order places in each group: incontournable first, then by distance, then name
-  const rank = (p) => (norm(p.statut) === 'incontournable' ? 0 : norm(p.statut) === 'a revoir' ? 2 : 1);
-  for (const g of [...hubs, other]) {
-    g.places.sort((a, b) => rank(a) - rank(b) || a.dist - b.dist || a.name.localeCompare(b.name, 'fr'));
-    g.places.forEach((p, i) => { p.num = g.other ? `A${i + 1}` : `${g.label.split('·')[0]}.${i + 1}`; });
   }
   const unmatched = [];
   const known = new Set(places.map((p) => norm(p.name)));
@@ -282,11 +298,27 @@ function buildModel(lieux, trajet, liens, votes, voyageurs) {
     p.votes.set(who, { vote: v, comment: r['Commentaire'] || '', date: r['Date'] || '' });
     if (!people.some((x) => norm(x) === norm(who))) people.push(who);
   }
+  const crew = people.length ? people : [];
   places.forEach((p) => {
     const vs = [...p.votes.values()].map((x) => norm(x.vote));
     p.disputed = vs.length >= 2 && new Set(vs).size > 1;
     p.agreed = vs.length >= 2 && new Set(vs).size === 1;
+    const everyone = crew.length >= 1 && crew.every((who) => [...p.votes.keys()].some((k) => norm(k) === norm(who)));
+    let key = baseKey(p.statut), byVotes = false;
+    if (everyone && !p.disputed && vs.length) {
+      if (vs[0] === 'oui') { key = 'conf'; byVotes = true; }
+      else if (vs[0] === 'non') { key = 'aside'; byVotes = true; }
+      else if (key === 'explore') { key = 'cand'; byVotes = true; }
+    }
+    p.st = key; p.stLabel = ST_LABEL[key]; p.byVotes = byVotes;
+    p.waiting = crew.filter((who) => ![...p.votes.keys()].some((k) => norm(k) === norm(who)));
   });
+  // order places in each group: confirmed first, then candidates, to explore, set aside; then by distance
+  const rank = (p) => ({ conf: 0, cand: 1, explore: 2, aside: 3 }[p.st]);
+  for (const g of [...hubs, other]) {
+    g.places.sort((a, b) => rank(a) - rank(b) || a.dist - b.dist || a.name.localeCompare(b.name, 'fr'));
+    g.places.forEach((p, i) => { p.num = g.other ? `A${i + 1}` : `${g.label.split('·')[0]}.${i + 1}`; });
+  }
   const totalNights = stops.reduce((s, x) => s + x.nights, 0);
   return { stops, hubs, other, places, skipped, unmatched, voteUnmatched, people, totalNights, hasVotes: places.some((p) => p.votes.size) };
 }
@@ -304,6 +336,14 @@ const colorOf = (g) => (g.other ? GREY : PALETTE[g.index % PALETTE.length]);
 const map = L.map('map', { zoomControl: true }).setView([45.2, 9.5], 5);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 19 }).addTo(map);
+const legend = L.control({ position: 'bottomleft' });
+legend.onAdd = () => { const d = L.DomUtil.create('div', 'maplegend'); d.innerHTML = `
+  <div><i style="border:2.5px solid #555;background:#fff"></i>À explorer</div>
+  <div><i style="background:#555"></i>Bon candidat</div>
+  <div><i class="big" style="background:#555;box-shadow:0 0 0 2px #1c2422"></i>Confirmé</div>
+  <div><i style="background:#555;opacity:.35"></i>Mis de côté</div>
+  <div class="sep">Couleur = port d'attache · gris = hors trajet</div>`; return d; };
+legend.addTo(map);
 let layers = { route: L.layerGroup().addTo(map), hubs: L.layerGroup().addTo(map), places: L.layerGroup().addTo(map), other: L.layerGroup().addTo(map) };
 let model = null, markerOf = new Map();
 
@@ -354,18 +394,19 @@ function render() {
   }
   // places
   for (const p of m.places) {
-    const g = p.hub, must = norm(p.statut) === 'incontournable', rev = norm(p.statut) === 'a revoir';
-    const mk = L.circleMarker(p.at, must ? { radius: 9, color: '#1c2422', weight: 2.5, fillColor: colorOf(g), fillOpacity: 1 }
-      : rev ? { radius: 6, color: colorOf(g), weight: 3, fillColor: '#fff', fillOpacity: 1 }
+    const g = p.hub;
+    const mk = L.circleMarker(p.at, p.st === 'conf' ? { radius: 9, color: '#1c2422', weight: 2.5, fillColor: colorOf(g), fillOpacity: 1 }
+      : p.st === 'explore' ? { radius: 6, color: colorOf(g), weight: 3, fillColor: '#fff', fillOpacity: 1 }
+      : p.st === 'aside' ? { radius: 5, color: '#fff', weight: 1.5, fillColor: colorOf(g), fillOpacity: .35, opacity: .6 }
       : { radius: 6, color: '#fff', weight: 2, fillColor: colorOf(g), fillOpacity: 1 })
       .bindTooltip(`${p.num} ${p.name}`, { direction: 'top', offset: [0, -6] })
       .bindPopup(() => popupHtml(p), { maxWidth: 240 })
       .on('popupopen', async (e) => { if (!WIKI.has(p)) { await wikiFor(p); e.popup.setContent(popupHtml(p)); } })
       .on('click', () => { if (!matchMedia('(max-width:900px)').matches) highlight(p, false); });
-    mk.addTo(g.other ? layers.other : layers.places); markerOf.set(p, mk); mk._st = stKey(p);
+    mk.addTo(g.other ? layers.other : layers.places); markerOf.set(p, mk); mk._st = p.st;
   }
   // panel
-  let html = `<div class="listbar"><button class="btn" id="openAll">Tout ouvrir</button><button class="btn" id="closeAll">Tout fermer</button></div>`;
+  let html = `<div class="listbar"><button class="btn" id="toggleAll">Tout ouvrir</button></div>`;
   if (m.skipped.length) html += `<div class="warn">Sans coordonnées (pas sur la carte) : ${m.skipped.map(esc).join(', ')}</div>`;
   if (m.voteUnmatched && m.voteUnmatched.length) html += `<div class="warn">Dans l'onglet Votes, nom introuvable dans Lieux : ${[...new Set(m.voteUnmatched)].map(esc).join(', ')}</div>`;
   if (m.unmatched.length) html += `<div class="warn">Dans l'onglet Liens, nom introuvable dans Lieux : ${[...new Set(m.unmatched)].map(esc).join(', ')}</div>`;
@@ -377,8 +418,10 @@ function render() {
       <div class="cards">${g.places.map((p) => cardHtml(p)).join('')}</div></details>`;
   }
   $('panel').innerHTML = html;
-  $('openAll').addEventListener('click', () => document.querySelectorAll('.group').forEach((d) => { if (d.style.display !== 'none') d.open = true; }));
-  $('closeAll').addEventListener('click', () => document.querySelectorAll('.group').forEach((d) => { d.open = false; }));
+  const groups = () => [...document.querySelectorAll('.group')].filter((d) => d.style.display !== 'none');
+  const syncToggle = () => { $('toggleAll').textContent = groups().some((d) => d.open) ? 'Tout fermer' : 'Tout ouvrir'; };
+  $('toggleAll').addEventListener('click', () => { const anyOpen = groups().some((d) => d.open); groups().forEach((d) => { d.open = !anyOpen; }); syncToggle(); });
+  document.querySelectorAll('.group').forEach((d) => d.addEventListener('toggle', syncToggle));
   $('panel').querySelectorAll('[data-go]').forEach((el) => el.addEventListener('click', () => { const p = m.places[+el.dataset.go]; highlight(p, true); }));
   $('panel').querySelectorAll('.group > summary').forEach((el) => el.addEventListener('click', () => {
     const d = el.parentElement; if (!d.open) setTimeout(() => fitGroup(d.dataset.other ? m.other : m.hubs[+d.id.slice(1)]), 0); }));
@@ -399,17 +442,17 @@ function linkKind(u) {
 }
 const ico = (id) => `<svg class="ic"><use href="#i-${id}"/></svg>`;
 function cardHtml(p) {
-  const i = model.places.indexOf(p), must = norm(p.statut) === 'incontournable', rev = norm(p.statut) === 'a revoir';
-  const facts = [p.statut ? `Statut : <b class="${must ? 'must' : rev ? 'rev' : ''}">${esc(p.statut)}</b>` : '', p.type ? `Type : <b>${esc(p.type)}</b>` : '',
+  const i = model.places.indexOf(p), rev = p.st === 'explore';
+  const facts = [`Statut : <b class="st-${p.st}">${esc(p.stLabel)}</b>${p.byVotes ? ' <span class="small">(selon les votes)</span>' : ''}`, p.type ? `Type : <b>${esc(p.type)}</b>` : '',
     p.dist < 1 ? '<b>Port d\'attache</b>' : `À <b>${p.dist} km</b> de ${esc(p.near)}`].filter(Boolean).join(' · ');
   const q = encodeURIComponent(p.name);
-  return `<article class="card${rev ? ' isrev' : ''}" id="c${i}" data-i="${i}" data-st="${stKey(p)}" ${p.disputed ? 'data-disc="1"' : ''}>
+  return `<article class="card${rev ? ' isrev' : ''}${p.st === 'aside' ? ' isaside' : ''}" id="c${i}" data-i="${i}" data-st="${p.st}" ${p.disputed ? 'data-disc="1"' : ''}>
     <div class="top"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span><button class="namelink" data-go="${i}" title="Voir sur la carte">${ico('pin')}<h3>${esc(p.name)}</h3></button></div>
     ${facts ? `<div class="facts">${facts}</div>` : ''}
     <div class="ph">${p.photo ? `<img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy" onerror="this.remove()">` : ''}</div>
     ${p.note ? `<div class="lbl">${ico('note')}Note</div><p style="margin-top:0">${esc(p.note)}</p>` : ''}
     ${p.links.length ? `<div class="lbl">${ico('link')}Liens</div><div class="links">${p.links.map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico(linkKind(l.url))}<span style="color:var(--ink);font-size:15px">${esc(l.desc || l.url)} <span>· ${linkLabel(l.url)}</span></span></a>`).join('')}</div>` : ''}
-    ${p.votes && p.votes.size ? `<div class="lbl">${ico('users')}Votes${p.disputed ? '<span class="vtag d">À discuter</span>' : p.agreed ? '<span class="vtag a">D\'accord</span>' : ''}</div><div class="votes">${[...p.votes].map(([who, v]) => `<div><b>${esc(who)}</b> : ${esc(v.vote)}${v.comment ? ` <span class="c">« ${esc(v.comment)} »</span>` : ''}</div>`).join('')}</div>` : ''}
+    ${p.votes && p.votes.size ? `<div class="lbl">${ico('users')}Votes${p.disputed ? '<span class="vtag d">À discuter</span>' : p.agreed ? '<span class="vtag a">D\'accord</span>' : ''}</div><div class="votes">${[...p.votes].map(([who, v]) => `<div><b>${esc(who)}</b> : ${esc(v.vote)}${v.comment ? ` <span class="c">« ${esc(v.comment)} »</span>` : ''}</div>`).join('')}${p.waiting.length ? `<div class="c">En attente : ${p.waiting.map(esc).join(', ')}</div>` : ''}</div>` : ''}
     <div class="wk"></div>
     <div class="acts"><a class="btn" href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">${ico('camera')}Photos Google</a>
       <a class="btn" href="https://www.google.com/maps/search/?api=1&query=${p.at[0]},${p.at[1]}" target="_blank" rel="noopener">${ico('map')}Google Maps</a></div>
@@ -444,13 +487,12 @@ function fitAll() {
   const pts = model.stops.map((s) => s.at);
   if (pts.length) map.fitBounds(L.latLngBounds(pts).pad(0.12));
 }
-const STS = [['rev', 'À revoir'], ['may', 'Peut-être'], ['must', 'Incontournable']];
-const stOn = { rev: true, may: true, must: true }; let onlyDisc = false;
-function stKey(p) { const s = norm(p.statut); return s === 'a revoir' ? 'rev' : s === 'incontournable' ? 'must' : 'may'; }
+const STS = [['explore', 'À explorer'], ['cand', 'Bon candidat'], ['conf', 'Confirmé'], ['aside', 'Mis de côté']];
+const stOn = { explore: true, cand: true, conf: true, aside: false }; let onlyDisc = false;
 function renderFilter() {
-  const n = { rev: 0, may: 0, must: 0 };
-  model.places.forEach((p) => { if (!p.hub.other || $('showOther').checked) n[stKey(p)]++; });
-  const dot = { rev: 'border:2.5px solid var(--muted);background:#fff', may: 'background:var(--muted)', must: 'background:var(--muted);box-shadow:0 0 0 2px var(--ink)' };
+  const n = { explore: 0, cand: 0, conf: 0, aside: 0 };
+  model.places.forEach((p) => { if (!p.hub.other || $('showOther').checked) n[p.st]++; });
+  const dot = { explore: 'border:2.5px solid var(--muted);background:#fff', cand: 'background:var(--muted)', conf: 'background:var(--muted);box-shadow:0 0 0 2px var(--ink)', aside: 'background:var(--muted);opacity:.35' };
   const nd = model.places.filter((p) => p.disputed && (!p.hub.other || $('showOther').checked)).length;
   $('sf').innerHTML = STS.map(([k, t]) => `<button data-k="${k}" aria-pressed="${stOn[k]}"><i style="${dot[k]}"></i>${t} <span>${n[k]}</span></button>`).join('')
     + `<button class="ht" aria-pressed="${$('showOther').checked}" title="Lieux à plus de 40 km de tous les ports d'attache"><i style="background:${GREY}"></i>Hors trajet <span>${model.other.places.length}</span></button>`
