@@ -87,7 +87,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture de la feuille Google…</div></section>
 </main>
 <footer>
-  <span>Version 0.3 · 6 octobre 2026</span>
+  <span>Version 0.3.1 · 6 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · 🚗 : auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -186,7 +186,7 @@ function buildModel(lieux, trajet, liens) {
 if (typeof module !== 'undefined') module.exports = { parseCSV, parseCoords, buildModel, km, norm };
 
 const BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRc8gRtaQjVgveoRwE9VsKfz2v-PgorJTpPQTK2xEJf8-bBGtIBbeWJ1RNLJUKxvOn0LT2t2AfbwPhX/pub';
-const GID = { lieux: '509099679', trajet: '179035661', liens: '305479065' };
+const GIDS = ['509099679', '305479065', '179035661']; // Lieux, Trajet, Liens (the page recognises each tab by its headings)
 const PALETTE = ['#1f5f99', '#b5541c', '#2e7d4f', '#7a4a9e', '#0f7f80', '#9b2335', '#8a6a12', '#3d5a80'];
 const GREY = '#8b918e';
 const $ = (id) => document.getElementById(id);
@@ -194,8 +194,8 @@ const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<
 const colorOf = (g) => (g.other ? GREY : PALETTE[g.index % PALETTE.length]);
 
 const map = L.map('map', { zoomControl: true }).setView([45.2, 9.5], 5);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 19 }).addTo(map);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 19 }).addTo(map);
 let layers = { route: L.layerGroup().addTo(map), hubs: L.layerGroup().addTo(map), places: L.layerGroup().addTo(map), other: L.layerGroup().addTo(map) };
 let model = null, markerOf = new Map();
 
@@ -207,7 +207,11 @@ async function getCSV(gid) {
 async function load() {
   $('sum').textContent = 'Chargement…';
   try {
-    const [l, t, k] = await Promise.all([getCSV(GID.lieux), getCSV(GID.trajet), getCSV(GID.liens)]);
+    const tabs = await Promise.all(GIDS.map(getCSV));
+    const pick = (test) => tabs.find((rows) => rows.length && test(Object.keys(rows[0]))) || [];
+    const l = pick((h) => h.includes('Lieu') && h.includes('Coordonnées'));
+    const t = pick((h) => h.includes('Ordre') || h.includes("Port d'attache"));
+    const k = pick((h) => h.includes('Lien') && !h.includes('Lieu'));
     model = buildModel(l, t, k);
     render();
     $('stamp').textContent = 'Feuille lue à ' + new Date().toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' }) + ' (un changement peut prendre environ 5 minutes à apparaître)';
