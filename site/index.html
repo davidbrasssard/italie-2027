@@ -57,7 +57,7 @@ main{ flex:1; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(340px,1
 .namelink:hover h3{ text-decoration-color:var(--ink); }
 .namelink:hover .ic{ color:var(--ink); }
 .namelink:focus-visible{ outline:3px solid #1f5f99; outline-offset:2px; border-radius:4px; }
-@media (hover:hover) and (pointer:fine){ .leaflet-popup-content .pbtn{ display:none; } }
+@media (hover:hover) and (pointer:fine){ .leaflet-popup-content .fiche{ display:none !important; } }
 .card h3{ margin:0; font-size:18px; font-weight:700; line-height:1.15; }
 .card img{ display:block; width:100%; max-height:220px; object-fit:cover; border-radius:8px; margin-top:8px; background:var(--soft); }
 .card p{ margin:6px 0 0; font-size:16px; }
@@ -105,6 +105,8 @@ main{ flex:1; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(340px,1
 .results{ position:absolute; top:38px; left:0; width:300px; max-height:340px; overflow-y:auto; background:var(--card); border:1px solid var(--line); border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.18); z-index:2000; display:none; }
 .results button{ font:inherit; font-size:15px; display:flex; gap:8px; align-items:center; width:100%; text-align:left; background:none; border:0; border-bottom:1px solid var(--line); padding:7px 10px; color:var(--ink); cursor:pointer; }
 .results button:hover,.results button.on{ background:var(--soft); }
+.results button .small{ font-size:13px; color:var(--muted); }
+.leaflet-popup-content .pbtn{ display:inline-flex; }
 .results .none{ padding:10px; color:var(--muted); font-size:14px; }
 dialog{ border:0; padding:0; border-radius:14px; width:min(640px,94vw); max-height:90vh; background:var(--card); color:var(--ink); box-shadow:0 20px 60px rgba(0,0,0,.35); }
 dialog::backdrop{ background:rgba(15,22,20,.5); }
@@ -171,6 +173,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <dt>Liens</dt><dd>Onglet <b>Liens</b>. Le texte affiché = colonne <b>Description</b>. Le lien apparaît sur chaque lieu choisi dans la colonne <b>Lieux</b>.</dd>
     <dt>Icônes des liens</dt><dd><svg class="ic"><use href="#i-play"/></svg> vidéo · <svg class="ic"><use href="#i-image"/></svg> image · <svg class="ic"><use href="#i-globe"/></svg> site Web</dd>
     <dt>Trajet (en haut)</dt><dd>Onglet <b>Trajet</b> : ordre, ports d'attache, nuits, comment on y arrive.</dd>
+    <dt>Chercher</dt><dd>La boîte de recherche trouve d'abord nos lieux. Pour n'importe quel autre endroit, choisir « Chercher … sur la carte » : la carte y va et met une épingle. Le bouton <b>Copier pour la feuille</b> copie le nom et les coordonnées : coller dans la colonne <b>Lieu</b> d'une nouvelle ligne de l'onglet Lieux, les deux cases se remplissent.</dd>
     <dt>Mise à jour</dt><dd>La page lit la feuille chaque fois qu'on l'ouvre : tout le monde voit toujours la dernière version. <b>Recharger</b> sert à celui qui vient de modifier la feuille : attendre environ 5 minutes, puis cliquer sur Recharger.</dd>
   </dl>
   <a class="btn" href="https://docs.google.com/spreadsheets/d/1mnxZiexvV5cnWcc1inZzZCftosAQsTyMMMLsrFbjyuY/edit" target="_blank" rel="noopener"><svg class="ic"><use href="#i-note"/></svg>Ouvrir la feuille Google</a>
@@ -191,7 +194,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture de la feuille Google…</div></section>
 </main>
 <footer>
-  <span>Version 0.4.3 · 6 octobre 2026</span>
+  <span>Version 0.5 · 6 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -461,7 +464,7 @@ function cardHtml(p) {
 function popupHtml(p) {
   const i = model.places.indexOf(p);
   const w = WIKI.get(p), img = p.photo || (w && w.img) || '';
-  return `${img ? `<img src="${esc(img)}" alt="" onerror="this.remove()">` : ''}<b>${esc(p.num)} · ${esc(p.name)}</b>${p.note ? `<br>${esc(p.note)}` : ''}<br><button class="btn pbtn" onclick="showCard(${i})">Voir la fiche</button>`;
+  return `${img ? `<img src="${esc(img)}" alt="" onerror="this.remove()">` : ''}<b>${esc(p.num)} · ${esc(p.name)}</b>${p.note ? `<br>${esc(p.note)}` : ''}<br><button class="btn pbtn fiche" onclick="showCard(${i})">Voir la fiche</button>`;
 }
 function openGroup(idx, fit) {
   const d = $('g' + idx); if (!d) return;
@@ -565,11 +568,41 @@ function showResults() {
   const q = norm($('q').value), box = $('results');
   if (!q || !model) { box.style.display = 'none'; return; }
   hits = model.places.filter((p) => norm(p.name).includes(q) || norm(p.note).includes(q)).slice(0, 30); sel = 0;
-  box.innerHTML = hits.length ? hits.map((p, j) => `<button data-j="${j}" class="${j === 0 ? 'on' : ''}"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span>${esc(p.name)}</button>`).join('') : '<div class="none">Aucun lieu trouvé</div>';
+  const raw = $('q').value.trim();
+  box.innerHTML = (hits.length ? hits.map((p, j) => `<button data-j="${j}" class="${j === 0 ? 'on' : ''}"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span>${esc(p.name)}</button>`).join('') : '<div class="none">Aucun de nos lieux</div>')
+    + (raw.length >= 3 ? `<button data-geo="1" class="${hits.length ? '' : 'on'}"><svg class="ic"><use href="#i-search"/></svg>Chercher « ${esc(raw)} » sur la carte</button>` : '');
   box.style.display = 'block';
-  box.querySelectorAll('button').forEach((b) => b.addEventListener('mousedown', (e) => { e.preventDefault(); pickHit(+b.dataset.j); }));
+  box.querySelectorAll('button[data-j]').forEach((b) => b.addEventListener('mousedown', (e) => { e.preventDefault(); pickHit(+b.dataset.j); }));
+  const gb = box.querySelector('button[data-geo]'); if (gb) gb.addEventListener('mousedown', (e) => { e.preventDefault(); geoSearch(raw); });
 }
-function pickHit(j) { const p = hits[j]; if (!p) return; $('results').style.display = 'none'; $('q').blur(); highlight(p, true); }
+function pickHit(j) { if (j >= hits.length) { const raw = $('q').value.trim(); if (raw.length >= 3) geoSearch(raw); return; } const p = hits[j]; if (!p) return; $('results').style.display = 'none'; $('q').blur(); highlight(p, true); }
+// ---- recherche sur toute la carte (OpenStreetMap / Nominatim) ----
+let geoPin = null;
+async function geoSearch(q) {
+  const box = $('results');
+  box.innerHTML = '<div class="none">Recherche…</div>'; box.style.display = 'block';
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=6&accept-language=fr&q=${encodeURIComponent(q)}`);
+    const list = r.ok ? await r.json() : [];
+    if (!list.length) { box.innerHTML = '<div class="none">Rien trouvé sur la carte</div>'; return; }
+    box.innerHTML = list.map((g, j) => `<button data-g="${j}"><svg class="ic"><use href="#i-pin"/></svg><span>${esc(g.name || g.display_name.split(',')[0])}<br><span class="small">${esc(g.display_name.split(',').slice(1, 4).join(',').trim())}</span></span></button>`).join('');
+    box.querySelectorAll('button[data-g]').forEach((b) => b.addEventListener('mousedown', (e) => { e.preventDefault(); showGeo(list[+b.dataset.g]); }));
+  } catch { box.innerHTML = '<div class="none">Recherche impossible pour le moment</div>'; }
+}
+function showGeo(g) {
+  $('results').style.display = 'none'; $('q').blur();
+  const lat = (+g.lat).toFixed(4), lon = (+g.lon).toFixed(4), name = g.name || g.display_name.split(',')[0];
+  if (geoPin) map.removeLayer(geoPin);
+  geoPin = L.marker([+g.lat, +g.lon]).addTo(map).bindPopup(`<b>${esc(name)}</b><br><span class="small">${esc(g.display_name.split(',').slice(1, 4).join(',').trim())}</span><br>${lat}, ${lon}
+    <br><button class="btn pbtn" id="copyGeo">Copier pour la feuille</button><div class="small" id="copyMsg">Coller dans la colonne Lieu d'une nouvelle ligne : le nom et les coordonnées se placent tout seuls.</div>`, { maxWidth: 260 });
+  map.flyTo([+g.lat, +g.lon], 11, { duration: .8 });
+  setTimeout(() => { geoPin.openPopup(); const b = $('copyGeo'); if (b) b.onclick = () => copyText(`${name}\t${lat}, ${lon}`); }, 850);
+}
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); }
+  catch { const a = document.createElement('textarea'); a.value = t; document.body.appendChild(a); a.select(); try { document.execCommand('copy'); } catch {} a.remove(); }
+  const m = $('copyMsg'); if (m) m.textContent = 'Copié ! Coller dans la colonne Lieu d’une nouvelle ligne.';
+}
 $('q').addEventListener('input', showResults);
 $('q').addEventListener('focus', showResults);
 $('q').addEventListener('blur', () => setTimeout(() => { $('results').style.display = 'none'; }, 150));
