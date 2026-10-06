@@ -80,6 +80,8 @@ main{ flex:1; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(340px,1
 .sf i{ width:11px; height:11px; border-radius:50%; display:inline-block; box-sizing:border-box; }
 .sf span{ color:var(--muted); font-size:13px; }
 .sf .disc{ margin-left:6px; }
+.sf .ht{ margin-left:6px; }
+.listbar{ display:flex; gap:6px; justify-content:flex-end; margin:0 0 10px; }
 .sf .disc[aria-pressed="false"]{ opacity:1; text-decoration:none; }
 .sf .disc[aria-pressed="true"]{ background:#8a3b12; border-color:#8a3b12; color:#fff; }
 .sf .disc[aria-pressed="true"] span{ color:#fde7d9; }
@@ -143,8 +145,8 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <dl>
     <dt>Nom souligné</dt><dd>Toucher le nom pour voir le lieu sur la carte. Toucher un point sur la carte met sa fiche en évidence.</dd>
     <dt>Distance</dt><dd>À vol d'oiseau, depuis le port d'attache le plus proche. Calculée par la page. Le temps de trajet, lui, va dans la Note (ex. « 15 min en train depuis Lauterbrunnen »).</dd>
-    <dt>Numéro (ex. 3.4)</dt><dd>Port d'attache n° 3, 4<sup>e</sup> lieu. Calculé par la page. <b>A</b> = Ailleurs.</dd>
-    <dt>Couleur</dt><dd>Celle du port d'attache. <b>Gris</b> = Ailleurs : à plus de 40 km de tous les ports d'attache.</dd>
+    <dt>Numéro (ex. 3.4)</dt><dd>Port d'attache n° 3, 4<sup>e</sup> lieu. Calculé par la page. <b>A</b> = Hors trajet.</dd>
+    <dt>Couleur</dt><dd>Celle du port d'attache. <b>Gris</b> = Hors trajet : à plus de 40 km de tous les ports d'attache du trajet actuel. Si on ajoute un port d'attache tout près (onglet Trajet), ces lieux s'y rattachent tout seuls.</dd>
     <dt>Nom</dt><dd>Onglet <b>Lieux</b>, colonne <b>Lieu</b>.</dd>
     <dt>Statut, Type</dt><dd>Onglet <b>Lieux</b>, colonnes <b>Statut</b> et <b>Type</b>.</dd>
     <dt>Statut</dt><dd><b>À revoir</b> (point creux, fiche en pointillé) : trouvé mais pas encore regardé. C'est le choix par défaut, même si la case est vide. <b>Peut-être</b> (point plein) : on l'a regardé, ça vaut la peine. <b>Incontournable</b> (gros point cerclé). <b>Non</b> : n'est plus affiché, mais reste dans la feuille. Les trois boutons en haut (À revoir, Peut-être, Incontournable) cachent ou montrent chaque groupe, sur la carte et dans les fiches. Le chiffre = combien il y en a.</dd>
@@ -155,18 +157,17 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <dt>Liens</dt><dd>Onglet <b>Liens</b>. Le texte affiché = colonne <b>Description</b>. Le lien apparaît sur chaque lieu choisi dans la colonne <b>Lieux</b>.</dd>
     <dt>Icônes des liens</dt><dd><svg class="ic"><use href="#i-play"/></svg> vidéo · <svg class="ic"><use href="#i-image"/></svg> image · <svg class="ic"><use href="#i-globe"/></svg> site Web</dd>
     <dt>Trajet (en haut)</dt><dd>Onglet <b>Trajet</b> : ordre, ports d'attache, nuits, comment on y arrive.</dd>
-    <dt>Mise à jour</dt><dd>Après un changement dans la feuille, attendre environ 5 minutes, puis cliquer sur <b>Recharger</b>.</dd>
+    <dt>Mise à jour</dt><dd>La page lit la feuille chaque fois qu'on l'ouvre : tout le monde voit toujours la dernière version. <b>Recharger</b> sert à celui qui vient de modifier la feuille : attendre environ 5 minutes, puis cliquer sur Recharger.</dd>
   </dl>
   <a class="btn" href="https://docs.google.com/spreadsheets/d/1mnxZiexvV5cnWcc1inZzZCftosAQsTyMMMLsrFbjyuY/edit" target="_blank" rel="noopener"><svg class="ic"><use href="#i-note"/></svg>Ouvrir la feuille Google</a>
 </div></dialog>
 <header>
   <h1>Italie 2027</h1>
   <span class="sum" id="sum">Chargement…</span>
-  <nav class="route" id="route" aria-label="Trajet"></nav>
   <div class="tools">
     <div class="search"><svg class="ic"><use href="#i-search"/></svg><input id="q" type="search" placeholder="Chercher un lieu" autocomplete="off" aria-label="Chercher un lieu"><div class="results" id="results"></div></div>
     <div class="sf" id="sf" role="group" aria-label="Filtrer par statut"></div>
-    <label><input type="checkbox" id="showOther" checked> Ailleurs</label>
+    <input type="checkbox" id="showOther" checked hidden>
     <button class="btn" id="reload" title="Relire la feuille Google"><svg class="ic"><use href="#i-refresh"/></svg>Recharger</button>
     <button class="btn" id="helpBtn" title="Comment lire une fiche"><svg class="ic"><use href="#i-help"/></svg>Aide</button>
   </div>
@@ -176,7 +177,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture de la feuille Google…</div></section>
 </main>
 <footer>
-  <span>Version 0.4 · 6 octobre 2026</span>
+  <span>Version 0.4.1 · 6 octobre 2026</span>
   <span id="stamp"></span>
   <span>Point creux : à revoir · plein : peut-être · gros point cerclé : incontournable</span><span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -246,7 +247,7 @@ function buildModel(lieux, trajet, liens, votes, voyageurs) {
 
   const linkRows = liens.map((r) => ({ url: r['Lien'], desc: r['Description'] || '', places: (r['Lieux'] || '').split(/[,;]/).map(norm).filter(Boolean) })).filter((l) => l.url);
 
-  const other = { name: 'Ailleurs', places: [], other: true };
+  const other = { name: 'Hors trajet', places: [], other: true };
   const places = [], skipped = [];
   for (const r of lieux) {
     const name = r['Lieu']; if (!name) continue;
@@ -336,8 +337,6 @@ function render() {
   const m = model;
   Object.values(layers).forEach((g) => g.clearLayers()); markerOf.clear();
   $('sum').textContent = `Brouillon de trajet · ${m.totalNights} nuits`;
-  $('route').innerHTML = m.stops.map((s) => { const h = m.hubs.find((x) => norm(x.name) === norm(s.name));
-    return `<button class="chip" data-hub="${h.index}"><b style="background:${colorOf(h)}">${s.seq}</b>${esc(s.name)} · ${s.nights} n.</button>`; }).join('');
 
   // route lines
   for (let i = 1; i < m.stops.length; i++) {
@@ -366,22 +365,23 @@ function render() {
     mk.addTo(g.other ? layers.other : layers.places); markerOf.set(p, mk); mk._st = stKey(p);
   }
   // panel
-  let html = '';
+  let html = `<div class="listbar"><button class="btn" id="openAll">Tout ouvrir</button><button class="btn" id="closeAll">Tout fermer</button></div>`;
   if (m.skipped.length) html += `<div class="warn">Sans coordonnées (pas sur la carte) : ${m.skipped.map(esc).join(', ')}</div>`;
   if (m.voteUnmatched && m.voteUnmatched.length) html += `<div class="warn">Dans l'onglet Votes, nom introuvable dans Lieux : ${[...new Set(m.voteUnmatched)].map(esc).join(', ')}</div>`;
   if (m.unmatched.length) html += `<div class="warn">Dans l'onglet Liens, nom introuvable dans Lieux : ${[...new Set(m.unmatched)].map(esc).join(', ')}</div>`;
   for (const g of [...m.hubs, m.other]) {
     if (!g.places.length && g.other) continue;
-    const meta = g.other ? 'Lieux à plus de 40 km de tous les ports d’attache' : `${g.nights.join(' + ')} n. · ${esc(g.how.filter(Boolean).join(' / '))}`;
+    const meta = g.other ? 'À plus de 40 km de tous les ports d’attache du trajet actuel. Si on ajoute un port d’attache tout près, ces lieux s’y rattachent tout seuls.' : `${g.nights.join(' + ')} n. · ${esc(g.how.filter(Boolean).join(' / '))}`;
     html += `<details class="group" id="g${g.other ? 'o' : g.index}" ${g.other ? 'data-other="1"' : ''}>
       <summary><span class="badge" style="background:${colorOf(g)}">${g.other ? 'A' : esc(g.label)}</span><div><h2>${esc(g.name)}</h2><div class="meta">${meta}</div></div><span class="count">${g.places.length} lieux</span></summary>
       <div class="cards">${g.places.map((p) => cardHtml(p)).join('')}</div></details>`;
   }
   $('panel').innerHTML = html;
+  $('openAll').addEventListener('click', () => document.querySelectorAll('.group').forEach((d) => { if (d.style.display !== 'none') d.open = true; }));
+  $('closeAll').addEventListener('click', () => document.querySelectorAll('.group').forEach((d) => { d.open = false; }));
   $('panel').querySelectorAll('[data-go]').forEach((el) => el.addEventListener('click', () => { const p = m.places[+el.dataset.go]; highlight(p, true); }));
   $('panel').querySelectorAll('.group > summary').forEach((el) => el.addEventListener('click', () => {
     const d = el.parentElement; if (!d.open) setTimeout(() => fitGroup(d.dataset.other ? m.other : m.hubs[+d.id.slice(1)]), 0); }));
-  $('route').querySelectorAll('.chip').forEach((el) => el.addEventListener('click', () => openGroup(+el.dataset.hub, true)));
   toggleOther();
   applyFilter();
   fitAll();
@@ -453,8 +453,10 @@ function renderFilter() {
   const dot = { rev: 'border:2.5px solid var(--muted);background:#fff', may: 'background:var(--muted)', must: 'background:var(--muted);box-shadow:0 0 0 2px var(--ink)' };
   const nd = model.places.filter((p) => p.disputed && (!p.hub.other || $('showOther').checked)).length;
   $('sf').innerHTML = STS.map(([k, t]) => `<button data-k="${k}" aria-pressed="${stOn[k]}"><i style="${dot[k]}"></i>${t} <span>${n[k]}</span></button>`).join('')
+    + `<button class="ht" aria-pressed="${$('showOther').checked}" title="Lieux à plus de 40 km de tous les ports d'attache"><i style="background:${GREY}"></i>Hors trajet <span>${model.other.places.length}</span></button>`
     + (model.hasVotes ? `<button class="disc" aria-pressed="${onlyDisc}" title="Seulement les lieux où nos votes diffèrent">À discuter <span>${nd}</span></button>` : '');
   $('sf').querySelectorAll('button[data-k]').forEach((b) => b.addEventListener('click', () => { stOn[b.dataset.k] = !stOn[b.dataset.k]; applyFilter(); }));
+  $('sf').querySelector('.ht').addEventListener('click', () => { $('showOther').checked = !$('showOther').checked; toggleOther(); applyFilter(); });
   const db = $('sf').querySelector('.disc'); if (db) db.addEventListener('click', () => { onlyDisc = !onlyDisc; applyFilter(); });
 }
 function applyFilter() {
