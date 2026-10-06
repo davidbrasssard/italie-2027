@@ -52,8 +52,6 @@ main{ flex:1; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(340px,1
 .card.hl{ border-color:var(--ink); box-shadow:0 0 0 3px rgba(31,95,153,.35); }
 .card .top{ display:flex; align-items:center; gap:8px; cursor:pointer; }
 .card h3{ margin:0; font-size:18px; font-weight:700; line-height:1.15; }
-.card .st{ margin-left:auto; font-size:13px; color:var(--muted); white-space:nowrap; }
-.card .st.must{ color:#b5541c; font-weight:700; }
 .card img{ display:block; width:100%; max-height:220px; object-fit:cover; border-radius:8px; margin-top:8px; background:var(--soft); }
 .card p{ margin:6px 0 0; font-size:16px; }
 .links{ display:flex; flex-direction:column; gap:4px; margin-top:7px; }
@@ -62,24 +60,81 @@ main{ flex:1; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(340px,1
 .links a span{ color:var(--muted); font-size:13px; }
 .acts{ display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
 .msg{ padding:16px; color:var(--muted); }
+.ic{ width:16px; height:16px; flex:none; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; vertical-align:-3px; }
+.lbl{ display:flex; align-items:center; gap:5px; font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin:9px 0 2px; }
+.facts{ font-size:14px; color:var(--muted); margin-top:4px; }
+.facts b{ color:var(--ink); font-weight:500; }
+.facts .must{ color:#b5541c; font-weight:700; }
+.links a{ display:flex; align-items:flex-start; gap:7px; }
+.links a .ic{ margin-top:3px; color:var(--muted); }
+.search{ position:relative; }
+.search input{ font:inherit; font-size:15px; width:220px; padding:6px 10px 6px 32px; border:1px solid var(--line); border-radius:8px; background:var(--card); color:var(--ink); }
+.search > .ic{ position:absolute; left:9px; top:9px; color:var(--muted); }
+.results{ position:absolute; top:38px; left:0; width:300px; max-height:340px; overflow-y:auto; background:var(--card); border:1px solid var(--line); border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.18); z-index:2000; display:none; }
+.results button{ font:inherit; font-size:15px; display:flex; gap:8px; align-items:center; width:100%; text-align:left; background:none; border:0; border-bottom:1px solid var(--line); padding:7px 10px; color:var(--ink); cursor:pointer; }
+.results button:hover,.results button.on{ background:var(--soft); }
+.results .none{ padding:10px; color:var(--muted); font-size:14px; }
+dialog{ border:0; padding:0; border-radius:14px; width:min(640px,94vw); max-height:90vh; background:var(--card); color:var(--ink); box-shadow:0 20px 60px rgba(0,0,0,.35); }
+dialog::backdrop{ background:rgba(15,22,20,.5); }
+.help{ padding:18px 22px 22px; }
+.help h2{ font-family:var(--serif); font-size:26px; margin:0 0 6px; }
+.help dl{ display:grid; grid-template-columns:max-content 1fr; gap:8px 14px; margin:12px 0; font-size:16px; }
+.help dt{ font-weight:700; }
+.help dd{ margin:0; color:var(--muted); }
+.help dd b{ color:var(--ink); font-weight:500; }
+.help .close{ float:right; }
 .warn{ margin:0 0 10px; padding:8px 10px; border-radius:8px; background:#fff4e5; color:#6b3d00; font-size:14px; }
 footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px solid var(--line); display:flex; gap:14px; flex-wrap:wrap; }
 .hubpin{ display:grid; place-items:center; border-radius:50%; color:#fff; font-weight:700; font-size:13px; border:3px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.4); font-family:var(--sans); }
-.carpin{ font-size:18px; background:#fff; border-radius:50%; width:30px; height:30px; display:grid; place-items:center; border:1.5px solid #bbb; }
+.carpin{ background:#fff; color:#1c2422; border-radius:50%; width:30px; height:30px; display:grid; place-items:center; border:1.5px solid #bbb; }
 .leaflet-popup-content{ font-family:var(--sans); font-size:15px; margin:10px 12px; }
 .leaflet-popup-content img{ width:200px; max-height:130px; object-fit:cover; border-radius:6px; display:block; margin-bottom:6px; }
 .leaflet-popup-content .pbtn{ margin-top:6px; }
-@media (max-width:900px){ main{ grid-template-columns:1fr; } #map{ height:55vh; } #panel{ border-left:0; border-top:1px solid var(--line); overflow:visible; } body{ display:block; } }
+@media (max-width:900px){ .search input{ width:160px; }  main{ grid-template-columns:1fr; } #map{ height:55vh; } #panel{ border-left:0; border-top:1px solid var(--line); overflow:visible; } body{ display:block; } }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></symbol>
+  <symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
+</svg>
+<dialog id="help"><div class="help">
+  <button class="btn close" id="helpClose">Fermer</button>
+  <h2>Comment lire une fiche</h2>
+  <p style="margin:0;color:var(--muted)">Tout vient de la feuille Google « Italie 2027 – Lieux ». Pour changer quelque chose sur la page, on le change dans la feuille.</p>
+  <dl>
+    <dt>Numéro (ex. 3.4)</dt><dd>Port d'attache n° 3, 4<sup>e</sup> lieu. Calculé par la page. <b>A</b> = Ailleurs.</dd>
+    <dt>Couleur</dt><dd>Celle du port d'attache. <b>Gris</b> = Ailleurs : à plus de 40 km de tous les ports d'attache.</dd>
+    <dt>Nom</dt><dd>Onglet <b>Lieux</b>, colonne <b>Lieu</b>.</dd>
+    <dt>Statut, Type</dt><dd>Onglet <b>Lieux</b>, colonnes <b>Statut</b> et <b>Type</b>. Statut « Non » = le lieu n'est plus affiché.</dd>
+    <dt>Photo</dt><dd>Onglet <b>Lieux</b>, colonne <b>Photo</b> (un lien vers une image).</dd>
+    <dt>Note</dt><dd>Onglet <b>Lieux</b>, colonne <b>Note</b>. C'est l'endroit pour nos commentaires.</dd>
+    <dt>Liens</dt><dd>Onglet <b>Liens</b>. Le texte affiché = colonne <b>Description</b>. Le lien apparaît sur chaque lieu choisi dans la colonne <b>Lieux</b>.</dd>
+    <dt>Icônes des liens</dt><dd><svg class="ic"><use href="#i-play"/></svg> vidéo · <svg class="ic"><use href="#i-image"/></svg> image · <svg class="ic"><use href="#i-globe"/></svg> site Web</dd>
+    <dt>Trajet (en haut)</dt><dd>Onglet <b>Trajet</b> : ordre, ports d'attache, nuits, comment on y arrive.</dd>
+    <dt>Mise à jour</dt><dd>Après un changement dans la feuille, attendre environ 5 minutes, puis cliquer sur <b>Recharger</b>.</dd>
+  </dl>
+  <a class="btn" href="https://docs.google.com/spreadsheets/d/1mnxZiexvV5cnWcc1inZzZCftosAQsTyMMMLsrFbjyuY/edit" target="_blank" rel="noopener"><svg class="ic"><use href="#i-note"/></svg>Ouvrir la feuille Google</a>
+</div></dialog>
 <header>
   <h1>Italie 2027</h1>
   <span class="sum" id="sum">Chargement…</span>
   <nav class="route" id="route" aria-label="Trajet"></nav>
   <div class="tools">
+    <div class="search"><svg class="ic"><use href="#i-search"/></svg><input id="q" type="search" placeholder="Chercher un lieu" autocomplete="off" aria-label="Chercher un lieu"><div class="results" id="results"></div></div>
     <label><input type="checkbox" id="showOther" checked> Ailleurs</label>
-    <button class="btn" id="reload" title="Relire la feuille Google">↻ Recharger</button>
+    <button class="btn" id="reload" title="Relire la feuille Google"><svg class="ic"><use href="#i-refresh"/></svg>Recharger</button>
+    <button class="btn" id="helpBtn" title="Comment lire une fiche"><svg class="ic"><use href="#i-help"/></svg>Aide</button>
   </div>
 </header>
 <main>
@@ -87,9 +142,9 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture de la feuille Google…</div></section>
 </main>
 <footer>
-  <span>Version 0.3.1 · 6 octobre 2026</span>
+  <span>Version 0.3.2 · 6 octobre 2026</span>
   <span id="stamp"></span>
-  <span>Trait plein : train · pointillé : avion · 🚗 : auto</span>
+  <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
 </footer>
 
@@ -233,7 +288,7 @@ function render() {
     const a = m.stops[i - 1], b = m.stops[i];
     const style = b.mode === 'avion' ? { color: '#666', weight: 3, dashArray: '2 8' } : b.mode === 'nuit' ? { color: '#444', weight: 4, dashArray: '12 8' } : { color: '#1c2422', weight: 3.5, opacity: .75 };
     L.polyline([a.at, b.at], style).bindTooltip(`${a.name} → ${b.name} : ${b.how}`).addTo(layers.route);
-    if (b.mode === 'auto') L.marker([(a.at[0] + b.at[0]) / 2, (a.at[1] + b.at[1]) / 2], { icon: L.divIcon({ className: '', html: '<div class="carpin">🚗</div>', iconSize: [30, 30] }), interactive: false }).addTo(layers.route);
+    if (b.mode === 'auto') L.marker([(a.at[0] + b.at[0]) / 2, (a.at[1] + b.at[1]) / 2], { icon: L.divIcon({ className: '', html: '<div class="carpin"><svg class="ic"><use href="#i-car"/></svg></div>', iconSize: [30, 30] }), interactive: false }).addTo(layers.route);
   }
   // hubs
   for (const h of m.hubs) {
@@ -275,18 +330,27 @@ function render() {
 function linkLabel(u) {
   try { const h = new URL(u).hostname.replace(/^www\./, ''); return h.includes('facebook') ? 'Facebook' : h.includes('youtu') ? 'YouTube' : h.includes('instagram') ? 'Instagram' : h; } catch { return 'Lien'; }
 }
+function linkKind(u) {
+  const s = String(u).toLowerCase();
+  if (/\.(jpe?g|png|webp|gif)(\?|$)/.test(s) || s.includes('googleusercontent') || s.startsWith('photos/')) return 'image';
+  if (/youtu\.?be|vimeo|tiktok|\/reel|\/share\/r\/|\/videos?\//.test(s)) return 'play';
+  return 'globe';
+}
+const ico = (id) => `<svg class="ic"><use href="#i-${id}"/></svg>`;
 function cardHtml(p) {
   const i = model.places.indexOf(p), must = norm(p.statut) === 'incontournable';
-  const where = p.hub.other ? `<p style="color:var(--muted);font-size:14px">À ${p.dist} km de ${esc(p.near)}</p>` : '';
+  const facts = [p.statut ? `Statut : <b class="${must ? 'must' : ''}">${esc(p.statut)}</b>` : '', p.type ? `Type : <b>${esc(p.type)}</b>` : '',
+    p.hub.other ? `À <b>${p.dist} km</b> de ${esc(p.near)}` : ''].filter(Boolean).join(' · ');
   const q = encodeURIComponent(p.name);
   return `<article class="card" id="c${i}" data-i="${i}">
-    <div class="top"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span><h3>${esc(p.name)}</h3><span class="st ${must ? 'must' : ''}">${esc(p.statut)}${p.type ? ' · ' + esc(p.type) : ''}</span></div>
+    <div class="top"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span><h3>${esc(p.name)}</h3></div>
+    ${facts ? `<div class="facts">${facts}</div>` : ''}
     ${p.photo ? `<img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy" onerror="this.remove()">` : ''}
-    ${p.note ? `<p>${esc(p.note)}</p>` : ''}${where}
-    ${p.links.length ? `<div class="links">${p.links.map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.desc || l.url)} <span>· ${linkLabel(l.url)} ↗</span></a>`).join('')}</div>` : ''}
-    <div class="acts"><button class="btn" data-go="${i}">◎ Voir sur la carte</button>
-      <a class="btn" href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">Photos ↗</a>
-      <a class="btn" href="https://www.google.com/maps/search/?api=1&query=${p.at[0]},${p.at[1]}" target="_blank" rel="noopener">Google Maps ↗</a></div>
+    ${p.note ? `<div class="lbl">${ico('note')}Note</div><p style="margin-top:0">${esc(p.note)}</p>` : ''}
+    ${p.links.length ? `<div class="lbl">${ico('link')}Liens</div><div class="links">${p.links.map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico(linkKind(l.url))}<span style="color:var(--ink);font-size:15px">${esc(l.desc || l.url)} <span>· ${linkLabel(l.url)}</span></span></a>`).join('')}</div>` : ''}
+    <div class="acts"><button class="btn" data-go="${i}">${ico('pin')}Voir sur la carte</button>
+      <a class="btn" href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">${ico('camera')}Photos Google</a>
+      <a class="btn" href="https://www.google.com/maps/search/?api=1&query=${p.at[0]},${p.at[1]}" target="_blank" rel="noopener">${ico('map')}Google Maps</a></div>
   </article>`;
 }
 function popupHtml(p) {
@@ -323,6 +387,28 @@ function toggleOther() {
   const g = document.querySelector('[data-other]'); if (g) g.style.display = on ? '' : 'none';
 }
 $('showOther').addEventListener('change', toggleOther);
+let hits = [], sel = 0;
+function showResults() {
+  const q = norm($('q').value), box = $('results');
+  if (!q || !model) { box.style.display = 'none'; return; }
+  hits = model.places.filter((p) => norm(p.name).includes(q) || norm(p.note).includes(q)).slice(0, 30); sel = 0;
+  box.innerHTML = hits.length ? hits.map((p, j) => `<button data-j="${j}" class="${j === 0 ? 'on' : ''}"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span>${esc(p.name)}</button>`).join('') : '<div class="none">Aucun lieu trouvé</div>';
+  box.style.display = 'block';
+  box.querySelectorAll('button').forEach((b) => b.addEventListener('mousedown', (e) => { e.preventDefault(); pickHit(+b.dataset.j); }));
+}
+function pickHit(j) { const p = hits[j]; if (!p) return; $('results').style.display = 'none'; $('q').blur(); highlight(p, true); }
+$('q').addEventListener('input', showResults);
+$('q').addEventListener('focus', showResults);
+$('q').addEventListener('blur', () => setTimeout(() => { $('results').style.display = 'none'; }, 150));
+$('q').addEventListener('keydown', (e) => {
+  const bs = $('results').querySelectorAll('button');
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (!bs.length) return; sel = (sel + (e.key === 'ArrowDown' ? 1 : bs.length - 1)) % bs.length; bs.forEach((b, k) => b.classList.toggle('on', k === sel)); bs[sel].scrollIntoView({ block: 'nearest' }); }
+  else if (e.key === 'Enter') { e.preventDefault(); pickHit(sel); }
+  else if (e.key === 'Escape') { $('q').value = ''; showResults(); }
+});
+$('helpBtn').addEventListener('click', () => $('help').showModal());
+$('helpClose').addEventListener('click', () => $('help').close());
+$('help').addEventListener('click', (e) => { if (e.target === $('help')) $('help').close(); });
 $('reload').addEventListener('click', load);
 load();
 </script>
