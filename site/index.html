@@ -77,6 +77,15 @@ main{ flex:1; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(340px,1
 .links a:hover{ border-left-color:var(--ink); }
 .links a span{ color:var(--muted); font-size:13px; }
 .links a .ic{ margin-top:3px; color:var(--muted); }
+.car{ position:relative; margin-top:8px; }
+.car .slide img{ margin-top:0; max-height:260px; }
+.car .slide.vid{ aspect-ratio:16/9; }
+.car .slide.vid iframe{ width:100%; height:100%; border:0; border-radius:8px; display:block; }
+.car .slide.lnk{ padding:22px 12px; background:var(--soft); border-radius:8px; text-align:center; }
+.car .nav{ position:absolute; top:50%; transform:translateY(-50%); width:36px; height:36px; border-radius:50%; border:0; background:rgba(0,0,0,.5); color:#fff; font-size:24px; line-height:1; cursor:pointer; }
+.car .nav:focus-visible{ outline:3px solid #fff; }
+.car .prev{ left:6px; } .car .next{ right:6px; }
+.car .cnt{ position:absolute; right:8px; bottom:8px; background:rgba(0,0,0,.55); color:#fff; font-size:12px; padding:1px 8px; border-radius:10px; }
 .il{ color:var(--ink); font-size:13px; white-space:nowrap; text-decoration:none; border-bottom:1px solid var(--line); }
 .il:hover{ border-bottom-color:var(--ink); }
 .src summary{ cursor:pointer; color:var(--muted); font-size:14px; margin-top:8px; }
@@ -182,7 +191,8 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <dl>
     <dt>Nom souligné</dt><dd>Toucher le nom pour voir le lieu sur la carte. Toucher un point sur la carte met sa fiche en évidence.</dd>
     <dt>Détails</dt><dd>Chaque fiche est fermée au départ. <b>Détails</b> l'ouvre.</dd>
-    <dt>Boutons</dt><dd><b>Photos</b> et <b>YouTube</b> cherchent le nom du lieu. <b>Google Maps</b> ouvre l'endroit exact.</dd>
+    <dt>Photos</dt><dd>En ouvrant une fiche, les photos et vidéos choisies pour ce lieu défilent avec les flèches (ou en glissant le doigt sur un téléphone).</dd>
+    <dt>Boutons</dt><dd><b>YouTube</b> cherche le nom du lieu. <b>Google Maps</b> ouvre l'endroit exact. Le bouton <b>Photos</b> (recherche Google) n'apparaît que si le lieu n'a pas encore ses propres photos.</dd>
     <dt>Couleur</dt><dd>Celle du port d'attache. <b>Gris</b> = Hors trajet : à plus de 40 km de tous les ports d'attache.</dd>
     <dt>Numéro (ex. 3.4)</dt><dd>Port d'attache n° 3, 4<sup>e</sup> lieu. <b>A</b> = Hors trajet.</dd>
     <dt>Distance</dt><dd>À vol d'oiseau, depuis le port d'attache le plus proche.</dd>
@@ -208,6 +218,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <dl>
     <dt>Principe</dt><dd>Tout vient du Google Sheet « Italie 2027 – Lieux ». Pour changer la page, on change le Google Sheet. Le mode d'emploi complet est dans l'onglet <b>Mode d'emploi</b>.</dd>
     <dt>Fiche</dt><dd>Onglet <b>Lieux</b> : <b>Aperçu</b>, <b>Comment s'y rendre</b>, <b>Quoi faire</b>, <b>Trucs et astuces</b> (une phrase = un conseil), <b>Pour en savoir plus</b> (description puis lien, séparés par « ; »). Les anciennes colonnes Note, Astuces et Sources servent encore aux lieux pas encore refaits.</dd>
+    <dt>Photos</dt><dd>Colonne <b>Photo</b> : une ou plusieurs adresses, séparées par « ; ». Pour une image : clic droit sur l'image, « Copier l'adresse de l'image ». Une vidéo YouTube ou Vimeo joue dans le carrousel ; un lien Facebook, Instagram ou TikTok devient un bouton « Voir la vidéo ». Une page de galerie (pas une image) va plutôt dans Pour en savoir plus.</dd>
     <dt>Liens du groupe</dt><dd>Onglet <b>Liens</b> : Lien, Description (texte affiché), Lieux (écrits exactement comme dans Lieux).</dd>
     <dt>Votes</dt><dd>Onglet <b>Votes</b> : Lieu, Qui, Vote, Commentaire. Le dernier vote de chacun compte.</dd>
     <dt>Région</dt><dd>Onglet <b>Régions</b> : Région, Aperçu (ou Résumé), Trucs et astuces (ou Astuces), Pour en savoir plus (ou Sources). Le nom doit être exactement le même que le port d'attache dans <b>Trajet</b>.</dd>
@@ -234,7 +245,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture du Google Sheet…</div></section>
 </main>
 <footer>
-  <span>Version 0.7.0 · 6 octobre 2026</span>
+  <span>Version 0.7.1 · 6 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -356,6 +367,7 @@ function buildModel(lieux, trajet, liens, votes, voyageurs, regions) {
     for (const h of hubs) { const d = km(at, h.at); if (d < bd) { bd = d; best = h; } }
     const p = { name, at, statut: r['Statut'] || '', type: r['Type'] || '', photo: r['Photo'] || '', note: r['Note'] || '', by: r['Ajouté par'] || '', wiki: r['Wikipédia'] || r['Wikipedia'] || '',
       tips: splitTips(r['Astuces']), sources: splitSources(r['Sources']),
+      media: String(r['Photo'] || '').split(/\s*;\s*/).map((x) => x.trim()).filter((x) => /^https?:\/\//i.test(x) || /^photos\//i.test(x)),
       apercu: col(r, 'Aperçu'), acces: col(r, "Comment s'y rendre"), faire: col(r, 'Quoi faire'), trucs: splitTips(col(r, 'Trucs et astuces')), plus: splitLabeled(col(r, 'Pour en savoir plus')),
       links: linkRows.filter((l) => l.places.includes(norm(name))), dist: Math.round(bd) };
     const home = best && bd <= RADIUS_KM ? best : other;
@@ -474,6 +486,33 @@ function labeledHtml(list) {
 function sourcesHtml(urls) {
   return urls.length ? `<div class="links">${urls.map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener">${ico(linkKind(u))}<span style="color:var(--ink);font-size:15px">${esc(linkLabel(u))}</span></a>`).join('')}</div>` : '';
 }
+// ---- carrousel : photos et vidéos de la colonne Photo ----
+const ytId = (u) => { const m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/))([\w-]{11})/); return m && m[1]; };
+const vimeoId = (u) => { const m = u.match(/vimeo\.com\/(?:video\/)?(\d+)/); return m && m[1]; };
+function slideHtml(u, name, first) {
+  const y = ytId(u), v = vimeoId(u);
+  if (y || v) {
+    const src = y ? `https://www.youtube-nocookie.com/embed/${y}` : `https://player.vimeo.com/video/${v}`;
+    return `<div class="slide vid"${first ? '' : ' hidden'}><iframe ${first ? 'src' : 'data-src'}="${esc(src)}" title="${esc(name)}" allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+  }
+  if (/facebook\.com|fb\.watch|instagram\.com|tiktok\.com/i.test(u)) return `<div class="slide lnk"${first ? '' : ' hidden'}><a class="btn" href="${esc(u)}" target="_blank" rel="noopener">${ico('play')}Voir la vidéo · ${esc(linkLabel(u))}</a></div>`;
+  return `<div class="slide"${first ? '' : ' hidden'}><img src="${esc(u)}" alt="${esc(name)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'small',textContent:'Image introuvable'}))"></div>`;
+}
+function carouselHtml(p) {
+  const n = p.media.length; if (!n) return '';
+  return `<div class="car" data-i="0">${p.media.map((u, j) => slideHtml(u, p.name, j === 0)).join('')}${n > 1 ? `<button class="nav prev" aria-label="Photo précédente">‹</button><button class="nav next" aria-label="Photo suivante">›</button><span class="cnt">1 / ${n}</span>` : ''}</div>`;
+}
+function carGo(car, dir) {
+  const slides = [...car.querySelectorAll('.slide')], n = slides.length; if (n < 2) return;
+  const i = ((+car.dataset.i || 0) + dir + n) % n; car.dataset.i = i;
+  slides.forEach((sl, j) => {
+    sl.hidden = j !== i;
+    const f = sl.querySelector('iframe'); if (!f) return;
+    if (j === i && f.dataset.src) { f.src = f.dataset.src; delete f.dataset.src; }
+    else if (j !== i && f.src) { f.dataset.src = f.src; f.removeAttribute('src'); } // stops a playing video
+  });
+  car.querySelector('.cnt').textContent = `${i + 1} / ${n}`;
+}
 function zoneHtml(g) {
   const r = g.region; if (!r || (!r.resume && !r.tips.length)) return '';
   return `<div class="zone">${r.resume ? `<p>${linkify(r.resume)}</p>` : ''}${tipsHtml(r.tips, 'Trucs et astuces')}${r.links.length ? `<details class="src"><summary>Pour en savoir plus (${r.links.length})</summary>${labeledHtml(r.links)}</details>` : ''}</div>`;
@@ -568,11 +607,11 @@ function cardHtml(p) {
   return `<article class="card${rev ? ' isrev' : ''}${p.st === 'aside' ? ' isaside' : ''}" id="c${i}" data-i="${i}" data-st="${p.st}" ${p.disputed ? 'data-disc="1"' : ''}>
     <div class="top"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span><button class="namelink" data-go="${i}" title="Voir sur la carte">${ico('pin')}<h3>${esc(p.name)}</h3></button><button class="btn more" data-open aria-expanded="false" aria-controls="b${i}">Détails</button></div>
     ${facts ? `<div class="facts">${facts}</div>` : ''}
-    <div class="acts"><a class="btn" href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">${ico('camera')}Photos</a>
+    <div class="acts">${p.media.length ? '' : `<a class="btn" href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">${ico('camera')}Photos</a>`}
       <a class="btn" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">${ico('play')}YouTube</a>
       <a class="btn" href="https://www.google.com/maps/search/?api=1&query=${p.at[0]},${p.at[1]}" target="_blank" rel="noopener">${ico('map')}Google Maps</a></div>
     <div class="body" id="b${i}" hidden>
-      <div class="ph">${p.photo ? `<img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy" onerror="this.remove()">` : ''}</div>
+      <div class="ph">${carouselHtml(p)}</div>
       ${tabs.length > 1 ? `<div class="tabs" role="tablist">${tabs.map(([k, t], j) => `<button role="tab" data-tab="${k}" aria-selected="${j === 0}">${t}</button>`).join('')}</div>` : ''}
       ${tabs.map(([k], j) => `<div class="tp" data-tab="${k}" role="tabpanel" ${j ? 'hidden' : ''}>${panes[k]}</div>`).join('')}
     </div>
@@ -584,6 +623,8 @@ function openCard(c, on) {
   const b = c.querySelector('[data-open]'); b.setAttribute('aria-expanded', on); b.textContent = on ? 'Fermer' : 'Détails';
 }
 $('panel').addEventListener('click', (e) => {
+  const nv = e.target.closest('.car .nav');
+  if (nv) { carGo(nv.closest('.car'), nv.classList.contains('next') ? 1 : -1); return; }
   const ob = e.target.closest('[data-open]');
   if (ob) { const c = ob.closest('.card'); openCard(c, !c.classList.contains('open')); return; }
   const tb = e.target.closest('.tabs button');
@@ -593,9 +634,16 @@ $('panel').addEventListener('click', (e) => {
     c.querySelectorAll('.tp').forEach((t) => { t.hidden = t.dataset.tab !== tb.dataset.tab; });
   }
 });
+let swipeX = null;
+$('panel').addEventListener('touchstart', (e) => { swipeX = e.target.closest('.car') ? e.touches[0].clientX : null; }, { passive: true });
+$('panel').addEventListener('touchend', (e) => {
+  if (swipeX === null) return; const car = e.target.closest('.car'); const dx = e.changedTouches[0].clientX - swipeX; swipeX = null;
+  if (car && Math.abs(dx) > 40) carGo(car, dx < 0 ? 1 : -1);
+});
 function popupHtml(p) {
   const i = model.places.indexOf(p);
-  const w = WIKI.get(p), img = p.photo || (w && w.img) || '';
+  const pic = p.media.find((u) => !ytId(u) && !vimeoId(u) && !/facebook\.com|fb\.watch|instagram\.com|tiktok\.com/i.test(u));
+  const w = WIKI.get(p), img = pic || (!p.media.length && w && w.img) || '';
   const txt = p.apercu || p.note, lead = txt ? (txt.length > 160 ? txt.slice(0, 157).trim() + '…' : txt).replace(/https?:\/\/\S+/g, '') : '';
   return `${img ? `<img src="${esc(img)}" alt="" onerror="this.remove()">` : ''}<b>${esc(p.num)} · ${esc(p.name)}</b>${lead ? `<br>${esc(lead)}` : ''}<br><button class="btn pbtn fiche" onclick="showCard(${i})">Voir la fiche</button>`;
 }
@@ -688,7 +736,7 @@ async function fillWiki(card) {
   const p = model.places[+card.dataset.i], w = await wikiFor(p);
   if (!w) return;
   // photo: only if we have none of our own
-  if (!p.photo && w.img) card.querySelector('.ph').innerHTML = `<img src="${esc(w.img)}" alt="${esc(p.name)}" loading="lazy" onerror="this.parentNode.innerHTML=''"><div class="cap">Photo : Wikipédia</div>`;
+  if (!p.media.length && w.img) card.querySelector('.ph').innerHTML = `<img src="${esc(w.img)}" alt="${esc(p.name)}" loading="lazy" onerror="this.parentNode.innerHTML=''"><div class="cap">Photo : Wikipédia</div>`;
   // text: only when we have no Note of our own
   const wk = card.querySelector('.wk');
   if (wk && !p.note && !p.apercu) wk.innerHTML = `<p>${esc(w.text)}</p><a href="${esc(w.url)}" target="_blank" rel="noopener">Résumé tiré de Wikipédia${w.lang === 'en' ? ' (anglais)' : ''}</a>`;
