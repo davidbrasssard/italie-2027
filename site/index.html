@@ -116,7 +116,12 @@ ul.rt li.hasic{ list-style:none; margin-left:-20px; }
 #sf{ position:relative; }
 .fltpanel{ position:absolute; top:40px; left:0; z-index:2100; background:var(--card); border:1px solid var(--line); border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.18); padding:10px 14px; display:flex; flex-direction:column; gap:7px; min-width:240px; }
 .fltpanel label{ display:flex; align-items:center; gap:8px; font-size:15px; cursor:pointer; }
-.fltpanel .sep{ border-top:1px solid var(--line); padding-top:7px; }
+.fltpanel .sep{ border-top:1px solid var(--line); padding-top:7px; margin-top:2px; }
+.fltpanel .small{ font-weight:700; }
+.fltpanel label .small{ font-weight:400; margin-left:auto; padding-left:12px; }
+.fltfoot{ display:flex; gap:8px; justify-content:space-between; border-top:1px solid var(--line); padding-top:9px; margin-top:4px; }
+#fltBtn.fltactive{ background:var(--ink); color:var(--card); border-color:var(--ink); }
+#fltBtn.fltactive .small{ color:var(--card); opacity:.8; }
 .steps{ padding-left:22px; margin:8px 0 0; }
 .steps > li{ margin:14px 0; padding-left:4px; }
 .steps > li::marker{ font-weight:700; color:var(--muted); }
@@ -373,7 +378,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture du Google Sheet…</div></section>
 </main>
 <footer>
-  <span>Version 0.11.0 · 7 octobre 2026</span>
+  <span>Version 0.11.1 · 7 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -728,7 +733,7 @@ function render() {
     mk.addTo(g.other ? layers.other : layers.places); markerOf.set(p, mk); mk._st = p.st;
   }
   // panel
-  let html = `<div class="listbar"><button class="btn" id="toggleAll">Tout ouvrir</button></div>`;
+  let html = `<div class="listbar"><button class="btn" id="toggleAll">Tout ouvrir</button></div><div class="warn" id="fltEmpty" hidden>Aucun lieu ne correspond aux filtres. <button class="btn" id="fltReset">Tout afficher</button></div>`;
   if (m.skipped.length) html += `<div class="warn">Sans coordonnées (pas sur la carte) : ${m.skipped.map((x) => esc(x.name)).join(', ')}<div style="margin-top:8px"><button class="btn" id="findCoords">${ico('search')}Trouver les coordonnées</button></div><div id="coordOut"></div></div>`;
   if (m.voteUnmatched && m.voteUnmatched.length) html += `<div class="warn">Dans l'onglet Votes, nom introuvable dans Lieux : ${[...new Set(m.voteUnmatched)].map(esc).join(', ')}</div>`;
   if (m.unmatched.length) html += `<div class="warn">Dans l'onglet Liens, nom introuvable dans Lieux : ${[...new Set(m.unmatched)].map(esc).join(', ')}</div>`;
@@ -742,6 +747,7 @@ function render() {
   }
   $('panel').innerHTML = html;
   const fc = $('findCoords'); if (fc) fc.addEventListener('click', findCoords);
+  $('fltReset').addEventListener('click', showAllFilters);
   const groups = () => [...document.querySelectorAll('.group')].filter((d) => d.style.display !== 'none');
   const syncToggle = () => { $('toggleAll').textContent = groups().some((d) => d.open) ? 'Tout fermer' : 'Tout ouvrir'; };
   $('toggleAll').addEventListener('click', () => { const anyOpen = groups().some((d) => d.open); groups().forEach((d) => { d.open = !anyOpen; }); syncToggle(); });
@@ -1151,22 +1157,27 @@ const STS = [['explore', 'À explorer'], ['cand', 'Bon candidat'], ['conf', 'Con
 const stOn = { explore: true, cand: true, conf: true, aside: false }; let onlyDisc = false;
 const rvOn = { new: true, todo: true, done: true };
 let fltOpen = false;
+const ST_DEFAULT = { explore: true, cand: true, conf: true, aside: false };
+const filtersActive = () => STS.some(([k]) => stOn[k] !== ST_DEFAULT[k]) || !$('showOther').checked || Object.values(rvOn).some((v) => !v) || onlyDisc;
+const passes = (p, skip) => (skip === 'st' || stOn[p.st]) && (skip === 'rv' || rvOn[p.rvk]) && (skip === 'other' || !p.hub.other || $('showOther').checked) && (!onlyDisc || p.disputed);
 function renderFilter() {
-  const n = { explore: 0, cand: 0, conf: 0, aside: 0 };
-  model.places.forEach((p) => { if (!p.hub.other || $('showOther').checked) n[p.st]++; });
-  const dot = { explore: 'border:2.5px solid var(--muted);background:#fff', cand: 'background:var(--muted)', conf: 'background:var(--muted);box-shadow:0 0 0 2px var(--ink)', aside: 'background:var(--muted);opacity:.35' };
-  const nd = model.places.filter((p) => p.disputed && (!p.hub.other || $('showOther').checked)).length;
-  const shown = model.places.filter((p) => stOn[p.st] && rvOn[p.rvk] && (!p.hub.other || $('showOther').checked) && (!onlyDisc || p.disputed)).length;
-  const nr = { new: 0, todo: 0, done: 0 }; model.places.forEach((p) => { if (!p.hub.other || $('showOther').checked) nr[p.rvk]++; });
-  $('sf').innerHTML = `<button class="btn" id="fltBtn" aria-expanded="${fltOpen}">${ico('filter')}Filtres <span class="small">· ${shown} lieux affichés</span></button>
+  // each count = what you'd see for that line, given the other choices
+  const cnt = (test, skip) => model.places.filter((p) => test(p) && passes(p, skip)).length;
+  const shown = model.places.filter((p) => passes(p)).length, active = filtersActive();
+  const row = (attr, on, label, n) => `<label><input type="checkbox" ${attr} ${on ? 'checked' : ''}>${label} <span class="small">${n}</span></label>`;
+  $('sf').innerHTML = `<button class="btn${active ? ' fltactive' : ''}" id="fltBtn" aria-expanded="${fltOpen}">${ico('filter')}${active ? 'Filtres actifs' : 'Filtres'} <span class="small">· ${shown} lieu${shown > 1 ? 'x' : ''} affiché${shown > 1 ? 's' : ''}</span></button>
     <div class="fltpanel" ${fltOpen ? '' : 'hidden'}>
-      ${STS.map(([k, t]) => `<label><input type="checkbox" data-k="${k}" ${stOn[k] ? 'checked' : ''}><i style="${dot[k]}"></i>${t} <span class="small">${n[k]}</span></label>`).join('')}
-      <label><input type="checkbox" data-ht ${$('showOther').checked ? 'checked' : ''}><i style="background:${GREY}"></i>Hors trajet <span class="small">${model.other.places.length}</span></label>
+      <div class="small">Statut</div>
+      ${STS.map(([k, t]) => row(`data-k="${k}"`, stOn[k], t, cnt((p) => p.st === k, 'st'))).join('')}
+      ${row('data-ht', $('showOther').checked, 'Hors trajet', cnt((p) => p.hub.other, 'other'))}
       <div class="sep small">Révision des fiches</div>
-      ${Object.entries(RV_LABEL).map(([k, t]) => `<label><input type="checkbox" data-rv="${k}" ${rvOn[k] ? 'checked' : ''}><span class="rvtag rv-${k}">${t}</span> <span class="small">${nr[k]}</span></label>`).join('')}
-      ${model.hasVotes ? `<label class="sep"><input type="checkbox" data-disc ${onlyDisc ? 'checked' : ''}>Seulement « À discuter » <span class="small">${nd}</span></label>` : ''}
+      ${Object.entries(RV_LABEL).map(([k, t]) => row(`data-rv="${k}"`, rvOn[k], t, cnt((p) => p.rvk === k, 'rv'))).join('')}
+      ${model.hasVotes ? `<div class="sep"></div>${row('data-disc', onlyDisc, 'Seulement « À discuter »', model.places.filter((p) => p.disputed && passes(p)).length)}` : ''}
+      <div class="fltfoot"><button class="btn" id="fltAll">Tout cocher</button><button class="btn primary" id="fltClose">Fermer</button></div>
     </div>`;
   $('fltBtn').addEventListener('click', (e) => { e.stopPropagation(); fltOpen = !fltOpen; $('sf').querySelector('.fltpanel').hidden = !fltOpen; $('fltBtn').setAttribute('aria-expanded', fltOpen); });
+  $('fltClose').addEventListener('click', (e) => { e.stopPropagation(); fltOpen = false; $('sf').querySelector('.fltpanel').hidden = true; $('fltBtn').setAttribute('aria-expanded', 'false'); });
+  $('fltAll').addEventListener('click', (e) => { e.stopPropagation(); showAllFilters(); });
   $('sf').querySelectorAll('.fltpanel input').forEach((el) => el.addEventListener('change', () => {
     if (el.dataset.k) stOn[el.dataset.k] = el.checked;
     else if (el.dataset.rv) rvOn[el.dataset.rv] = el.checked;
@@ -1174,6 +1185,11 @@ function renderFilter() {
     else if (el.hasAttribute('data-disc')) onlyDisc = el.checked;
     applyFilter();
   }));
+}
+function showAllFilters() {
+  STS.forEach(([k]) => { stOn[k] = true; }); Object.keys(rvOn).forEach((k) => { rvOn[k] = true; }); onlyDisc = false;
+  if (!$('showOther').checked) { $('showOther').checked = true; toggleOther(); }
+  applyFilter();
 }
 document.addEventListener('click', (e) => {
   if (fltOpen && !e.target.closest('#sf')) { fltOpen = false; const pn = document.querySelector('.fltpanel'); if (pn) pn.hidden = true; const b = $('fltBtn'); if (b) b.setAttribute('aria-expanded', 'false'); }
@@ -1187,7 +1203,10 @@ function applyFilter() {
     const cards = [...g.querySelectorAll('.card')], total = cards.length;
     const n = cards.filter((c) => vis(c.dataset.st, !!c.dataset.disc, c.dataset.rv)).length;
     g.querySelector('.count').textContent = n === total ? `${total} ${total > 1 ? 'lieux' : 'lieu'}` : `${n} sur ${total}`;
+    if (!g.dataset.other) g.style.display = n === 0 && filtersActive() ? 'none' : '';
   });
+  const none = model.places.filter((p) => passes(p)).length === 0, em = $('fltEmpty');
+  if (em) em.hidden = !none;
 }
 function toggleOther() {
   const on = $('showOther').checked;
