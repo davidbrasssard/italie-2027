@@ -17,25 +17,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#eef2f1; --ink:#1c2422; --muted:#56615d; --line:#d3dbd7; --card:#ffffff; --soft:#f6f2e7; --grey:#8b918e;
+  --bg:#eef2f1; --ink:#1c2422; --muted:#56615d; --line:#d3dbd7; --card:#ffffff; --soft:#f6f2e7; --grey:#8b918e; --tip:#8a6a12;
   --serif:"Alegreya", Georgia, serif; --sans:"Alegreya Sans", "Segoe UI", system-ui, sans-serif;
   box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }
-@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --bg:#141a19; --ink:#e7ecea; --muted:#a4b0ab; --line:#2f3a37; --card:#1d2523; --soft:#26302d; } }
-:root[data-theme="dark"]{ --bg:#141a19; --ink:#e7ecea; --muted:#a4b0ab; --line:#2f3a37; --card:#1d2523; --soft:#26302d; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --bg:#141a19; --ink:#e7ecea; --muted:#a4b0ab; --line:#2f3a37; --card:#1d2523; --soft:#26302d; --tip:#d7b45a; } }
+:root[data-theme="dark"]{ --bg:#141a19; --ink:#e7ecea; --muted:#a4b0ab; --line:#2f3a37; --card:#1d2523; --soft:#26302d; --tip:#d7b45a; }
 *,*::before,*::after{ box-sizing:inherit; }
 html,body{ height:100%; }
 body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:17px; line-height:1.45; display:flex; flex-direction:column; }
 header{ display:flex; align-items:center; gap:10px 22px; flex-wrap:wrap; padding:10px 18px; border-bottom:1px solid var(--line); }
 header h1{ font-family:var(--serif); font-size:26px; margin:0; line-height:1; }
 header .sum{ color:var(--muted); }
-.route{ display:flex; gap:6px; flex-wrap:wrap; }
-.chip{ font:inherit; font-size:15px; display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:20px; padding:3px 10px 3px 4px; cursor:pointer; }
-.chip b{ display:inline-grid; place-items:center; min-width:22px; height:22px; padding:0 5px; border-radius:11px; color:#fff; font-size:12px; }
-.chip:hover{ border-color:var(--muted); }
-.tools{ margin-left:auto; display:flex; gap:8px; align-items:center; color:var(--muted); font-size:14px; }
+.tools{ margin-left:auto; display:flex; gap:8px; align-items:center; color:var(--muted); font-size:14px; flex-wrap:wrap; }
 .btn{ font:inherit; font-size:14px; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:8px; padding:5px 10px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:5px; }
 .btn:hover{ border-color:var(--muted); }
+.btn:focus-visible,.tabs button:focus-visible{ outline:3px solid #1f5f99; outline-offset:2px; }
 main{ flex:1; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(340px,1fr); min-height:0; }
 #map{ height:100%; min-height:420px; background:#dce8ef; }
 #panel{ overflow-y:auto; padding:14px 16px 40px; border-left:1px solid var(--line); }
@@ -46,11 +43,15 @@ main{ flex:1; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(340px,1
 .group h2{ font-family:var(--serif); font-size:21px; margin:0; line-height:1.1; }
 .group .meta{ color:var(--muted); font-size:14px; }
 .group .count{ margin-left:auto; color:var(--muted); font-size:14px; white-space:nowrap; }
+.zone{ padding:0 12px 12px; }
+.zone > p{ margin:0; font-size:16px; max-width:70ch; }
 .cards{ display:flex; flex-direction:column; gap:8px; padding:0 10px 10px; }
 .badge{ display:inline-grid; place-items:center; min-width:26px; height:26px; padding:0 6px; border-radius:13px; color:#fff; font-weight:700; font-size:12px; flex:none; }
 .card{ border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:9px 10px; scroll-margin:14px; transition:box-shadow .2s, border-color .2s; }
 .card.hl{ border-color:var(--ink); box-shadow:0 0 0 3px rgba(31,95,153,.35); }
 .card .top{ display:flex; align-items:center; gap:8px; }
+.card .top .more{ margin-left:auto; font-size:13px; padding:3px 9px; flex:none; }
+.card.open .top .more{ background:var(--ink); color:var(--card); border-color:var(--ink); }
 .namelink{ font:inherit; background:none; border:0; padding:0; margin:0; color:var(--ink); cursor:pointer; display:inline-flex; align-items:center; gap:5px; text-align:left; }
 .namelink h3{ text-decoration:underline; text-decoration-color:var(--line); text-decoration-thickness:2px; text-underline-offset:4px; }
 .namelink .ic{ color:var(--muted); }
@@ -61,14 +62,25 @@ main{ flex:1; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(340px,1
 .card h3{ margin:0; font-size:18px; font-weight:700; line-height:1.15; }
 .card img{ display:block; width:100%; max-height:220px; object-fit:cover; border-radius:8px; margin-top:8px; background:var(--soft); }
 .card p{ margin:6px 0 0; font-size:16px; }
-.links{ display:flex; flex-direction:column; gap:4px; margin-top:7px; }
-.links a{ color:var(--ink); font-size:15px; text-decoration:none; border-left:3px solid var(--line); padding:2px 0 2px 8px; }
+.tabs{ display:flex; gap:2px; border-bottom:1px solid var(--line); margin-top:8px; }
+.tabs button{ font:inherit; font-size:15px; background:none; border:0; border-bottom:3px solid transparent; margin-bottom:-1px; padding:5px 10px 4px; color:var(--muted); cursor:pointer; }
+.tabs button:hover{ color:var(--ink); }
+.tabs button[aria-selected="true"]{ color:var(--ink); border-bottom-color:var(--ink); font-weight:700; }
+.tp{ padding-top:4px; }
+.tips{ margin-top:10px; background:var(--soft); border-left:4px solid var(--tip); border-radius:0 8px 8px 0; padding:7px 10px 8px; max-width:70ch; }
+.tips b{ font-size:15px; }
+.tips ul{ margin:3px 0 0; padding-left:18px; font-size:15px; }
+.tips li{ margin:3px 0; }
+.sub{ font-size:14px; font-weight:700; color:var(--muted); margin:10px 0 3px; }
+.links{ display:flex; flex-direction:column; gap:4px; margin-top:4px; }
+.links a{ color:var(--ink); font-size:15px; text-decoration:none; border-left:3px solid var(--line); padding:2px 0 2px 8px; display:flex; align-items:flex-start; gap:7px; word-break:break-word; }
 .links a:hover{ border-left-color:var(--ink); }
 .links a span{ color:var(--muted); font-size:13px; }
+.links a .ic{ margin-top:3px; color:var(--muted); }
+.src summary{ cursor:pointer; color:var(--muted); font-size:14px; margin-top:8px; }
 .acts{ display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
 .msg{ padding:16px; color:var(--muted); }
 .ic{ width:16px; height:16px; flex:none; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; vertical-align:-3px; }
-.lbl{ display:flex; align-items:center; gap:5px; font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin:9px 0 2px; }
 .facts{ font-size:14px; color:var(--muted); margin-top:4px; }
 .facts b{ color:var(--ink); font-weight:500; }
 .facts .st-conf{ color:#b5541c; font-weight:700; }
@@ -77,7 +89,7 @@ main{ flex:1; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(340px,1
 .card.isaside{ opacity:.7; }
 .small{ font-size:13px; color:var(--muted); }
 .card.isrev{ border-style:dashed; }
-.sf{ display:flex; gap:4px; }
+.sf{ display:flex; gap:4px; flex-wrap:wrap; }
 .sf button{ font:inherit; font-size:14px; display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:8px; padding:5px 9px; cursor:pointer; }
 .sf button[aria-pressed="false"]{ opacity:.45; text-decoration:line-through; }
 .sf i{ width:11px; height:11px; border-radius:50%; display:inline-block; box-sizing:border-box; }
@@ -94,11 +106,9 @@ main{ flex:1; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(340px,1
 .vtag{ display:inline-block; font-size:12px; font-weight:700; padding:1px 7px; border-radius:10px; margin-left:6px; vertical-align:2px; }
 .vtag.d{ background:#fde7d9; color:#8a3b12; }
 .vtag.a{ background:#e3f1e8; color:#2e7d4f; }
-.links a{ display:flex; align-items:flex-start; gap:7px; }
-.wk p{ margin:0; font-size:15px; color:var(--muted); display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+.wk p{ margin:6px 0 0; font-size:15px; color:var(--muted); display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; }
 .wk a{ font-size:14px; color:var(--ink); }
 .cap{ font-size:12px; color:var(--muted); margin-top:2px; }
-.links a .ic{ margin-top:3px; color:var(--muted); }
 .search{ position:relative; }
 .search input{ font:inherit; font-size:15px; width:220px; padding:6px 10px 6px 32px; border:1px solid var(--line); border-radius:8px; background:var(--card); color:var(--ink); }
 .search > .ic{ position:absolute; left:9px; top:9px; color:var(--muted); }
@@ -112,7 +122,8 @@ dialog{ border:0; padding:0; border-radius:14px; width:min(640px,94vw); max-heig
 dialog::backdrop{ background:rgba(15,22,20,.5); }
 .help{ padding:18px 22px 22px; }
 .help h2{ font-family:var(--serif); font-size:26px; margin:0 0 6px; }
-.help dl{ display:grid; grid-template-columns:max-content 1fr; gap:8px 14px; margin:12px 0; font-size:16px; }
+.help h3{ font-family:var(--serif); font-size:20px; margin:18px 0 0; }
+.help dl{ display:grid; grid-template-columns:max-content 1fr; gap:8px 14px; margin:10px 0; font-size:16px; }
 .help dt{ font-weight:700; }
 .help dd{ margin:0; color:var(--muted); }
 .help dd b{ color:var(--ink); font-weight:500; }
@@ -129,6 +140,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 .leaflet-popup-content{ font-family:var(--sans); font-size:15px; margin:10px 12px; }
 .leaflet-popup-content img{ width:200px; max-height:130px; object-fit:cover; border-radius:6px; display:block; margin-bottom:6px; }
 .leaflet-popup-content .pbtn{ margin-top:6px; }
+@media (prefers-reduced-motion:reduce){ .card{ transition:none; } }
 @media (max-width:900px){ .search input{ width:160px; } .sf button{ font-size:13px; padding:4px 7px; }  main{ grid-template-columns:1fr; } #map{ height:55vh; } #panel{ border-left:0; border-top:1px solid var(--line); overflow:visible; } body{ display:block; } }
 </style>
 </head>
@@ -154,27 +166,41 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <p style="margin:0;color:var(--muted)">Tout vient de la feuille Google « Italie 2027 – Lieux ». Pour changer quelque chose sur la page, on le change dans la feuille.</p>
   <dl>
     <dt>Nom souligné</dt><dd>Toucher le nom pour voir le lieu sur la carte. Toucher un point sur la carte met sa fiche en évidence.</dd>
-    <dt>Distance</dt><dd>À vol d'oiseau, depuis le port d'attache le plus proche. Calculée par la page. Le temps de trajet, lui, va dans la Note (ex. « 15 min en train depuis Lauterbrunnen »).</dd>
+    <dt>Détails</dt><dd>Chaque fiche est fermée au départ. Le bouton <b>Détails</b> l'ouvre et montre ses onglets : <b>Résumé</b>, <b>Liens</b> et <b>Avis</b>. Un onglet vide n'apparaît pas.</dd>
+    <dt>Distance</dt><dd>À vol d'oiseau, depuis le port d'attache le plus proche. Calculée par la page.</dd>
     <dt>Numéro (ex. 3.4)</dt><dd>Port d'attache n° 3, 4<sup>e</sup> lieu. Calculé par la page. <b>A</b> = Hors trajet.</dd>
     <dt>Couleur</dt><dd>Celle du port d'attache. <b>Gris</b> = Hors trajet : à plus de 40 km de tous les ports d'attache du trajet actuel. Si on ajoute un port d'attache tout près (onglet Trajet), ces lieux s'y rattachent tout seuls.</dd>
-    <dt>Nom</dt><dd>Onglet <b>Lieux</b>, colonne <b>Lieu</b>.</dd>
     <dt>Statut, Type</dt><dd>Onglet <b>Lieux</b>, colonnes <b>Statut</b> et <b>Type</b>.</dd>
     <dt>Statut</dt><dd>
       <b>À explorer</b> (point creux) : on a trouvé l'endroit, mais on ne l'a pas encore vraiment regardé. C'est le choix par défaut.<br>
       <b>Bon candidat</b> (point plein) : on a fait nos recherches, c'est un bon arrêt possible.<br>
-      <b>Confirmé</b> (gros point cerclé) : tout le monde a voté Oui, on y va. On peut aussi le mettre à la main pour un incontournable (ex. le Colisée).<br>
-      <b>Mis de côté</b> (point pâle, caché par défaut) : on n'y va pas. Tout le monde a voté Non, ou on l'a choisi à la main. La ligne reste dans la feuille.<br>
-      <b>À discuter</b> : nos votes ne sont pas pareils.<br>
-      Confirmé et Mis de côté se font tout seuls quand tous les voyageurs ont voté pareil. Les boutons en haut cachent ou montrent chaque groupe.</dd>
-    <dt>Photo</dt><dd>Onglet <b>Lieux</b>, colonne <b>Photo</b> (un lien vers une image).</dd>
-    <dt>Votes</dt><dd>Onglet <b>Votes</b> : une ligne par avis (Lieu, Qui, Vote, Commentaire). Si quelqu'un vote deux fois pour le même lieu, c'est le dernier vote qui compte. Les noms viennent de l'onglet <b>Voyageurs</b>. <b>À discuter</b> = nos votes diffèrent. <b>D'accord</b> = tout le monde a voté pareil. Le bouton « À discuter » en haut montre seulement ces lieux.</dd>
-    <dt>Wikipédia</dt><dd>Ajouté automatiquement par la page quand Wikipédia connaît le lieu : un résumé et, s'il n'y a pas de photo à nous, la photo de Wikipédia. Rien n'est écrit dans la feuille. Notre photo, notre note et nos liens ont toujours priorité.</dd>
-    <dt>Note</dt><dd>Onglet <b>Lieux</b>, colonne <b>Note</b>. C'est l'endroit pour nos commentaires.</dd>
-    <dt>Liens</dt><dd>Onglet <b>Liens</b>. Le texte affiché = colonne <b>Description</b>. Le lien apparaît sur chaque lieu choisi dans la colonne <b>Lieux</b>.</dd>
-    <dt>Icônes des liens</dt><dd><svg class="ic"><use href="#i-play"/></svg> vidéo · <svg class="ic"><use href="#i-image"/></svg> image · <svg class="ic"><use href="#i-globe"/></svg> site Web</dd>
+      <b>Confirmé</b> (gros point cerclé) : on y va.<br>
+      <b>Mis de côté</b> (point pâle, caché par défaut) : on n'y va pas. La ligne reste dans la feuille.<br>
+      Les boutons en haut cachent ou montrent chaque groupe.</dd>
+  </dl>
+  <h3>Onglet Résumé</h3>
+  <dl>
+    <dt>Résumé</dt><dd>Onglet <b>Lieux</b>, colonne <b>Note</b>. S'il n'y a pas encore de Note, la page montre le résumé de Wikipédia à la place (rien n'est écrit dans la feuille).</dd>
+    <dt>Astuces</dt><dd>Onglet <b>Lieux</b>, colonne <b>Astuces</b>. Chaque phrase devient une astuce. « Aucune astuce sourcée » n'est pas affiché.</dd>
+    <dt>Photo</dt><dd>Onglet <b>Lieux</b>, colonne <b>Photo</b> (un lien vers une image). Sinon, la photo de Wikipédia si elle existe.</dd>
+  </dl>
+  <h3>Onglet Liens</h3>
+  <dl>
+    <dt>Sources</dt><dd>Onglet <b>Lieux</b>, colonne <b>Sources</b> : les liens qui appuient le résumé et les astuces, séparés par « ; ».</dd>
+    <dt>Liens du groupe</dt><dd>Onglet <b>Liens</b> : vidéos, blogues ou photos partagés par le groupe. Texte affiché = colonne <b>Description</b>. Le lien apparaît sur chaque lieu nommé dans la colonne <b>Lieux</b>.</dd>
+    <dt>Icônes</dt><dd><svg class="ic"><use href="#i-play"/></svg> vidéo · <svg class="ic"><use href="#i-image"/></svg> image · <svg class="ic"><use href="#i-globe"/></svg> site Web</dd>
+  </dl>
+  <h3>Onglet Avis</h3>
+  <dl>
+    <dt>Votes</dt><dd>Onglet <b>Votes</b> : une ligne par avis (Lieu, Qui, Vote, Commentaire). Si quelqu'un vote deux fois pour le même lieu, c'est le dernier vote qui compte. <b>À discuter</b> = nos votes diffèrent.</dd>
+  </dl>
+  <h3>Le reste</h3>
+  <dl>
+    <dt>Région</dt><dd>En ouvrant un port d'attache, on voit le résumé et les astuces de sa région : onglet <b>Régions</b>. Le nom dans Régions doit être exactement le même que dans Trajet.</dd>
+    <dt>Boutons</dt><dd><b>Photos</b> et <b>YouTube</b> cherchent le nom du lieu. <b>Google Maps</b> ouvre ses coordonnées.</dd>
     <dt>Trajet (en haut)</dt><dd>Onglet <b>Trajet</b> : ordre, ports d'attache, nuits, comment on y arrive.</dd>
-    <dt>Chercher</dt><dd>La boîte de recherche trouve d'abord nos lieux. Pour n'importe quel autre endroit, choisir « Chercher … sur la carte » : la carte y va et met une épingle temporaire, de la couleur du port d'attache auquel l'endroit se rattacherait (gris = hors trajet). Le bouton <b>Copier pour la feuille</b> copie le nom et les coordonnées : coller dans la colonne <b>Lieu</b> d'une nouvelle ligne de l'onglet Lieux, les deux cases se remplissent.</dd>
-    <dt>Mise à jour</dt><dd>La page lit la feuille chaque fois qu'on l'ouvre : tout le monde voit toujours la dernière version. <b>Recharger</b> sert à celui qui vient de modifier la feuille : attendre environ 5 minutes, puis cliquer sur Recharger.</dd>
+    <dt>Chercher</dt><dd>La boîte de recherche trouve d'abord nos lieux. Pour n'importe quel autre endroit, choisir « Chercher … sur la carte » : la carte y va et met une épingle temporaire, de la couleur du port d'attache auquel l'endroit se rattacherait (gris = hors trajet). Le bouton <b>Copier pour la feuille</b> copie une ligne complète : coller dans la colonne <b>Lieu</b> d'une nouvelle ligne de l'onglet Lieux, et le nom, les coordonnées, le statut, le type et la région se placent tout seuls.</dd>
+    <dt>Mise à jour</dt><dd>La page lit la feuille chaque fois qu'on l'ouvre. <b>Recharger</b> sert à celui qui vient de modifier la feuille : attendre environ 5 minutes, puis cliquer sur Recharger.</dd>
   </dl>
   <a class="btn" href="https://docs.google.com/spreadsheets/d/1mnxZiexvV5cnWcc1inZzZCftosAQsTyMMMLsrFbjyuY/edit" target="_blank" rel="noopener"><svg class="ic"><use href="#i-note"/></svg>Ouvrir la feuille Google</a>
 </div></dialog>
@@ -194,7 +220,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture de la feuille Google…</div></section>
 </main>
 <footer>
-  <span>Version 0.5.1 · 6 octobre 2026</span>
+  <span>Version 0.6.0 · 6 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -202,8 +228,8 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
-// ---- Italie 2027 v0.3 : data logic (no DOM) ----
-const RADIUS_KM = 40; // a place farther than this from every hub goes to "Ailleurs"
+// ---- Italie 2027 : data logic (no DOM) ----
+const RADIUS_KM = 40; // a place farther than this from every hub goes to "Hors trajet"
 
 function parseCSV(text) {
   const rows = []; let row = [], field = '', q = false;
@@ -240,6 +266,16 @@ function km([a, b], [c, d]) {
   const x = Math.sin((c - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin((d - b) * r / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(x));
 }
+// Sources: URLs separated by ";" or "|" (both styles exist in the sheet)
+function splitSources(s) {
+  return String(s || '').split(/\s*[;|]\s*|\s+(?=https?:\/\/)/).map((x) => x.trim()).filter((x) => /^https?:\/\//i.test(x));
+}
+// Astuces: one tip per sentence; "Aucune astuce sourcée" = no tips
+function splitTips(s) {
+  const t = String(s || '').trim();
+  if (!t || norm(t).startsWith('aucune astuce')) return [];
+  return t.split(/(?<=[.!?])\s+(?=[A-ZÀ-ÖØ-Þ«"])/).map((x) => x.trim()).filter(Boolean);
+}
 // statuses (old words still understood)
 const ST_LABEL = { explore: 'À explorer', cand: 'Bon candidat', conf: 'Confirmé', aside: 'Mis de côté' };
 function baseKey(s) {
@@ -257,8 +293,14 @@ function legMode(how) {
   return 'train';
 }
 
-function buildModel(lieux, trajet, liens, votes, voyageurs) {
-  votes = votes || []; voyageurs = voyageurs || [];
+function buildModel(lieux, trajet, liens, votes, voyageurs, regions) {
+  votes = votes || []; voyageurs = voyageurs || []; regions = regions || [];
+  // regions: matched to hubs by name (optional tab)
+  const regionOf = new Map();
+  for (const r of regions) {
+    const name = r['Région']; if (!name) continue;
+    regionOf.set(norm(name), { resume: r['Résumé'] || '', tips: splitTips(r['Astuces']), sources: splitSources(r['Sources']) });
+  }
   // stops = route in order; hubs = unique hub names (Paris twice -> one hub)
   const stops = trajet.map((r) => ({ order: +r['Ordre'] || 0, name: r["Port d'attache"], nights: +r['Nuits'] || 0, at: parseCoords(r['Coordonnées']), how: r['Comment on y arrive'] || '' }))
     .filter((s) => s.name && s.at).sort((a, b) => a.order - b.order);
@@ -269,7 +311,7 @@ function buildModel(lieux, trajet, liens, votes, voyageurs) {
     if (!h) { h = { name: s.name, at: s.at, seqs: [], nights: [], places: [], how: [] }; hubs.push(h); }
     h.seqs.push(s.seq); h.nights.push(s.nights); h.how.push(s.how);
   }
-  hubs.forEach((h, i) => { h.index = i; h.label = h.seqs.join('·'); });
+  hubs.forEach((h, i) => { h.index = i; h.label = h.seqs.join('·'); h.region = regionOf.get(norm(h.name)) || null; });
 
   const linkRows = liens.map((r) => ({ url: r['Lien'], desc: r['Description'] || '', places: (r['Lieux'] || '').split(/[,;]/).map(norm).filter(Boolean) })).filter((l) => l.url);
 
@@ -282,6 +324,7 @@ function buildModel(lieux, trajet, liens, votes, voyageurs) {
     let best = null, bd = Infinity;
     for (const h of hubs) { const d = km(at, h.at); if (d < bd) { bd = d; best = h; } }
     const p = { name, at, statut: r['Statut'] || '', type: r['Type'] || '', photo: r['Photo'] || '', note: r['Note'] || '', by: r['Ajouté par'] || '', wiki: r['Wikipédia'] || r['Wikipedia'] || '',
+      tips: splitTips(r['Astuces']), sources: splitSources(r['Sources']),
       links: linkRows.filter((l) => l.places.includes(norm(name))), dist: Math.round(bd) };
     const home = best && bd <= RADIUS_KM ? best : other;
     p.hub = home; p.near = best ? best.name : ''; home.places.push(p); places.push(p);
@@ -326,10 +369,10 @@ function buildModel(lieux, trajet, liens, votes, voyageurs) {
   return { stops, hubs, other, places, skipped, unmatched, voteUnmatched, people, totalNights, hasVotes: places.some((p) => p.votes.size) };
 }
 
-if (typeof module !== 'undefined') module.exports = { parseCSV, parseCoords, buildModel, km, norm };
+if (typeof module !== 'undefined') module.exports = { parseCSV, parseCoords, buildModel, km, norm, splitSources, splitTips };
 
 const BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRc8gRtaQjVgveoRwE9VsKfz2v-PgorJTpPQTK2xEJf8-bBGtIBbeWJ1RNLJUKxvOn0LT2t2AfbwPhX/pub';
-const GIDS = ['509099679', '305479065', '179035661', '566111621', '383224527']; // Lieux, Trajet, Liens, Voyageurs, Votes (recognised by their headings; Liens, Voyageurs and Votes are optional)
+const GIDS = ['509099679', '305479065', '179035661', '566111621', '383224527', '473616955']; // Lieux, Trajet, Liens, Voyageurs, Votes, Régions (recognised by their headings; all but Lieux and Trajet are optional)
 const PALETTE = ['#1f5f99', '#b5541c', '#2e7d4f', '#7a4a9e', '#0f7f80', '#9b2335', '#8a6a12', '#3d5a80'];
 const GREY = '#8b918e';
 const $ = (id) => document.getElementById(id);
@@ -367,13 +410,25 @@ async function load() {
     const k = pick((h) => h.includes('Lien') && !h.includes('Lieu'));
     const vo = pick((h) => h.includes('Qui') && h.includes('Vote'));
     const vy = pick((h) => h.includes('Voyageur') || h.includes('Voyageurs'));
-    model = buildModel(l, t, k, vo, vy);
+    const rg = pick((h) => h.includes('Région') && h.includes('Résumé') && !h.includes('Lieu'));
+    model = buildModel(l, t, k, vo, vy, rg);
     render();
     $('stamp').textContent = 'Feuille lue à ' + new Date().toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' }) + ' (un changement peut prendre environ 5 minutes à apparaître)';
   } catch (e) {
     $('sum').textContent = '';
     $('panel').innerHTML = `<div class="msg">Impossible de lire la feuille Google (${esc(e.message)}). Vérifier qu'elle est toujours publiée sur le Web, puis cliquer sur Recharger.</div>`;
   }
+}
+
+function tipsHtml(tips) {
+  return tips.length ? `<div class="tips"><b>Astuces</b><ul>${tips.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div>` : '';
+}
+function sourcesHtml(urls) {
+  return urls.length ? `<div class="links">${urls.map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener">${ico(linkKind(u))}<span style="color:var(--ink);font-size:15px">${esc(linkLabel(u))}</span></a>`).join('')}</div>` : '';
+}
+function zoneHtml(g) {
+  const r = g.region; if (!r || (!r.resume && !r.tips.length)) return '';
+  return `<div class="zone">${r.resume ? `<p>${esc(r.resume)}</p>` : ''}${tipsHtml(r.tips)}${r.sources.length ? `<details class="src"><summary>Sources de la région (${r.sources.length})</summary>${sourcesHtml(r.sources)}</details>` : ''}</div>`;
 }
 
 function render() {
@@ -418,6 +473,7 @@ function render() {
     const meta = g.other ? 'À plus de 40 km de tous les ports d’attache du trajet actuel. Si on ajoute un port d’attache tout près, ces lieux s’y rattachent tout seuls.' : `${g.nights.join(' + ')} n. · ${esc(g.how.filter(Boolean).join(' / '))}`;
     html += `<details class="group" id="g${g.other ? 'o' : g.index}" ${g.other ? 'data-other="1"' : ''}>
       <summary><span class="badge" style="background:${colorOf(g)}">${g.other ? 'A' : esc(g.label)}</span><div><h2>${esc(g.name)}</h2><div class="meta">${meta}</div></div><span class="count">${g.places.length} lieux</span></summary>
+      ${g.other ? '' : zoneHtml(g)}
       <div class="cards">${g.places.map((p) => cardHtml(p)).join('')}</div></details>`;
   }
   $('panel').innerHTML = html;
@@ -449,22 +505,46 @@ function cardHtml(p) {
   const facts = [`Statut : <b class="st-${p.st}">${esc(p.stLabel)}</b>${p.byVotes ? ' <span class="small">(selon les votes)</span>' : ''}`, p.type ? `Type : <b>${esc(p.type)}</b>` : '',
     p.dist < 1 ? '<b>Port d\'attache</b>' : `À <b>${p.dist} km</b> de ${esc(p.near)}`].filter(Boolean).join(' · ');
   const q = encodeURIComponent(p.name);
+  // tabs: Résumé always; Liens and Avis only when they have something
+  const hasLinks = p.sources.length || p.links.length, hasVotes = p.votes && p.votes.size;
+  const tabs = [['res', 'Résumé'], hasLinks ? ['lnk', 'Liens'] : null, hasVotes ? ['avis', 'Avis'] : null].filter(Boolean);
+  const res = `${p.note ? `<p>${esc(p.note)}</p>` : `<div class="wk"><p class="small">Pas encore de résumé.</p></div>`}${tipsHtml(p.tips)}`;
+  const lnk = hasLinks ? `${p.sources.length ? `<div class="sub">Sources</div>${sourcesHtml(p.sources)}` : ''}${p.links.length ? `<div class="sub">Liens du groupe</div><div class="links">${p.links.map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico(linkKind(l.url))}<span style="color:var(--ink);font-size:15px">${esc(l.desc || l.url)} <span>· ${linkLabel(l.url)}</span></span></a>`).join('')}</div>` : ''}` : '';
+  const avis = hasVotes ? `<div class="sub">Votes${p.disputed ? '<span class="vtag d">À discuter</span>' : p.agreed ? '<span class="vtag a">D\'accord</span>' : ''}</div><div class="votes">${[...p.votes].map(([who, v]) => `<div><b>${esc(who)}</b> : ${esc(v.vote)}${v.comment ? ` <span class="c">« ${esc(v.comment)} »</span>` : ''}</div>`).join('')}${p.waiting.length ? `<div class="c">En attente : ${p.waiting.map(esc).join(', ')}</div>` : ''}</div>` : '';
+  const panes = { res, lnk, avis };
   return `<article class="card${rev ? ' isrev' : ''}${p.st === 'aside' ? ' isaside' : ''}" id="c${i}" data-i="${i}" data-st="${p.st}" ${p.disputed ? 'data-disc="1"' : ''}>
-    <div class="top"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span><button class="namelink" data-go="${i}" title="Voir sur la carte">${ico('pin')}<h3>${esc(p.name)}</h3></button></div>
+    <div class="top"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span><button class="namelink" data-go="${i}" title="Voir sur la carte">${ico('pin')}<h3>${esc(p.name)}</h3></button><button class="btn more" data-open aria-expanded="false" aria-controls="b${i}">Détails</button></div>
     ${facts ? `<div class="facts">${facts}</div>` : ''}
-    <div class="ph">${p.photo ? `<img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy" onerror="this.remove()">` : ''}</div>
-    ${p.note ? `<div class="lbl">${ico('note')}Note</div><p style="margin-top:0">${esc(p.note)}</p>` : ''}
-    ${p.links.length ? `<div class="lbl">${ico('link')}Liens</div><div class="links">${p.links.map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico(linkKind(l.url))}<span style="color:var(--ink);font-size:15px">${esc(l.desc || l.url)} <span>· ${linkLabel(l.url)}</span></span></a>`).join('')}</div>` : ''}
-    ${p.votes && p.votes.size ? `<div class="lbl">${ico('users')}Votes${p.disputed ? '<span class="vtag d">À discuter</span>' : p.agreed ? '<span class="vtag a">D\'accord</span>' : ''}</div><div class="votes">${[...p.votes].map(([who, v]) => `<div><b>${esc(who)}</b> : ${esc(v.vote)}${v.comment ? ` <span class="c">« ${esc(v.comment)} »</span>` : ''}</div>`).join('')}${p.waiting.length ? `<div class="c">En attente : ${p.waiting.map(esc).join(', ')}</div>` : ''}</div>` : ''}
-    <div class="wk"></div>
-    <div class="acts"><a class="btn" href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">${ico('camera')}Photos Google</a>
+    <div class="acts"><a class="btn" href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">${ico('camera')}Photos</a>
+      <a class="btn" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">${ico('play')}YouTube</a>
       <a class="btn" href="https://www.google.com/maps/search/?api=1&query=${p.at[0]},${p.at[1]}" target="_blank" rel="noopener">${ico('map')}Google Maps</a></div>
+    <div class="body" id="b${i}" hidden>
+      <div class="ph">${p.photo ? `<img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy" onerror="this.remove()">` : ''}</div>
+      ${tabs.length > 1 ? `<div class="tabs" role="tablist">${tabs.map(([k, t], j) => `<button role="tab" data-tab="${k}" aria-selected="${j === 0}">${t}</button>`).join('')}</div>` : ''}
+      ${tabs.map(([k], j) => `<div class="tp" data-tab="${k}" role="tabpanel" ${j ? 'hidden' : ''}>${panes[k]}</div>`).join('')}
+    </div>
   </article>`;
 }
+function openCard(c, on) {
+  c.classList.toggle('open', on);
+  c.querySelector('.body').hidden = !on;
+  const b = c.querySelector('[data-open]'); b.setAttribute('aria-expanded', on); b.textContent = on ? 'Fermer' : 'Détails';
+}
+$('panel').addEventListener('click', (e) => {
+  const ob = e.target.closest('[data-open]');
+  if (ob) { const c = ob.closest('.card'); openCard(c, !c.classList.contains('open')); return; }
+  const tb = e.target.closest('.tabs button');
+  if (tb) {
+    const c = tb.closest('.card');
+    c.querySelectorAll('.tabs button').forEach((b) => b.setAttribute('aria-selected', b === tb));
+    c.querySelectorAll('.tp').forEach((t) => { t.hidden = t.dataset.tab !== tb.dataset.tab; });
+  }
+});
 function popupHtml(p) {
   const i = model.places.indexOf(p);
   const w = WIKI.get(p), img = p.photo || (w && w.img) || '';
-  return `${img ? `<img src="${esc(img)}" alt="" onerror="this.remove()">` : ''}<b>${esc(p.num)} · ${esc(p.name)}</b>${p.note ? `<br>${esc(p.note)}` : ''}<br><button class="btn pbtn fiche" onclick="showCard(${i})">Voir la fiche</button>`;
+  const lead = p.note ? (p.note.length > 160 ? p.note.slice(0, 157).trim() + '…' : p.note) : '';
+  return `${img ? `<img src="${esc(img)}" alt="" onerror="this.remove()">` : ''}<b>${esc(p.num)} · ${esc(p.name)}</b>${lead ? `<br>${esc(lead)}` : ''}<br><button class="btn pbtn fiche" onclick="showCard(${i})">Voir la fiche</button>`;
 }
 function openGroup(idx, fit) {
   const d = $('g' + idx); if (!d) return;
@@ -474,8 +554,9 @@ function openGroup(idx, fit) {
 function showCard(i) {
   const p = model.places[i], d = $('g' + (p.hub.other ? 'o' : p.hub.index)); d.open = true;
   const c = $('c' + i); document.querySelectorAll('.card.hl').forEach((x) => x.classList.remove('hl'));
-  c.classList.add('hl'); c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  c.classList.add('hl'); openCard(c, true); c.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
+window.showCard = showCard;
 function highlight(p, fly) {
   showCard(model.places.indexOf(p));
   const mk = markerOf.get(p);
@@ -553,8 +634,11 @@ async function fillWiki(card) {
   if (card.dataset.wk) return; card.dataset.wk = '1';
   const p = model.places[+card.dataset.i], w = await wikiFor(p);
   if (!w) return;
+  // photo: only if we have none of our own
   if (!p.photo && w.img) card.querySelector('.ph').innerHTML = `<img src="${esc(w.img)}" alt="${esc(p.name)}" loading="lazy" onerror="this.parentNode.innerHTML=''"><div class="cap">Photo : Wikipédia</div>`;
-  card.querySelector('.wk').innerHTML = `<div class="lbl">${ico('globe')}Wikipédia</div><p>${esc(w.text)}</p><a href="${esc(w.url)}" target="_blank" rel="noopener">Lire sur Wikipédia${w.lang === 'en' ? ' (anglais)' : ''}</a>`;
+  // text: only when we have no Note of our own
+  const wk = card.querySelector('.wk');
+  if (wk && !p.note) wk.innerHTML = `<p>${esc(w.text)}</p><a href="${esc(w.url)}" target="_blank" rel="noopener">Résumé tiré de Wikipédia${w.lang === 'en' ? ' (anglais)' : ''}</a>`;
 }
 let wikiObs = null;
 function watchWiki() {
@@ -577,6 +661,12 @@ function showResults() {
 }
 function pickHit(j) { if (j >= hits.length) { const raw = $('q').value.trim(); if (raw.length >= 3) geoSearch(raw); return; } const p = hits[j]; if (!p) return; $('results').style.display = 'none'; $('q').blur(); highlight(p, true); }
 // ---- recherche sur toute la carte (OpenStreetMap / Nominatim) ----
+// OpenStreetMap kinds of place -> our Type column (unknown kinds stay empty)
+const TYPE_FR = { city: 'Ville', town: 'Ville', village: 'Village', hamlet: 'Hameau', suburb: 'Quartier', neighbourhood: 'Quartier', quarter: 'Quartier',
+  peak: 'Sommet', volcano: 'Sommet', saddle: 'Col', mountain_pass: 'Col', water: 'Lac', lake: 'Lac', waterfall: 'Cascade', valley: 'Vallée', glacier: 'Glacier',
+  museum: 'Musée', gallery: 'Musée', viewpoint: 'Point de vue', attraction: 'Attraction', park: 'Parc', garden: 'Parc', nature_reserve: 'Réserve naturelle', national_park: 'Parc', protected_area: 'Réserve naturelle',
+  place_of_worship: 'Église', church: 'Église', cathedral: 'Église', castle: 'Château', fort: 'Château', ruins: 'Ruines', archaeological_site: 'Site archéologique', monument: 'Monument', memorial: 'Monument',
+  alpine_hut: 'Refuge', wilderness_hut: 'Refuge', square: 'Place', marketplace: 'Marché', station: 'Gare', beach: 'Plage', island: 'Île' };
 let geoPin = null;
 async function geoSearch(q) {
   const box = $('results');
@@ -596,13 +686,16 @@ function showGeo(g) {
   let best = null, bd = Infinity;
   for (const h of model.hubs) { const d = km([+g.lat, +g.lon], h.at); if (d < bd) { bd = d; best = h; } }
   const inHub = best && bd <= RADIUS_KM, col = inHub ? colorOf(best) : GREY;
+  const type = TYPE_FR[g.type] || TYPE_FR[g.addresstype] || '';
   const where = inHub ? `Se rattacherait à <b>${esc(best.name)}</b> (${Math.round(bd)} km)` : best ? `Hors trajet : ${Math.round(bd)} km de ${esc(best.name)}` : '';
+  // full Lieux row: Lieu, Coordonnées, Statut, Type, Photo, Note, Ajouté par, Région
+  const row = [name, `${lat}, ${lon}`, 'À explorer', type, '', '', '', inHub ? best.name : ''].join('\t');
   const pin = `<svg width="30" height="42" viewBox="0 0 30 42"><path d="M15 1C7.3 1 1 7.2 1 14.8 1 25.5 15 41 15 41s14-15.5 14-26.2C29 7.2 22.7 1 15 1z" fill="${col}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="15" r="5.5" fill="#fff"/></svg>`;
   geoPin = L.marker([+g.lat, +g.lon], { icon: L.divIcon({ className: '', html: pin, iconSize: [30, 42], iconAnchor: [15, 41], popupAnchor: [0, -36] }), zIndexOffset: 2000 })
-    .addTo(map).bindPopup(`<b>${esc(name)}</b><br><span class="small">${esc(g.display_name.split(',').slice(1, 4).join(',').trim())}</span><br>${where}<br>${lat}, ${lon}
-    <br><button class="btn pbtn" id="copyGeo">Copier pour la feuille</button><div class="small" id="copyMsg">Coller dans la colonne Lieu d'une nouvelle ligne : le nom et les coordonnées se placent tout seuls.</div>`, { maxWidth: 260 });
+    .addTo(map).bindPopup(`<b>${esc(name)}</b>${type ? ` <span class="small">(${esc(type)})</span>` : ''}<br><span class="small">${esc(g.display_name.split(',').slice(1, 4).join(',').trim())}</span><br>${where}<br>${lat}, ${lon}
+    <br><button class="btn pbtn" id="copyGeo">Copier pour la feuille</button><div class="small" id="copyMsg">Coller dans la colonne Lieu d'une nouvelle ligne : nom, coordonnées, statut, type et région se placent tout seuls.</div>`, { maxWidth: 260 });
   map.flyTo([+g.lat, +g.lon], 11, { duration: .8 });
-  setTimeout(() => { geoPin.openPopup(); const b = $('copyGeo'); if (b) b.onclick = () => copyText(`${name}\t${lat}, ${lon}`); }, 850);
+  setTimeout(() => { geoPin.openPopup(); const b = $('copyGeo'); if (b) b.onclick = () => copyText(row); }, 850);
 }
 async function copyText(t) {
   try { await navigator.clipboard.writeText(t); }
