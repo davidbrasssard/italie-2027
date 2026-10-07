@@ -160,7 +160,15 @@ body.nolist main{ grid-template-columns:minmax(0,1fr); } body.nolist #panel{ dis
 .place p{ margin:6px 0 0; font-size:16px; }
 .place img{ display:block; width:100%; max-height:62vh; object-fit:cover; border-radius:8px; background:var(--soft); }
 .place .ph{ margin-top:4px; }
-.place .hd{ position:sticky; top:-14px; z-index:20; background:var(--bg); margin:-14px -16px 0; padding:14px 16px 0; border-bottom:1px solid var(--line); }
+.place .hd{ position:sticky; top:-14px; z-index:20; background:var(--bg); margin:-14px -16px 0; padding:0 16px; border-bottom:1px solid var(--line); }
+.rband{ display:flex; align-items:center; gap:8px; margin:0 -16px; padding:7px 10px 7px 16px; color:#fff; }
+.rband .rbname{ font:inherit; font-family:var(--serif); font-size:19px; font-weight:700; color:#fff; background:none; border:0; padding:0; margin-right:auto; text-align:left; line-height:1.2; }
+button.rbname{ cursor:pointer; } button.rbname:hover{ text-decoration:underline; text-underline-offset:3px; }
+.rband .xbtn{ background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.45); color:#fff; }
+.rband .xbtn:hover{ background:rgba(255,255,255,.3); }
+.place .psub{ margin-top:8px; }
+.place .psub h3{ font-size:20px; }
+.rmeta{ margin:6px 0 0; }
 .place .back{ font:inherit; font-size:14px; background:none; border:0; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; gap:4px; padding:2px 0; }
 .place .back:hover{ color:var(--ink); }
 .place .top{ display:flex; align-items:center; gap:8px; margin-top:4px; }
@@ -172,9 +180,11 @@ body.nolist main{ grid-template-columns:minmax(0,1fr); } body.nolist #panel{ dis
 .place .car .slide img{ max-height:62vh; }
 .place .tp{ padding-top:8px; scroll-margin-top:120px; }
 @media (max-width:900px){ .place .hd{ top:0; margin:0 -16px; } }
+#rplaces > .small{ margin:0 0 8px; }
 @media (min-width:901px){
   #panel{ display:flex; flex-direction:column; overflow:hidden; padding:0; border-left:0; }
-  #placeView{ flex:0 0 60%; overflow-y:auto; padding:14px 16px 16px; border-bottom:3px solid var(--line); background:var(--bg); }
+  .rbar{ flex:none; margin:0; padding:10px 16px 8px; border-bottom:1px solid var(--line); background:var(--bg); }
+  #placeView{ flex:0 0 58%; overflow-y:auto; padding:14px 16px 16px; border-bottom:3px solid var(--line); background:var(--bg); }
   #listView{ flex:1 1 0; overflow-y:auto; padding:14px 16px 40px; min-height:0; }
   .place .back{ display:none; }
   #rplaces .zone{ display:none; }
@@ -285,7 +295,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 .leaflet-popup-content img{ width:200px; max-height:130px; object-fit:cover; border-radius:6px; display:block; margin-bottom:6px; }
 .leaflet-popup-content .pbtn{ margin-top:6px; }
 @media (prefers-reduced-motion:reduce){ .card{ transition:none; } }
-@media (max-width:900px){ .search input{ width:150px; } main{ grid-template-columns:minmax(0,1fr); } #split{ display:none; } .xbtn{ display:none !important; } #map{ height:calc(100dvh - 170px); min-height:320px; } #panel{ border-left:0; overflow:visible; padding-bottom:90px; } body{ display:block; padding-bottom:64px; }
+@media (max-width:900px){ .search input{ width:150px; } main{ grid-template-columns:minmax(0,1fr); } #split{ display:none; } #map{ height:calc(100dvh - 170px); min-height:320px; } #panel{ border-left:0; overflow:visible; padding-bottom:90px; } body{ display:block; padding-bottom:64px; }
   .lay{ display:none !important; } footer{ display:none; }
   .mnav{ display:flex; position:fixed; left:0; right:0; bottom:0; z-index:3000; gap:8px; background:var(--card); border-top:1px solid var(--line); padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px)); }
   .mnav button{ flex:1; font:inherit; font-size:15px; display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:9px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink); }
@@ -352,9 +362,9 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 
   <details class="hs"><summary>Lire une fiche</summary>
   <dl>
-    <dt>Nom souligné</dt><dd>Toucher le nom pour voir le lieu sur la carte. Toucher un point sur la carte met sa fiche en évidence.</dd>
+    <dt>Nom souligné</dt><dd>Toucher le nom pour voir le lieu sur la carte. Toucher un point sur la carte (pas besoin de viser juste, la zone autour compte aussi) ouvre sa fiche.</dd>
     <dt>Régions</dt><dd>La rangée de régions en haut de la liste choisit la région ; la liste montre alors seulement ses lieux. Les flèches ‹ › font défiler les régions quand elles ne tiennent pas toutes.</dd>
-    <dt>Ouvrir un lieu</dt><dd>Toucher un lieu dans la liste ouvre sa fiche. La flèche ← en haut de la fiche ramène à la liste. L'en-tête de la fiche (nom, épingle, crayon, onglets) reste en haut pendant qu'on la lit.</dd>
+    <dt>Ouvrir un lieu</dt><dd>Toucher un lieu dans la liste ouvre sa fiche. La bande de couleur en haut de la fiche indique la région ; la toucher montre la fiche de la région. Le <b>✕</b> ferme la fiche. L'en-tête de la fiche reste en haut pendant qu'on la lit.</dd>
     <dt>Carte et liste</dt><dd>Sur un ordinateur, la fiche (d'un lieu ou d'une région) s'ouvre au-dessus de la liste ; le <b>✕</b> la ferme et la liste reprend toute la place. La barre entre la carte et la liste se glisse pour changer leur largeur (double-clic : taille de départ). Sur un téléphone, les boutons <b>Carte</b> et <b>Lieux</b> en bas passent de l'un à l'autre.</dd>
     <dt>Photos</dt><dd>L'onglet <b>Photos</b> montre les photos et vidéos choisies pour ce lieu, en grand ; elles défilent avec les flèches (ou en glissant le doigt sur un téléphone).</dd>
     <dt>Boutons</dt><dd>Dans une fiche : l'<b>épingle</b> ouvre le lieu dans Google Maps, le <b>crayon</b> permet de modifier la fiche. En haut de la page : <b>entonnoir</b> = filtres, <b>flèche circulaire</b> = recharger, <b>jumelles</b> = recherche, <b>?</b> = aide. Garder le doigt ou la souris sur un bouton affiche son nom.</dd>
@@ -454,7 +464,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 </main>
 <nav class="mnav" aria-label="Affichage"><button data-mv="map" aria-pressed="true"><svg class="ic"><use href="#i-map"/></svg>Carte</button><button data-mv="list" aria-pressed="false"><svg class="ic"><use href="#i-list"/></svg>Lieux</button></nav>
 <footer>
-  <span>Version 0.14.0 · 7 octobre 2026</span>
+  <span>Version 0.15.0 · 7 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -646,7 +656,7 @@ const $ = (id) => document.getElementById(id);
 const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const colorOf = (g) => (g.other ? GREY : PALETTE[g.index % PALETTE.length]);
 
-const map = L.map('map', { zoomControl: true }).setView([45.2, 9.5], 5);
+const map = L.map('map', { zoomControl: true, renderer: L.canvas({ tolerance: 12 }) }).setView([45.2, 9.5], 5);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 19 }).addTo(map);
 const legend = L.control({ position: 'bottomleft' });
@@ -810,13 +820,13 @@ function render() {
   }
   // panel: a row of regions, then the places of the selected region
   const groupsAll = [...m.hubs, m.other].filter((g) => !g.other || g.places.length);
-  let html = `<div class="rbar"><button class="rnav" data-rnav="-1" aria-label="Régions précédentes">‹</button><div class="rchips" id="rchips">${groupsAll.map((g) => `<button class="rchip" data-gr="${g.other ? 'o' : g.index}" aria-pressed="false"><span class="badge" style="background:${colorOf(g)}">${g.other ? 'A' : esc(g.label)}</span><span class="rcname">${esc(g.name)}</span><span class="small cnt"></span></button>`).join('')}</div><button class="rnav" data-rnav="1" aria-label="Régions suivantes">›</button></div>`;
-  html += `<div class="warn" id="fltEmpty" hidden>Aucun lieu ne correspond aux filtres. <button class="btn" id="fltReset">Tout afficher</button></div>`;
+  const rbar = `<div class="rbar"><button class="rnav" data-rnav="-1" aria-label="Régions précédentes">‹</button><div class="rchips" id="rchips">${groupsAll.map((g) => `<button class="rchip" data-gr="${g.other ? 'o' : g.index}" aria-pressed="false"><span class="badge" style="background:${colorOf(g)}">${g.other ? 'A' : esc(g.label)}</span><span class="rcname">${esc(g.name)}</span><span class="small cnt"></span></button>`).join('')}</div><button class="rnav" data-rnav="1" aria-label="Régions suivantes">›</button></div>`;
+  let html = `<div class="warn" id="fltEmpty" hidden>Aucun lieu ne correspond aux filtres. <button class="btn" id="fltReset">Tout afficher</button></div>`;
   if (m.skipped.length) html += `<div class="warn">Sans coordonnées (pas sur la carte) : ${m.skipped.map((x) => esc(x.name)).join(', ')}<div style="margin-top:8px"><button class="btn" id="findCoords">${ico('search')}Trouver les coordonnées</button></div><div id="coordOut"></div></div>`;
   if (m.voteUnmatched && m.voteUnmatched.length) html += `<div class="warn">Dans l'onglet Votes, nom introuvable dans Lieux : ${[...new Set(m.voteUnmatched)].map(esc).join(', ')}</div>`;
   if (m.unmatched.length) html += `<div class="warn">Dans l'onglet Liens, nom introuvable dans Lieux : ${[...new Set(m.unmatched)].map(esc).join(', ')}</div>`;
   html += `<div id="rplaces"></div>`;
-  $('panel').innerHTML = `<div id="placeView" hidden></div><div id="listView">${html}</div>`; curPlace = null; curRegion = null;
+  $('panel').innerHTML = `${rbar}<div id="placeView" hidden></div><div id="listView">${html}</div>`; curPlace = null; curRegion = null;
   const fc = $('findCoords'); if (fc) fc.addEventListener('click', findCoords);
   $('fltReset').addEventListener('click', showAllFilters);
   const keep = curG != null && groupOf(curG) && (curG !== 'o' || m.other.places.length) ? groupOf(curG) : groupsAll[0];
@@ -868,15 +878,21 @@ function placeHtml(p, want) {
   const zone = p.hub.other ? 'Hors trajet' : p.hub.name;
   return `<article class="place all" data-i="${i}">
     <div class="hd">
-      <button class="back" data-back title="Retour à la liste">${ico('arrowl')}${esc(zone)}</button>
-      <div class="top"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span><button class="namelink" data-go="${i}" title="Voir sur la carte"><h3>${esc(p.name)}</h3></button>
+      ${bandHtml(p.hub, true)}
+      <div class="top psub"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span><button class="namelink" data-go="${i}" title="Voir sur la carte"><h3>${esc(p.name)}</h3></button>
         <a class="btn ibtn" href="https://www.google.com/maps/search/?api=1&query=${p.at[0]},${p.at[1]}" target="_blank" rel="noopener" title="Ouvrir dans Google Maps" aria-label="Ouvrir dans Google Maps">${ico('pin')}</a>
-        <button class="btn ibtn" data-edit="${i}" title="Modifier cette fiche" aria-label="Modifier cette fiche">${ico('pencil')}</button><button class="btn ibtn xbtn" data-back title="Fermer" aria-label="Fermer">${ico('x')}</button></div>
+        <button class="btn ibtn" data-edit="${i}" title="Modifier cette fiche" aria-label="Modifier cette fiche">${ico('pencil')}</button></div>
       <div class="tabs" role="tablist">${panes.map(([k, t], j) => `<button role="tab" data-tab="${k}" aria-selected="false">${t}</button>`).join('')}<button class="allbtn" aria-pressed="true" title="Voir une section à la fois">Par onglet</button></div>
     </div>
     <div class="facts">${p.rvk !== 'done' ? `<span class="rvtag rv-${p.rvk}">${RV_LABEL[p.rvk]}</span> ` : ''}${facts}</div>
     ${panes.map(([k, t, h], j) => `<section class="tp" data-tab="${k}" role="tabpanel"><div class="sub ph2">${t}</div>${h}</section>`).join('')}
   </article>`;
+}
+// the coloured region band at the top of the window (clicking it, from a place, shows the region)
+function bandHtml(g, link) {
+  const key = g.other ? 'o' : g.index;
+  const label = `${g.other ? 'A' : esc(g.label)} · ${esc(g.name)}`;
+  return `<div class="rband" style="background:${colorOf(g)}">${link ? `<button class="rbname" data-region="${key}" title="Voir la fiche de la région">${label} ›</button>` : `<span class="rbname">${label}</span>`}<button class="btn ibtn xbtn" data-back title="Fermer" aria-label="Fermer">${ico('x')}</button></div>`;
 }
 function regionHtml(g, want) {
   const r = g.region || { resume: '', tips: [], links: [], media: [] };
@@ -888,9 +904,8 @@ function regionHtml(g, want) {
   const meta = g.other ? 'Lieux à plus de 40 km de tous les ports d’attache' : `${g.nights.join(' + ')} n. · ${esc(g.how.filter(Boolean).join(' / '))} · ${g.places.length} lieu${g.places.length > 1 ? 'x' : ''}`;
   return `<article class="place region all" data-g="${g.other ? 'o' : g.index}">
     <div class="hd">
-      <button class="back" data-back title="Retour à la liste">${ico('arrowl')}Liste</button>
-      <div class="top"><span class="badge" style="background:${colorOf(g)}">${g.other ? 'A' : esc(g.label)}</span><div class="rname"><h3>${esc(g.name)}</h3><div class="small">${meta}</div></div>
-        <button class="btn ibtn xbtn" data-back title="Fermer" aria-label="Fermer">${ico('x')}</button></div>
+      ${bandHtml(g, false)}
+      <div class="rmeta small">${meta}</div>
       <div class="tabs" role="tablist">${panes.map(([k, t], j) => `<button role="tab" data-tab="${k}" aria-selected="false">${t}</button>`).join('')}<button class="allbtn" aria-pressed="true" title="Voir une section à la fois">Par onglet</button></div>
     </div>
     ${panes.map(([k, t, h], j) => `<section class="tp" data-tab="${k}" role="tabpanel"><div class="sub ph2">${t}</div>${h}</section>`).join('')}
@@ -906,7 +921,7 @@ function selectRegion(g, scroll = true) {
   const chip = document.querySelector(`.rchip[data-gr="${curG}"]`);
   if (chip && scroll) chip.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   const meta = g.other ? 'À plus de 40 km de tous les ports d’attache. Si on ajoute un port d’attache tout près, ces lieux s’y rattachent tout seuls.' : `${g.nights.join(' + ')} n. · ${esc(g.how.filter(Boolean).join(' / '))}`;
-  $('rplaces').innerHTML = `<div class="rhead"><h2>${esc(g.name)}</h2><div class="meta">${meta}</div></div>${g.other ? '' : zoneHtml(g)}<div class="cards">${g.places.length ? g.places.map((p) => rowHtml(p)).join('') : '<p class="small">Pas encore de lieux dans cette région.</p>'}</div>`;
+  $('rplaces').innerHTML = `${g.other ? `<p class="small">${meta}</p>` : zoneHtml(g)}<div class="cards">${g.places.length ? g.places.map((p) => rowHtml(p)).join('') : '<p class="small">Pas encore de lieux dans cette région.</p>'}</div>`;
   if (curPlace != null) { const r = $('r' + curPlace); if (r) r.classList.add('sel'); }
   $('listView').scrollTop = 0;
   if (model) applyFilter();
@@ -985,6 +1000,8 @@ $('panel').addEventListener('click', (e) => {
   if (ed) { openEditor(model.places[+ed.dataset.edit]); return; }
   const nv = e.target.closest('.car .nav');
   if (nv) { carGo(nv.closest('.car'), nv.classList.contains('next') ? 1 : -1); return; }
+  const rb = e.target.closest('[data-region]');
+  if (rb) { const g = groupOf(rb.dataset.region); openRegion(g); if (!isMobile()) fitGroup(g); return; }
   const rn = e.target.closest('[data-rnav]');
   if (rn) { $('rchips').scrollBy({ left: +rn.dataset.rnav * 260, behavior: 'smooth' }); return; }
   const rc = e.target.closest('.rchip');
@@ -1390,7 +1407,7 @@ document.addEventListener('click', (e) => {
 function applyFilter() {
   renderFilter();
   const vis = (st, disc, rv) => stOn[st] && rvOn[rv] && (!onlyDisc || disc);
-  for (const [p, mk] of markerOf) { const el = mk.getElement && mk.getElement(); if (el) el.style.display = vis(mk._st, p.disputed, p.rvk) ? '' : 'none'; }
+  for (const [p, mk] of markerOf) { const grp = p.hub.other ? layers.other : layers.places; if (vis(mk._st, p.disputed, p.rvk)) { if (!grp.hasLayer(mk)) grp.addLayer(mk); } else if (grp.hasLayer(mk)) grp.removeLayer(mk); }
   document.querySelectorAll('.prow').forEach((c) => { c.style.display = vis(c.dataset.st, !!c.dataset.disc, c.dataset.rv) ? '' : 'none'; });
   document.querySelectorAll('.rchip').forEach((c) => {
     const g = groupOf(c.dataset.gr); if (!g) return;
