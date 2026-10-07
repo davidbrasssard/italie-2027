@@ -200,7 +200,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <dt>Boutons</dt><dd><b>Photos</b> et <b>YouTube</b> cherchent le nom du lieu. <b>Google Maps</b> ouvre ses coordonnées.</dd>
     <dt>Trajet (en haut)</dt><dd>Onglet <b>Trajet</b> : ordre, ports d'attache, nuits, comment on y arrive.</dd>
     <dt>Chercher</dt><dd>La boîte de recherche trouve d'abord nos lieux. Pour n'importe quel autre endroit, choisir « Chercher … sur la carte » : la carte y va et met une épingle temporaire, de la couleur du port d'attache auquel l'endroit se rattacherait (gris = hors trajet). Le bouton <b>Copier pour la feuille</b> copie une ligne complète : coller dans la colonne <b>Lieu</b> d'une nouvelle ligne de l'onglet Lieux, et le nom, les coordonnées, le statut, le type et la région se placent tout seuls.</dd>
-    <dt>Sans coordonnées</dt><dd>Les lieux sans coordonnées sont listés dans l'encadré jaune. Le bouton <b>Trouver les coordonnées</b> les cherche autour de leur région (colonne Région), puis copie toutes les coordonnées d'un coup, dans l'ordre : coller dans la case Coordonnées du premier lieu de la liste.</dd>
+    <dt>Sans coordonnées</dt><dd>Les lieux sans coordonnées sont listés dans l'encadré jaune. Le bouton <b>Trouver les coordonnées</b> les cherche autour de leur région (colonne Région), puis donne un bouton <b>Copier</b> par bloc de lignes qui se suivent, avec la case exacte où coller (ex. A8). Chaque nom retombe sur lui-même, ses coordonnées se placent à côté.</dd>
     <dt>Mise à jour</dt><dd>La page lit la feuille chaque fois qu'on l'ouvre. <b>Recharger</b> sert à celui qui vient de modifier la feuille : attendre environ 5 minutes, puis cliquer sur Recharger.</dd>
   </dl>
   <a class="btn" href="https://docs.google.com/spreadsheets/d/1mnxZiexvV5cnWcc1inZzZCftosAQsTyMMMLsrFbjyuY/edit" target="_blank" rel="noopener"><svg class="ic"><use href="#i-note"/></svg>Ouvrir la feuille Google</a>
@@ -221,7 +221,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture de la feuille Google…</div></section>
 </main>
 <footer>
-  <span>Version 0.6.1 · 6 octobre 2026</span>
+  <span>Version 0.6.3 · 6 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -249,8 +249,8 @@ function parseCSV(text) {
   }
   if (field !== '' || row.length) { row.push(field); rows.push(row); }
   const head = (rows.shift() || []).map((h) => h.trim());
-  return rows.filter((r) => r.some((v) => v.trim() !== ''))
-    .map((r) => Object.fromEntries(head.map((h, i) => [h, (r[i] || '').trim()])));
+  return rows.map((r, n) => [r, n + 2]).filter(([r]) => r.some((v) => v.trim() !== ''))
+    .map(([r, n]) => Object.assign(Object.fromEntries(head.map((h, i) => [h, (r[i] || '').trim()])), { _row: n }));
 }
 
 function parseCoords(s) {
@@ -321,7 +321,7 @@ function buildModel(lieux, trajet, liens, votes, voyageurs, regions) {
   for (const r of lieux) {
     const name = r['Lieu']; if (!name) continue;
     const at = parseCoords(r['Coordonnées']);
-    if (!at) { skipped.push({ name, region: r['Région'] || '' }); continue; }
+    if (!at) { skipped.push({ name, region: r['Région'] || '', row: r._row }); continue; }
     let best = null, bd = Infinity;
     for (const h of hubs) { const d = km(at, h.at); if (d < bd) { bd = d; best = h; } }
     const p = { name, at, statut: r['Statut'] || '', type: r['Type'] || '', photo: r['Photo'] || '', note: r['Note'] || '', by: r['Ajouté par'] || '', wiki: r['Wikipédia'] || r['Wikipedia'] || '',
@@ -404,7 +404,7 @@ async function load() {
   try {
     const got = await Promise.allSettled(GIDS.map(getCSV));
     const tabs = got.filter((g) => g.status === 'fulfilled').map((g) => g.value);
-    const pick = (test) => tabs.find((rows) => rows.length && test(Object.keys(rows[0]))) || [];
+    const pick = (test) => tabs.find((rows) => rows.length && test(Object.keys(rows[0]).filter((k) => k !== '_row'))) || [];
     const l = pick((h) => h.includes('Lieu') && h.includes('Coordonnées'));
     const t = pick((h) => h.includes('Ordre') || h.includes("Port d'attache"));
     if (!l.length || !t.length) throw new Error('onglets Lieux ou Trajet introuvables');
@@ -730,12 +730,21 @@ async function findCoords() {
     const far = at && hub ? km(at, hub.at) > RADIUS_KM : false;
     res.push({ x, g, at, far });
   }
-  const lines = res.map((r) => (r.at ? `${r.at[0].toFixed(4)}, ${r.at[1].toFixed(4)}` : '')).join('\n');
+  // blocks of consecutive sheet rows: one paste per block, so a gap can never shift anything
+  const blocks = [];
+  for (const r of [...res].sort((a, b) => a.x.row - b.x.row)) {
+    const b = blocks[blocks.length - 1];
+    if (b && r.x.row === b.end + 1) { b.items.push(r); b.end = r.x.row; } else blocks.push({ start: r.x.row, end: r.x.row, items: [r] });
+  }
   const miss = res.filter((r) => !r.at).length, farN = res.filter((r) => r.far).length;
-  out.innerHTML = `<div class="links" style="margin-top:8px">${res.map((r) => `<div style="font-size:14px;border-left:3px solid ${r.at && !r.far ? '#2e7d4f' : '#b5541c'};padding:2px 0 2px 8px"><b>${esc(r.x.name)}</b> : ${r.at ? `${r.at[0].toFixed(4)}, ${r.at[1].toFixed(4)} <span class="small">(${esc(r.g.display_name.split(',').slice(0, 3).join(','))})</span>${r.far ? ' <b>loin de sa zone, à vérifier</b>' : ''}` : '<b>pas trouvé, à chercher à la main</b>'}</div>`).join('')}</div>
-    <p class="small">${res.length - miss} trouvés${miss ? `, ${miss} pas trouvés` : ''}${farN ? `, ${farN} à vérifier` : ''}. Dans l'onglet Lieux, cliquer la case <b>Coordonnées</b> de « ${esc(list[0].name)} », puis coller : chaque lieu reçoit ses coordonnées dans le même ordre (une case vide = pas trouvé).</p>
-    <button class="btn" id="copyCoords">Copier les coordonnées</button> <span class="small" id="coordMsg"></span>`;
-  $('copyCoords').onclick = () => copyText(lines, 'coordMsg', 'Copié ! Coller dans la case Coordonnées du premier lieu.');
+  out.innerHTML = `<div class="links" style="margin-top:8px">${res.map((r) => `<div style="font-size:14px;border-left:3px solid ${r.at && !r.far ? '#2e7d4f' : '#b5541c'};padding:2px 0 2px 8px"><span class="small">Ligne ${r.x.row}</span> <b>${esc(r.x.name)}</b> : ${r.at ? `${r.at[0].toFixed(4)}, ${r.at[1].toFixed(4)} <span class="small">(${esc(r.g.display_name.split(',').slice(0, 3).join(','))})</span>${r.far ? ' <b>loin de sa zone, à vérifier</b>' : ''}` : '<b>pas trouvé, à chercher à la main</b>'}</div>`).join('')}</div>
+    <p class="small">${res.length - miss} trouvés${miss ? `, ${miss} pas trouvés` : ''}${farN ? `, ${farN} à vérifier` : ''}. Chaque bouton copie les noms et les coordonnées d'un bloc de lignes qui se suivent. Dans l'onglet Lieux, cliquer la case indiquée (colonne A), puis coller : chaque nom retombe sur lui-même et ses coordonnées se placent à côté.</p>
+    ${blocks.map((b, k) => `<div style="margin:6px 0"><button class="btn" data-blk="${k}">Copier ${b.start === b.end ? `la ligne ${b.start}` : `les lignes ${b.start} à ${b.end}`}</button> <span class="small">puis cliquer la case <b>A${b.start}</b> et coller</span> <span class="small" id="blkMsg${k}"></span></div>`).join('')}`;
+  out.querySelectorAll('[data-blk]').forEach((el) => { el.onclick = () => {
+    const b = blocks[+el.dataset.blk];
+    const text = b.items.map((r) => `${r.x.name}\t${r.at ? `${r.at[0].toFixed(4)}, ${r.at[1].toFixed(4)}` : ''}`).join('\n');
+    copyText(text, 'blkMsg' + el.dataset.blk, `Copié ! Cliquer la case A${b.start} et coller.`);
+  }; });
   btn.disabled = false;
 }
 $('q').addEventListener('input', showResults);
