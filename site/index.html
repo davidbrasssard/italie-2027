@@ -332,7 +332,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
       <li><b>Choose places</b><span class="hint">Tick places waiting in the research list and/or type new ones, one per line, as they appear on Google Maps.</span>
         <div id="tlQueue"></div>
         <label class="edf"><textarea id="tlNewPlaces" rows="3" placeholder="One place per line"></textarea></label>
-        <label class="edf"><span class="sub">Staying in</span><span class="small">Where you'll sleep, so the directions start from there. Picked automatically from the closest base.</span><select id="tlBaseP"></select></label></li>
+        <label class="edf"><span class="sub">Region</span><span class="small">Picked automatically from the closest region. The directions in the cards start from there.</span><select id="tlBaseP"></select></label></li>
       <li><button class="btn primary" id="tlCopyLieuP">Copy research prompt</button> <span class="small" id="tlMsg3"></span></li>
       <li>Open a new ChatGPT conversation and paste.</li>
       <li>Copy ChatGPT's whole answer (the copy icon under the answer) and paste it to Claude for review.</li>
@@ -342,8 +342,8 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   </div>
   <div id="tlReg" hidden>
     <ol class="steps">
-      <li><b>Choose the region</b><span class="hint">A region is the area around one of your bases.</span>
-        <div class="tlrow"><label class="edf"><span class="sub">Region</span><select id="tlRegion"></select></label><label class="edf" id="tlNewWrap" hidden><span class="sub">New region name</span><input id="tlNew"></label><label class="edf"><span class="sub">Staying in</span><select id="tlBaseR"></select></label></div></li>
+      <li><b>Choose the region</b><span class="hint">A region is the area around one of your bases. For a new area, choose « + New region… ».</span>
+        <div class="tlrow"><label class="edf"><span class="sub">Region</span><select id="tlRegion"></select></label><label class="edf tlnew" hidden><span class="sub">New region name</span><input id="tlNew"></label></div></li>
       <li><button class="btn primary" id="tlCopyReg">Copy research prompt</button> <span class="small" id="tlMsg1"></span></li>
       <li>Open a new ChatGPT conversation and paste.</li>
       <li>Copy ChatGPT's whole answer (the copy icon under the answer) and paste it to Claude for review.</li>
@@ -379,7 +379,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture du Google Sheet…</div></section>
 </main>
 <footer>
-  <span>Version 0.11.3 · 7 octobre 2026</span>
+  <span>Version 0.11.5 · 7 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -941,7 +941,7 @@ function tlSetPath(path) {
 }
 function openTools() {
   $('tlRegion').innerHTML = model.hubs.map((h) => `<option>${esc(h.name)}</option>`).join('') + '<option value="__new">+ New region…</option>';
-  $('tlBaseR').innerHTML = baseOptions(); $('tlBaseP').innerHTML = baseOptions();
+  $('tlBaseP').innerHTML = baseOptions();
   if (!tl.baseTouched) $('tlBaseP').value = NOT_DECIDED;
   tlSyncRegion(); tlRenderQueue(); tlSummary();
   let k = ''; try { k = localStorage.getItem(KEYSTORE) || ''; } catch {}
@@ -1040,9 +1040,10 @@ async function tlSave() {
 // ---------- A region ----------
 function tlSyncRegion() {
   const isNew = $('tlRegion').value === '__new';
-  $('tlNewWrap').hidden = !isNew;
-  $('tlBaseR').value = isNew ? NOT_DECIDED : $('tlRegion').value;
+  document.querySelectorAll('#tools .tlnew').forEach((el) => { el.hidden = !isNew; });
 }
+// where the directions start from: the region's own base, or the town typed for a new region
+const tlRegionBase = () => tlRegionName() || NOT_DECIDED;
 function tlReadAnswer() {
   const rows = tsvRows($('tlPaste1').value), name = tlRegionName();
   const reg = rows.find((r) => r.length >= 4 && norm(r[0]) === norm(name)) || rows.find((r) => r.length >= 4);
@@ -1067,7 +1068,7 @@ async function tlRegSave() {
     try { localStorage.setItem(KEYSTORE, cle); } catch {}
     const picks = [...$('tlParsed1').querySelectorAll('[data-pk]:checked')].map((c) => tl.list[+c.dataset.pk].name);
     for (const n of picks) { if (!tl.queue.some((q) => norm(q.name) === norm(n))) tl.queue.push({ name: n, at: null, by: '' }); tl.checked.add(norm(n)); }
-    $('tlBaseP').value = $('tlBaseR').value; tl.baseTouched = true;
+    const rb = tlRegionBase(); $('tlBaseP').value = model.hubs.some((h) => h.name === rb) ? rb : NOT_DECIDED; tl.baseTouched = true;
     res.textContent = `Region ${j.region === 'ajoutée' ? 'added' : 'updated'}.`;
     tlRenderQueue(); tlSetPath('pl');
     $('tlMsg3').textContent = `${picks.length} place${picks.length === 1 ? '' : 's'} from ${tl.region['Région']} ticked below. Continue with step 2.`;
@@ -1092,7 +1093,7 @@ $('tlSave').addEventListener('click', tlSave);
 $('tlRegion').addEventListener('change', () => { tlSyncRegion(); tlReadAnswer(); });
 $('tlCopyReg').addEventListener('click', () => {
   const name = tlRegionName(); if (!name) { $('tlMsg1').textContent = 'Pick or type a region first.'; return; }
-  tlCopy('region', { REGION: name, BASE: $('tlBaseR').value || NOT_DECIDED }, 'tlMsg1');
+  tlCopy('region', { REGION: name, BASE: tlRegionBase() }, 'tlMsg1');
 });
 $('tlPaste1').addEventListener('input', tlReadAnswer);
 $('tlRegSave').addEventListener('click', tlRegSave);
