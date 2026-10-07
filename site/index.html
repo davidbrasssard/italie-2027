@@ -113,6 +113,21 @@ ul.rt li.hasic{ list-style:none; margin-left:-20px; }
 .picks label{ font-size:15px; }
 .okline{ margin:8px 0; padding:6px 10px; border-left:3px solid #2e7d4f; font-size:14px; color:var(--muted); }
 .tlsum{ font-size:14px; color:var(--muted); line-height:1.8; margin-top:6px; }
+#sf{ position:relative; }
+.fltpanel{ position:absolute; top:40px; left:0; z-index:2100; background:var(--card); border:1px solid var(--line); border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.18); padding:10px 14px; display:flex; flex-direction:column; gap:7px; min-width:240px; }
+.fltpanel label{ display:flex; align-items:center; gap:8px; font-size:15px; cursor:pointer; }
+.fltpanel .sep{ border-top:1px solid var(--line); padding-top:7px; }
+.steps{ padding-left:22px; margin:8px 0 0; }
+.steps > li{ margin:14px 0; padding-left:4px; }
+.steps > li::marker{ font-weight:700; color:var(--muted); }
+.steps .hint{ display:block; font-size:13px; color:var(--muted); margin-top:2px; }
+.steps .btn + .hint{ display:inline; margin-left:8px; }
+.rvtag{ display:inline-block; font-size:12px; font-weight:700; padding:1px 7px; border-radius:10px; vertical-align:1px; }
+.rv-new{ background:#e3eefa; color:#1f5f99; }
+.rv-todo{ background:#fbefd5; color:#7a5300; }
+.rv-done{ background:#e3f1e8; color:#2e7d4f; }
+.edrev{ display:flex; gap:8px; align-items:flex-start; flex-wrap:wrap; margin-top:16px; padding:10px; background:var(--soft); border-radius:8px; }
+.edrev .small{ flex-basis:100%; }
 .editbar{ margin-top:12px; padding-top:8px; border-top:1px dashed var(--line); }
 .edf{ display:block; margin-top:12px; }
 .edf .small{ display:block; margin-bottom:4px; }
@@ -232,6 +247,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></symbol>
   <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"/></symbol>
   <symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
 </svg>
 <dialog id="help"><div class="help">
@@ -242,10 +258,9 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <details class="hs" open><summary>Suggérer un lieu</summary>
   <dl>
     <dt>1. Trouver</dt><dd>Taper le nom dans la boîte <b>Chercher un lieu</b>, puis choisir « Chercher … sur la carte ». Vérifier que l'épingle est au bon endroit.</dd>
-    <dt>2. Copier</dt><dd>Cliquer <b>Copier pour le Google Sheet</b>, puis coller dans une note sur votre téléphone ou ordinateur (une ligne par lieu).</dd>
-    <dt>3. Ajouter</dt><dd>Sous chaque lieu, écrire en quelques mots pourquoi il vous plaît, et coller les liens à partager (vidéo, blogue, photos).</dd>
-    <dt>4. Envoyer</dt><dd>Quand vous en avez quelques-uns, envoyer la note à David. Il les ajoute à la carte.</dd>
-    <dt>Pas trouvé ?</dt><dd>Si la page ne trouve pas le lieu, l'ouvrir dans Google Maps, toucher <b>Partager</b>, puis <b>Copier le lien</b>, et coller ce lien dans la note.</dd>
+    <dt>2. Ajouter</dt><dd>Dans la bulle de l'épingle, toucher <b>Ajouter à la liste de recherche</b>. La première fois, la page demande le code d'accès (le demander à David) et votre prénom. Le lieu apparaît sur la carte d'ici environ 5 minutes.</dd>
+    <dt>3. Enrichir</dt><dd>Une fois le lieu sur la carte, vous pouvez ouvrir sa fiche et toucher <b>Modifier</b> pour ajouter des photos, des liens ou des conseils.</dd>
+    <dt>Pas trouvé ?</dt><dd>Si la page ne trouve pas le lieu, l'ouvrir dans Google Maps, toucher <b>Partager</b>, puis <b>Copier le lien</b>, et l'envoyer à David.</dd>
   </dl></details>
 
   <details class="hs"><summary>Modifier une fiche (photos, liens, textes)</summary>
@@ -253,6 +268,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <dt>1. Ouvrir</dt><dd>Toucher <b>Modifier</b> (le crayon) en haut de la fiche.</dd>
     <dt>2. Code</dt><dd>La première fois, entrer le code d'accès (le demander à David). La page s'en souvient ensuite sur cet appareil.</dd>
     <dt>3. Coller</dt><dd>Photos : une adresse d'image par ligne (clic droit sur l'image, « Copier l'adresse de l'image »). Pour en savoir plus : une courte description puis le lien, un par ligne. Trucs et astuces : un conseil par ligne. Icônes : la barre d'icônes en haut de l'écran les insère là où se trouve le curseur ; une ligne qui commence par « Distance : », « Durée : », « Difficulté : » ou « Pourquoi : » reçoit son icône toute seule. Dans les autres textes : une ligne vide = nouveau paragraphe, « - » au début d'une ligne = puce, **texte** entre deux paires d'étoiles = gras.</dd>
+    <dt>Fiche revue</dt><dd>Cocher <b>Fiche revue</b> en bas quand la fiche est vraiment à nous. Ajouter une photo ou un lien ne suffit pas pour la cocher.</dd>
     <dt>4. Enregistrer</dt><dd>La fiche change tout de suite sur votre écran. Les autres la verront d'ici environ 5 minutes.</dd>
   </dl></details>
 
@@ -265,6 +281,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <dt>Couleur</dt><dd>Celle du port d'attache. <b>Gris</b> = Hors trajet : à plus de 40 km de tous les ports d'attache.</dd>
     <dt>Numéro (ex. 3.4)</dt><dd>Port d'attache n° 3, 4<sup>e</sup> lieu. <b>A</b> = Hors trajet.</dd>
     <dt>Distance</dt><dd>À vol d'oiseau, depuis le port d'attache le plus proche.</dd>
+    <dt>Révision</dt><dd><b>Nouveau</b> : ajouté depuis la carte, pas encore de fiche. <b>À revoir</b> : fiche préparée par la recherche, pas encore personnalisée. Les fiches <b>revues</b> n'ont pas d'étiquette. Le bouton <b>Filtres</b> permet de n'afficher que celles à revoir.</dd>
     <dt>Statut</dt><dd>
       <b>À explorer</b> (point creux) : trouvé, pas encore regardé de près.<br>
       <b>Bon candidat</b> (point plein) : un bon arrêt possible.<br>
@@ -292,7 +309,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <dt>Liens du groupe</dt><dd>Onglet <b>Liens</b> : Lien, Description (texte affiché), Lieux (écrits exactement comme dans Lieux).</dd>
     <dt>Votes</dt><dd>Onglet <b>Votes</b> : Lieu, Qui, Vote, Commentaire. Le dernier vote de chacun compte.</dd>
     <dt>Région</dt><dd>Onglet <b>Régions</b> : Région, Aperçu (ou Résumé), Trucs et astuces (ou Astuces), Pour en savoir plus (ou Sources). Le nom doit être exactement le même que le port d'attache dans <b>Trajet</b>.</dd>
-    <dt>Ajouter un lieu</dt><dd>« Copier pour le Google Sheet » copie une ligne complète : coller dans la colonne <b>Lieu</b> d'une nouvelle ligne, et le nom, les coordonnées, le statut, le type et la région se placent tout seuls.</dd>
+    <dt>Ajouter un lieu</dt><dd>Chercher le lieu, puis <b>Ajouter à la liste de recherche</b> dans la bulle de l'épingle : la ligne est créée avec le nom, les coordonnées, À explorer et la région. Le bouton <b>Research</b> sert ensuite à faire sa fiche.</dd>
     <dt>Sans coordonnées</dt><dd>Les lieux sans coordonnées sont listés dans l'encadré jaune. <b>Trouver les coordonnées</b> les cherche autour de leur région, puis donne un bouton <b>Copier</b> par bloc de lignes qui se suivent, avec la case exacte où coller (ex. A8). Pour un lieu pas trouvé : dans Google Maps, clic droit <b>sur le lieu lui-même</b> (le lac, le sommet, l'église, pas le départ du sentier), cliquer sur les coordonnées pour les copier, les coller dans sa case Coordonnées. Le nombre de décimales n'a pas d'importance.</dd>
     <dt>Mise à jour</dt><dd>La page lit le Google Sheet chaque fois qu'on l'ouvre. Après une modification, attendre environ 5 minutes, puis cliquer sur <b>Recharger</b>.</dd>
   </dl>
@@ -301,30 +318,33 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 </div></dialog>
 <dialog id="tools" lang="en"><div class="help">
   <button class="btn close" id="tlClose">Close</button>
-  <h2>Tools</h2>
-  <div class="tltabs"><button data-tl="reg" aria-pressed="true">Research a region</button><button data-tl="pl" aria-pressed="false">Research places</button></div>
-  <div id="tlReg">
-    <h3 class="tlh">1. Build the region prompt</h3>
-    <div class="tlrow"><label class="edf"><span class="sub">Region</span><select id="tlRegion"></select></label><label class="edf" id="tlNewWrap" hidden><span class="sub">New region name</span><input id="tlNew"></label><label class="edf"><span class="sub">Staying in</span><input id="tlBase"></label></div>
-    <div class="tlbtns"><button class="btn" id="tlCopyReg">Copy region prompt</button><span class="small" id="tlMsg1">Paste it into a new ChatGPT conversation, then bring the answer to Claude to check.</span></div>
-    <h3 class="tlh">2. Paste the checked answer and pick places</h3>
-    <label class="edf"><textarea id="tlPaste1" rows="4" placeholder="Paste the checked answer here (both blocks)"></textarea></label>
-    <div id="tlParsed1"></div>
-    <div class="tlbtns"><button class="btn" id="tlCopyLieuR" hidden>Copy place prompt</button><span class="small" id="tlMsg2"></span></div>
-  </div>
-  <div id="tlPl" hidden>
-    <h3 class="tlh">1. Choose places</h3>
-    <div id="tlEmpty"></div>
-    <label class="edf"><span class="sub">Or type new places (one per line)</span><textarea id="tlNewPlaces" rows="3"></textarea></label>
-    <label class="edf"><span class="sub">Staying in</span><input id="tlBase2" value="pas encore décidé"></label>
-    <div class="tlbtns"><button class="btn" id="tlCopyLieuP">Copy place prompt</button><span class="small" id="tlMsg3"></span></div>
-  </div>
-  <h3 class="tlh" id="tlStep3">3. Paste the checked place cards and save</h3>
-  <label class="edf"><textarea id="tlPaste2" rows="4" placeholder="Paste the checked place cards here"></textarea></label>
-  <div id="tlSummary" class="tlsum"></div>
+  <h2>Research</h2>
   <label class="edf" id="tlKeyRow" hidden><span class="sub">Access code</span><input id="tlKey" type="password" autocomplete="current-password"></label>
-  <div class="tlbtns"><button class="btn primary" id="tlSave">Save to Google Sheet</button></div>
-  <div id="tlResult" class="small" role="status"></div>
+  <div class="tltabs"><button data-tl="pl" aria-pressed="true">Places</button><button data-tl="reg" aria-pressed="false">A region</button></div>
+  <div id="tlPl">
+    <ol class="steps">
+      <li><b>Choose places</b><span class="hint">Tick places waiting in the research list and/or type new ones, one per line, as they appear on Google Maps.</span>
+        <div id="tlQueue"></div>
+        <label class="edf"><textarea id="tlNewPlaces" rows="3" placeholder="One place per line"></textarea></label>
+        <label class="edf"><span class="sub">Staying in</span><span class="small">Where you'll sleep, so the directions start from there. Picked automatically from the closest base.</span><select id="tlBaseP"></select></label></li>
+      <li><button class="btn primary" id="tlCopyLieuP">Copy research prompt</button> <span class="small" id="tlMsg3"></span></li>
+      <li>Open a new ChatGPT conversation and paste.</li>
+      <li>Copy ChatGPT's whole answer (the copy icon under the answer) and paste it to Claude for review.</li>
+      <li><b>Paste Claude's reviewed version</b><span class="hint">One line per place. Below, you'll see what was read before anything is saved.</span><label class="edf"><textarea id="tlPaste2" rows="4"></textarea></label><div id="tlSummary" class="tlsum"></div></li>
+      <li><button class="btn primary" id="tlSave">Save</button><span class="hint">Saves the places to the trip and shows them on the map.</span><div id="tlResult" class="small" role="status"></div></li>
+    </ol>
+  </div>
+  <div id="tlReg" hidden>
+    <ol class="steps">
+      <li><b>Choose the region</b><span class="hint">A region is the area around one of your bases.</span>
+        <div class="tlrow"><label class="edf"><span class="sub">Region</span><select id="tlRegion"></select></label><label class="edf" id="tlNewWrap" hidden><span class="sub">New region name</span><input id="tlNew"></label><label class="edf"><span class="sub">Staying in</span><select id="tlBaseR"></select></label></div></li>
+      <li><button class="btn primary" id="tlCopyReg">Copy research prompt</button> <span class="small" id="tlMsg1"></span></li>
+      <li>Open a new ChatGPT conversation and paste.</li>
+      <li>Copy ChatGPT's whole answer (the copy icon under the answer) and paste it to Claude for review.</li>
+      <li><b>Paste Claude's reviewed version</b><span class="hint">The region card, then the list of places. Tick the places you want to research.</span><label class="edf"><textarea id="tlPaste1" rows="4"></textarea></label><div id="tlParsed1"></div></li>
+      <li><button class="btn primary" id="tlRegSave">Save the region and continue with the places</button><span class="hint">Saves the region card, then takes the ticked places to the Places tab, where you continue from step 2.</span><div id="tlRegResult" class="small" role="status"></div></li>
+    </ol>
+  </div>
 </div></dialog>
 <dialog id="edit"><div class="help">
   <h2 id="edTitle">Modifier</h2>
@@ -332,6 +352,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <label class="edf" id="edKeyRow"><span class="sub">Code d'accès</span><span class="small">Demander le code à David. La page s'en souvient ensuite sur cet appareil.</span><input id="edKey" type="password" autocomplete="current-password"></label>
   <div class="icobar" id="edIcons" aria-label="Icônes à insérer"></div>
   <div id="edFields"></div>
+  <label class="edrev"><input type="checkbox" id="edRev"> <b>Fiche revue</b> <span class="small">Cocher quand la fiche est vraiment à nous (comme Resciesa). Elle sort alors de la liste « À revoir ». On peut toujours l’enrichir ensuite.</span></label>
   <div class="edbtns"><button class="btn" id="edSave">Enregistrer</button><button class="btn" id="edCancel">Annuler</button><a href="#" class="small" id="edForget">Oublier le code sur cet appareil</a></div>
   <div class="small" id="edMsg" role="status"></div>
 </div></dialog>
@@ -343,7 +364,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <div class="sf" id="sf" role="group" aria-label="Filtrer par statut"></div>
     <input type="checkbox" id="showOther" checked hidden>
     <button class="btn" id="reload" title="Relire le Google Sheet"><svg class="ic"><use href="#i-refresh"/></svg>Recharger</button>
-    <button class="btn" id="toolsBtn" title="Research tools (David)"><svg class="ic"><use href="#i-wrench"/></svg>Tools</button>
+    <button class="btn" id="toolsBtn" title="Research (David)"><svg class="ic"><use href="#i-wrench"/></svg>Research</button>
     <button class="btn" id="helpBtn" title="Comment lire une fiche"><svg class="ic"><use href="#i-help"/></svg>Aide</button>
   </div>
 </header>
@@ -352,7 +373,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture du Google Sheet…</div></section>
 </main>
 <footer>
-  <span>Version 0.10.0 · 7 octobre 2026</span>
+  <span>Version 0.11.0 · 7 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -425,13 +446,17 @@ function splitLabeled(s) {
   }).filter(Boolean);
 }
 // the fields anyone with the access code can edit from the page (same list as the Apps Script bridge)
-const EDIT_FIELDS = ['Photo', 'Type', 'Aperçu', "Comment s'y rendre", 'Quoi faire', 'Trucs et astuces', 'Pour en savoir plus', 'Note'];
+const EDIT_FIELDS = ['Photo', 'Type', 'Aperçu', "Comment s'y rendre", 'Quoi faire', 'Trucs et astuces', 'Pour en savoir plus', 'Note', 'Révision'];
+// card review state: new (added from the map), todo (researched, not yet made our own), done (reviewed)
+const RV_LABEL = { new: 'Nouveau', todo: 'À revoir', done: 'Revu' };
 function applyRaw(p) {
   const v = p.raw;
   p.photo = v['Photo']; p.type = v['Type']; p.note = v['Note'];
   p.media = String(v['Photo'] || '').split(/\s*;\s*/).map((x) => x.trim()).filter((x) => /^https?:\/\//i.test(x) || /^photos\//i.test(x));
   p.apercu = v['Aperçu']; p.acces = v["Comment s'y rendre"]; p.faire = v['Quoi faire'];
   p.trucs = splitTips(v['Trucs et astuces']); p.plus = splitLabeled(v['Pour en savoir plus']);
+  const rv = norm(v['Révision']);
+  p.rvk = rv === 'revu' ? 'done' : rv === 'nouveau' ? 'new' : rv === 'a revoir' ? 'todo' : (p.apercu || p.acces || p.faire || p.trucs.length || p.note ? 'todo' : 'new');
 }
 // statuses (old words still understood)
 const ST_LABEL = { explore: 'À explorer', cand: 'Bon candidat', conf: 'Confirmé', aside: 'Mis de côté' };
@@ -758,12 +783,12 @@ function cardHtml(p) {
   ] : [['res', 'Résumé', `${p.note ? `<p>${esc(p.note)}</p>` : `<div class="wk"><p class="small">Pas encore de résumé.</p></div>`}${tipsHtml(p.tips)}`]])
     .concat([hasLinks ? ['lnk', 'Liens', linksPane] : null, hasVotes ? ['avis', 'Avis', avisPane] : null]).filter(Boolean);
   const tabbar = panes.length > 1 ? `<div class="tabs" role="tablist">${panes.map(([k, t], j) => `<button role="tab" data-tab="${k}" aria-selected="${j === 0}">${t}</button>`).join('')}<button class="allbtn" aria-pressed="false" title="Voir toutes les sections d'un coup">Tout voir</button></div>` : '';
-  return `<article class="card${rev ? ' isrev' : ''}${p.st === 'aside' ? ' isaside' : ''}" id="c${i}" data-i="${i}" data-st="${p.st}" ${p.disputed ? 'data-disc="1"' : ''}>
+  return `<article class="card${rev ? ' isrev' : ''}${p.st === 'aside' ? ' isaside' : ''}" id="c${i}" data-i="${i}" data-st="${p.st}" data-rv="${p.rvk}" ${p.disputed ? 'data-disc="1"' : ''}>
     <div class="hd">
       <div class="top"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span><button class="namelink" data-go="${i}" title="Voir sur la carte">${ico('pin')}<h3>${esc(p.name)}</h3></button><button class="btn more edit" data-edit="${i}" title="Modifier cette fiche">${ico('pencil')}<span>Modifier</span></button><button class="btn more" data-open aria-expanded="false" aria-controls="b${i}">Détails</button></div>
       <div class="tabwrap" hidden>${tabbar}</div>
     </div>
-    ${facts ? `<div class="facts">${facts}</div>` : ''}
+    <div class="facts">${p.rvk !== 'done' ? `<span class="rvtag rv-${p.rvk}">${RV_LABEL[p.rvk]}</span> ` : ''}${facts}</div>
     <div class="acts">${p.media.length ? '' : `<a class="btn" href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">${ico('camera')}Photos</a>`}
       <a class="btn" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">${ico('play')}YouTube</a>
       <a class="btn" href="https://www.google.com/maps/search/?api=1&query=${p.at[0]},${p.at[1]}" target="_blank" rel="noopener">${ico('map')}Google Maps</a></div>
@@ -841,6 +866,7 @@ function openEditor(p) {
     `<label class="edf"><span class="sub">${label}</span><span class="small">${hint}</span>${kind === 'short'
       ? `<input data-f="${j}" value="${esc(toEditor(kind, p.raw[f]))}">`
       : `<textarea data-f="${j}" rows="${rows}">${esc(toEditor(kind, p.raw[f]))}</textarea>`}</label>`).join('');
+  $('edRev').checked = p.rvk === 'done';
   $('edit').showModal();
 }
 async function saveEditor() {
@@ -853,6 +879,8 @@ async function saveEditor() {
     const val = fromEditor(kind, el.value);
     if (val !== String(p.raw[f] || '').trim()) champs[f] = val;
   });
+  const rvNow = $('edRev').checked ? 'Revu' : (p.rvk === 'done' ? 'À revoir' : '');
+  if (rvNow && rvNow !== String(p.raw['Révision'] || '')) champs['Révision'] = rvNow;
   if (!Object.keys(champs).length) { $('edit').close(); return; }
   $('edSave').disabled = true; $('edMsg').className = 'small'; $('edMsg').textContent = 'Enregistrement…';
   try {
@@ -884,154 +912,203 @@ $('edIcons').addEventListener('click', (e) => {
 $('edSave').addEventListener('click', saveEditor);
 $('edCancel').addEventListener('click', () => $('edit').close());
 $('edForget').addEventListener('click', (e) => { e.preventDefault(); try { localStorage.removeItem(KEYSTORE); } catch {} $('edKey').value = ''; $('edKeyRow').hidden = false; });
-// ---- Tools (English, for David): research a region or places, then save to the Google Sheet ----
+// ---- Research (English, for David): places or a region, then save ----
 let PROMPTS = null;
 async function getPrompts() {
   if (PROMPTS) return PROMPTS;
   const r = await fetch(BRIDGE + '?action=prompts'); const j = await r.json();
   if (!j.ok) throw new Error(j.erreur || 'no prompts'); PROMPTS = j; return j;
 }
-const tl = { path: 'reg', region: null, list: [], cards: [] };
+const NOT_DECIDED = 'pas encore décidé';
+const tl = { path: 'pl', region: null, list: [], cards: [], queue: [], items: [], checked: new Set(), baseTouched: false };
 const tsvRows = (t) => String(t || '').replace(/\r/g, '').split('\n').filter((l) => l.trim() && !/^```/.test(l.trim())).map((l) => l.split('\t').map((x) => x.trim()));
 const para = (s) => String(s || '').replace(/\s*¶\s*/g, '\n').trim();
+const baseOptions = () => model.hubs.map((h) => `<option value="${esc(h.name)}">${esc(h.name)}</option>`).join('') + `<option value="${NOT_DECIDED}">Not decided yet</option>`;
 const tlRegionName = () => ($('tlRegion').value === '__new' ? $('tlNew').value.trim() : $('tlRegion').value);
-function tlSyncBase() { const n = $('tlRegion').value === '__new'; $('tlNewWrap').hidden = !n; if (!n) $('tlBase').value = $('tlRegion').value; }
+const tlKey = () => $('tlKey').value.trim() || (() => { try { return localStorage.getItem(KEYSTORE) || ''; } catch { return ''; } })();
+function tlNeedKey(msgEl) { $('tlKeyRow').hidden = false; $('tlKey').focus(); msgEl.textContent = 'Enter the access code first (top of the panel).'; }
 function tlSetPath(path) {
   tl.path = path;
   document.querySelectorAll('#tools .tltabs button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.tl === path));
   $('tlReg').hidden = path !== 'reg'; $('tlPl').hidden = path !== 'pl';
-  $('tlStep3').textContent = path === 'reg' ? '3. Paste the checked place cards and save' : '2. Paste the checked place cards and save';
-  tlSummary();
 }
 function openTools() {
   $('tlRegion').innerHTML = model.hubs.map((h) => `<option>${esc(h.name)}</option>`).join('') + '<option value="__new">+ New region…</option>';
-  tlSyncBase(); tlRenderEmpty(); tlSummary();
+  $('tlBaseR').innerHTML = baseOptions(); $('tlBaseP').innerHTML = baseOptions();
+  if (!tl.baseTouched) $('tlBaseP').value = NOT_DECIDED;
+  tlSyncRegion(); tlRenderQueue(); tlSummary();
   let k = ''; try { k = localStorage.getItem(KEYSTORE) || ''; } catch {}
   $('tlKey').value = k; $('tlKeyRow').hidden = !!k;
+  tlSetPath(tl.path);
   $('tools').showModal();
 }
 async function tlCopy(kind, vals, msgId) {
   try {
     const P = await getPrompts(); let t = kind === 'region' ? P.region : P.lieu;
     for (const [k, v] of Object.entries(vals)) t = t.split(`{${k}}`).join(v);
-    await copyText(t, msgId, 'Copied. Paste it into a new ChatGPT conversation.');
+    await copyText(t, msgId, 'Copied. Now step 3.');
   } catch (e) { $(msgId).textContent = 'Could not load the prompts: ' + e.message; }
 }
-// step 2 (region path): read the region line and the work list
-function tlReadAnswer() {
-  const rows = tsvRows($('tlPaste1').value), name = tlRegionName();
-  const reg = rows.find((r) => r.length >= 4 && norm(r[0]) === norm(name)) || rows.find((r) => r.length >= 4);
-  tl.region = reg ? { 'Région': name || reg[0], 'Aperçu': para(reg[1]), 'Trucs et astuces': para(reg[2]), 'Pour en savoir plus': para(reg[3]) } : null;
-  tl.list = rows.filter((r) => r !== reg && r.length >= 2 && r.length < 4).map((r) => ({ name: r[0], why: r[1] || '' }));
-  const out = [];
-  if (tl.region) out.push(`<div class="okline">✓ Region card read: « ${esc(tl.region['Aperçu'].slice(0, 160))}${tl.region['Aperçu'].length > 160 ? '…' : ''} »</div>`);
-  else if (rows.length) out.push('<div class="err">No region line found. It should be one line with 4 columns separated by tabs.</div>');
-  if (tl.list.length) out.push(`<div class="picks">${tl.list.map((p, j) => `<label><input type="checkbox" data-pk="${j}" checked> <b>${esc(p.name)}</b> <span class="small">${esc(p.why)}</span></label>`).join('')}</div>`);
-  else if (rows.length) out.push('<div class="err">No places found. The work list should have one place per line, 3 columns separated by tabs.</div>');
-  $('tlParsed1').innerHTML = out.join('');
-  $('tlCopyLieuR').hidden = !tl.list.length; tlCountPicks();
-  tlSummary();
+// ---------- Places ----------
+function tlRenderQueue() {
+  const items = [], seen = new Set();
+  for (const q of tl.queue) if (!seen.has(norm(q.name))) { items.push(q); seen.add(norm(q.name)); }
+  for (const p of model.places) if (!p.apercu && !p.acces && !p.faire && !p.trucs.length && !p.note && !seen.has(norm(p.name))) { items.push({ name: p.name, at: p.at, by: p.by }); seen.add(norm(p.name)); }
+  for (const x of model.skipped) if (!seen.has(norm(x.name))) { items.push({ name: x.name, at: null, by: '' }); seen.add(norm(x.name)); }
+  tl.items = items;
+  $('tlQueue').innerHTML = items.length
+    ? `<div class="small" style="margin-top:6px">Waiting in the research list:</div><div class="picks">${items.map((q, j) => `<label><input type="checkbox" data-q="${j}" ${tl.checked.has(norm(q.name)) ? 'checked' : ''}> <b>${esc(q.name)}</b>${q.by ? ` <span class="small">· ${esc(q.by)}</span>` : ''}</label>`).join('')}</div>`
+    : '';
+  tlAutoBase();
 }
-function tlCountPicks() {
-  const n = $('tlParsed1').querySelectorAll('[data-pk]:checked').length;
-  $('tlCopyLieuR').textContent = `Copy place prompt (${n} place${n > 1 ? 's' : ''})`;
+function tlAutoBase() {
+  if (tl.baseTouched) return;
+  const pts = tl.items.filter((q) => tl.checked.has(norm(q.name)) && q.at).map((q) => q.at);
+  if (!pts.length) return;
+  const votes = {};
+  for (const at of pts) { let best = null, bd = Infinity; for (const h of model.hubs) { const d = km(at, h.at); if (d < bd) { bd = d; best = h; } } if (best && bd <= RADIUS_KM) votes[best.name] = (votes[best.name] || 0) + 1; }
+  const top = Object.entries(votes).sort((a, b) => b[1] - a[1])[0];
+  $('tlBaseP').value = top ? top[0] : NOT_DECIDED;
 }
-// places path: places already in the Google Sheet without a card
-function tlRenderEmpty() {
-  const empty = model.places.filter((p) => !p.apercu && !p.acces && !p.faire && !p.trucs.length && !p.note);
-  const noCoord = model.skipped.map((x) => ({ name: x.name, by: '' }));
-  const all = empty.map((p) => ({ name: p.name, by: p.by })).concat(noCoord.filter((x) => !empty.some((p) => norm(p.name) === norm(x.name))));
-  $('tlEmpty').innerHTML = all.length
-    ? `<div class="small" style="margin-bottom:4px">Already in the Google Sheet, without a card:</div><div class="picks">${all.map((p) => `<label><input type="checkbox" data-em="${esc(p.name)}"> <b>${esc(p.name)}</b>${p.by ? ` <span class="small">· ${esc(p.by)}</span>` : ''}</label>`).join('')}</div>`
-    : '<div class="small">Every place in the Google Sheet already has a card.</div>';
-}
-// last step: read the place cards and say what will happen
 function tlSummary() {
   const rows = tsvRows($('tlPaste2').value);
   tl.cards = rows.filter((r) => r.length >= 6).map((r) => ({ 'Lieu': r[0], 'Aperçu': para(r[1]), "Comment s'y rendre": para(r[2]), 'Quoi faire': para(r[3]), 'Trucs et astuces': para(r[4]), 'Pour en savoir plus': para(r[5]) }));
   const bad = rows.filter((r) => r.length > 1 && r.length < 6).length;
   const known = new Set(model.places.map((p) => norm(p.name)).concat(model.skipped.map((x) => norm(x.name))));
   const out = [];
-  if (tl.path === 'reg' && tl.region) {
-    const exists = model.hubs.some((h) => norm(h.name) === norm(tl.region['Région']) && h.region);
-    out.push(`<div>${ico('refresh')} Region ${esc(tl.region['Région'])}: will be ${exists ? 'updated' : 'added'}</div>`);
-  }
   const fresh = tl.cards.filter((c) => !known.has(norm(c['Lieu']))), old = tl.cards.filter((c) => known.has(norm(c['Lieu'])));
-  if (fresh.length) out.push(`<div>${ico('plus')} ${fresh.length} new place${fresh.length > 1 ? 's' : ''}: ${fresh.map((c) => esc(c['Lieu'])).join(', ')}</div>`);
-  if (old.length) out.push(`<div>${ico('refresh')} ${old.length} existing place${old.length > 1 ? 's' : ''} updated: ${old.map((c) => esc(c['Lieu'])).join(', ')}</div>`);
-  if (tl.cards.length) out.push(`<div>${ico('pin')} Coordinates: found automatically after saving</div>`);
-  if (bad) out.push(`<div class="err">${bad} line${bad > 1 ? 's' : ''} could not be read (each card needs 6 columns separated by tabs).</div>`);
+  for (const c of tl.cards) out.push(`<div class="okline"><b>${esc(c['Lieu'])}</b>${known.has(norm(c['Lieu'])) ? ' (update)' : ' (new)'} : « ${esc(c['Aperçu'].slice(0, 110))}${c['Aperçu'].length > 110 ? '…' : ''} »</div>`);
+  if (tl.cards.length) out.push(`<div>${fresh.length} new, ${old.length} updated.</div>`);
+  if (bad) out.push(`<div class="err">${bad} line${bad > 1 ? 's' : ''} could not be read (each place needs 6 columns separated by tabs).</div>`);
   $('tlSummary').innerHTML = out.join('');
 }
+async function tlFindCoords(names, hub, cle, res, prefix) {
+  const items = [], missed = [];
+  for (let k = 0; k < names.length; k++) {
+    const name = names[k];
+    res.innerHTML = prefix + ` Finding places on the map ${k + 1} of ${names.length}: ${esc(name)}…`;
+    const tries = [...new Set([name, name.split(' - ')[0], name.replace(/\s*\(.*?\)\s*/g, ' ').trim()])];
+    let g = null;
+    try {
+      if (hub) for (const t of tries) { g = await nomi(t, hub.at); if (g) break; }
+      if (!g) for (const t of tries) { g = await nomi(t, null); if (g) break; }
+    } catch { g = null; }
+    if (g) items.push({ lieu: name, coords: `${(+g.lat).toFixed(4)}, ${(+g.lon).toFixed(4)}` }); else missed.push(name);
+  }
+  if (items.length) {
+    const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'coordonnees', items }) });
+    const j = await r.json(); if (!j.ok) throw new Error(j.erreur || 'coordinates');
+  }
+  return { found: items.length, missed };
+}
 async function tlSave() {
-  const cle = $('tlKey').value.trim(), res = $('tlResult');
-  if (!cle) { $('tlKeyRow').hidden = false; $('tlKey').focus(); res.textContent = 'Enter the access code first.'; return; }
-  const region = tl.path === 'reg' ? tl.region : null;
-  if (!tl.cards.length && !region) { res.textContent = 'Nothing to save yet.'; return; }
-  const regName = region ? region['Région'] : '';
+  const cle = tlKey(), res = $('tlResult');
+  if (!cle) return tlNeedKey(res);
+  if (!tl.cards.length) { res.textContent = 'Nothing to save yet: paste Claude’s reviewed version in step 5.'; return; }
+  const base = $('tlBaseP').value, hub = model.hubs.find((h) => norm(h.name) === norm(base)) || null;
   $('tlSave').disabled = true; res.className = 'small'; res.textContent = 'Saving…';
   try {
-    const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'enregistrer', region, lieux: tl.cards.map((c) => Object.assign({}, c, regName ? { 'Région': regName } : {})) }) });
+    const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'enregistrer', lieux: tl.cards.map((c) => Object.assign({}, c, hub ? { 'Région': hub.name } : {})) }) });
     const j = await r.json();
     if (!j.ok) { if (/code/i.test(j.erreur || '')) { try { localStorage.removeItem(KEYSTORE); } catch {} $('tlKeyRow').hidden = false; } throw new Error(j.erreur || 'Error'); }
     try { localStorage.setItem(KEYSTORE, cle); } catch {}
-    const lines = [];
-    if (j.region) lines.push(`Region ${esc(regName)} ${j.region === 'ajoutée' ? 'added' : 'updated'}.`);
     const added = j.lieux.filter((l) => l.action === 'ajouté').length, upd = j.lieux.length - added;
-    if (j.lieux.length) lines.push(`${added} place${added === 1 ? '' : 's'} added, ${upd} updated.`);
-    res.innerHTML = lines.join(' ') + ' Finding coordinates…';
-    // coordinates: only for places that don't have any yet
+    const lines = [`Saved: ${added} new, ${upd} updated.`];
     const withCoords = new Set(model.places.map((p) => norm(p.name)));
     const need = j.lieux.map((l) => l.lieu).filter((n) => !withCoords.has(norm(n)));
-    const hub = model.hubs.find((h) => norm(h.name) === norm(regName)) || model.hubs.find((h) => norm(h.name) === norm(tl.path === 'reg' ? $('tlBase').value : $('tlBase2').value)) || null;
-    const items = [], missed = [];
-    for (let k = 0; k < need.length; k++) {
-      const name = need[k];
-      res.innerHTML = lines.join(' ') + ` Finding coordinates ${k + 1} of ${need.length}: ${esc(name)}…`;
-      const tries = [...new Set([name, name.split(' - ')[0], name.replace(/\s*\(.*?\)\s*/g, ' ').trim()])];
-      let g = null;
-      try {
-        if (hub) for (const t of tries) { g = await nomi(t, hub.at); if (g) break; }
-        if (!g) for (const t of tries) { g = await nomi(t, null); if (g) break; }
-      } catch { g = null; }
-      if (g) items.push({ lieu: name, coords: `${(+g.lat).toFixed(4)}, ${(+g.lon).toFixed(4)}` }); else missed.push(name);
+    if (need.length) {
+      const f = await tlFindCoords(need, hub, cle, res, lines.join(' '));
+      lines.push(`Found on the map: ${f.found} of ${need.length}.`);
+      if (f.missed.length) lines.push(`<b>Not found, add the coordinates by hand (Google Maps, right-click on the place):</b> ${f.missed.map(esc).join(', ')}.`);
     }
-    if (items.length) {
-      const r2 = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'coordonnees', items }) });
-      const j2 = await r2.json(); if (!j2.ok) throw new Error(j2.erreur || 'coordinates');
-    }
-    if (need.length) lines.push(`Coordinates found for ${items.length} of ${need.length}.`);
-    if (missed.length) lines.push(`<b>Not found, add by hand from Google Maps:</b> ${missed.map(esc).join(', ')}.`);
     lines.push('Done. The map shows the changes in about 5 minutes: then press Recharger.');
     res.innerHTML = lines.join(' ');
+    const savedNames = new Set(j.lieux.map((l) => norm(l.lieu)));
+    tl.queue = tl.queue.filter((q) => !savedNames.has(norm(q.name)));
+    savedNames.forEach((n) => tl.checked.delete(n));
   } catch (err) {
     res.className = 'small err'; res.textContent = 'Not saved: ' + err.message;
   } finally { $('tlSave').disabled = false; }
 }
+// ---------- A region ----------
+function tlSyncRegion() {
+  const isNew = $('tlRegion').value === '__new';
+  $('tlNewWrap').hidden = !isNew;
+  $('tlBaseR').value = isNew ? NOT_DECIDED : $('tlRegion').value;
+}
+function tlReadAnswer() {
+  const rows = tsvRows($('tlPaste1').value), name = tlRegionName();
+  const reg = rows.find((r) => r.length >= 4 && norm(r[0]) === norm(name)) || rows.find((r) => r.length >= 4);
+  tl.region = reg ? { 'Région': name || reg[0], 'Aperçu': para(reg[1]), 'Trucs et astuces': para(reg[2]), 'Pour en savoir plus': para(reg[3]) } : null;
+  tl.list = rows.filter((r) => r !== reg && r.length >= 2 && r.length < 4).map((r) => ({ name: r[0], why: r[1] || '' }));
+  const out = [];
+  if (tl.region) out.push(`<div class="okline">Region card: « ${esc(tl.region['Aperçu'].slice(0, 160))}${tl.region['Aperçu'].length > 160 ? '…' : ''} »</div>`);
+  else if (rows.length) out.push('<div class="err">No region line found. It should be one line with 4 columns separated by tabs.</div>');
+  if (tl.list.length) out.push(`<div class="small" style="margin-top:6px">Tick the places to research:</div><div class="picks">${tl.list.map((p, j) => `<label><input type="checkbox" data-pk="${j}" checked> <b>${esc(p.name)}</b> <span class="small">${esc(p.why)}</span></label>`).join('')}</div>`);
+  else if (rows.length) out.push('<div class="err">No places found. Each place should be one line with 3 columns separated by tabs.</div>');
+  $('tlParsed1').innerHTML = out.join('');
+}
+async function tlRegSave() {
+  const cle = tlKey(), res = $('tlRegResult');
+  if (!cle) return tlNeedKey(res);
+  if (!tl.region) { res.textContent = 'Paste Claude’s reviewed version in step 5 first.'; return; }
+  $('tlRegSave').disabled = true; res.className = 'small'; res.textContent = 'Saving the region…';
+  try {
+    const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'enregistrer', region: tl.region }) });
+    const j = await r.json();
+    if (!j.ok) { if (/code/i.test(j.erreur || '')) { try { localStorage.removeItem(KEYSTORE); } catch {} $('tlKeyRow').hidden = false; } throw new Error(j.erreur || 'Error'); }
+    try { localStorage.setItem(KEYSTORE, cle); } catch {}
+    const picks = [...$('tlParsed1').querySelectorAll('[data-pk]:checked')].map((c) => tl.list[+c.dataset.pk].name);
+    for (const n of picks) { if (!tl.queue.some((q) => norm(q.name) === norm(n))) tl.queue.push({ name: n, at: null, by: '' }); tl.checked.add(norm(n)); }
+    $('tlBaseP').value = $('tlBaseR').value; tl.baseTouched = true;
+    res.textContent = `Region ${j.region === 'ajoutée' ? 'added' : 'updated'}.`;
+    tlRenderQueue(); tlSetPath('pl');
+    $('tlMsg3').textContent = `${picks.length} place${picks.length === 1 ? '' : 's'} from ${tl.region['Région']} ticked below. Continue with step 2.`;
+  } catch (err) {
+    res.className = 'small err'; res.textContent = 'Not saved: ' + err.message;
+  } finally { $('tlRegSave').disabled = false; }
+}
+// ---------- wiring ----------
 $('toolsBtn').addEventListener('click', () => { if (model) openTools(); });
 $('tlClose').addEventListener('click', () => $('tools').close());
 document.querySelectorAll('#tools .tltabs button').forEach((b) => b.addEventListener('click', () => tlSetPath(b.dataset.tl)));
-$('tlRegion').addEventListener('change', () => { tlSyncBase(); tlReadAnswer(); });
-$('tlNew').addEventListener('input', () => { $('tlBase').value = $('tlNew').value; });
-$('tlCopyReg').addEventListener('click', () => {
-  const name = tlRegionName(); if (!name) { $('tlMsg1').textContent = 'Pick or type a region first.'; return; }
-  tlCopy('region', { REGION: name, BASE: $('tlBase').value.trim() || 'pas encore décidé' }, 'tlMsg1');
-});
-$('tlPaste1').addEventListener('input', tlReadAnswer);
-$('tlParsed1').addEventListener('change', tlCountPicks);
-$('tlCopyLieuR').addEventListener('click', () => {
-  const names = [...$('tlParsed1').querySelectorAll('[data-pk]:checked')].map((c) => tl.list[+c.dataset.pk].name);
-  if (!names.length) { $('tlMsg2').textContent = 'Tick at least one place.'; return; }
-  tlCopy('lieu', { LIEUX: names.join(', '), BASE: $('tlBase').value.trim() || 'pas encore décidé' }, 'tlMsg2');
-});
+$('tlQueue').addEventListener('change', (e) => { const c = e.target.closest('[data-q]'); if (!c) return; const n = norm(tl.items[+c.dataset.q].name); if (c.checked) tl.checked.add(n); else tl.checked.delete(n); tlAutoBase(); });
+$('tlBaseP').addEventListener('change', () => { tl.baseTouched = true; });
 $('tlCopyLieuP').addEventListener('click', () => {
-  const names = [...$('tlEmpty').querySelectorAll('[data-em]:checked')].map((c) => c.dataset.em)
+  const names = tl.items.filter((q) => tl.checked.has(norm(q.name))).map((q) => q.name)
     .concat($('tlNewPlaces').value.split('\n').map((x) => x.trim()).filter(Boolean));
   if (!names.length) { $('tlMsg3').textContent = 'Tick or type at least one place.'; return; }
-  tlCopy('lieu', { LIEUX: names.join(', '), BASE: $('tlBase2').value.trim() || 'pas encore décidé' }, 'tlMsg3');
+  tlCopy('lieu', { LIEUX: names.join(', '), BASE: $('tlBaseP').value || NOT_DECIDED }, 'tlMsg3');
 });
 $('tlPaste2').addEventListener('input', tlSummary);
 $('tlSave').addEventListener('click', tlSave);
+$('tlRegion').addEventListener('change', () => { tlSyncRegion(); tlReadAnswer(); });
+$('tlCopyReg').addEventListener('click', () => {
+  const name = tlRegionName(); if (!name) { $('tlMsg1').textContent = 'Pick or type a region first.'; return; }
+  tlCopy('region', { REGION: name, BASE: $('tlBaseR').value || NOT_DECIDED }, 'tlMsg1');
+});
+$('tlPaste1').addEventListener('input', tlReadAnswer);
+$('tlRegSave').addEventListener('click', tlRegSave);
+// ---- map pin: add a new place to the research list (French, for everyone) ----
+async function addPinPlace(name, lat, lon, regionName) {
+  const msg = $('copyMsg');
+  if (model.places.some((p) => norm(p.name) === norm(name)) || model.skipped.some((x) => norm(x.name) === norm(name))) { if (msg) msg.textContent = 'Ce lieu est déjà dans la liste.'; return; }
+  let cle = ''; try { cle = localStorage.getItem(KEYSTORE) || ''; } catch {}
+  if (!cle) cle = (prompt('Code d’accès (le demander à David) :') || '').trim();
+  if (!cle) return;
+  let who = ''; try { who = localStorage.getItem('qui2027') || ''; } catch {}
+  if (!who) who = (prompt('Votre prénom :') || '').trim();
+  if (msg) msg.textContent = 'Ajout…';
+  try {
+    const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'enregistrer', lieux: [Object.assign({ 'Lieu': name, 'Ajouté par': who || '—' }, regionName ? { 'Région': regionName } : {})] }) });
+    const j = await r.json();
+    if (!j.ok) { if (/code/i.test(j.erreur || '')) { try { localStorage.removeItem(KEYSTORE); } catch {} } throw new Error(j.erreur || 'Erreur'); }
+    try { localStorage.setItem(KEYSTORE, cle); if (who) localStorage.setItem('qui2027', who); } catch {}
+    await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'coordonnees', items: [{ lieu: name, coords: `${lat}, ${lon}` }] }) });
+    tl.queue.push({ name, at: [+lat, +lon], by: who }); tl.checked.add(norm(name));
+    if (msg) msg.textContent = 'Ajouté ! Il apparaîtra sur la carte d’ici environ 5 minutes.';
+  } catch (err) { if (msg) msg.textContent = 'Pas ajouté : ' + err.message; }
+}
 let swipeX = null;
 $('panel').addEventListener('touchstart', (e) => { swipeX = e.target.closest('.car') ? e.touches[0].clientX : null; }, { passive: true });
 $('panel').addEventListener('touchend', (e) => {
@@ -1072,26 +1149,43 @@ function fitAll() {
 }
 const STS = [['explore', 'À explorer'], ['cand', 'Bon candidat'], ['conf', 'Confirmé'], ['aside', 'Mis de côté']];
 const stOn = { explore: true, cand: true, conf: true, aside: false }; let onlyDisc = false;
+const rvOn = { new: true, todo: true, done: true };
+let fltOpen = false;
 function renderFilter() {
   const n = { explore: 0, cand: 0, conf: 0, aside: 0 };
   model.places.forEach((p) => { if (!p.hub.other || $('showOther').checked) n[p.st]++; });
   const dot = { explore: 'border:2.5px solid var(--muted);background:#fff', cand: 'background:var(--muted)', conf: 'background:var(--muted);box-shadow:0 0 0 2px var(--ink)', aside: 'background:var(--muted);opacity:.35' };
   const nd = model.places.filter((p) => p.disputed && (!p.hub.other || $('showOther').checked)).length;
-  $('sf').innerHTML = STS.map(([k, t]) => `<button data-k="${k}" aria-pressed="${stOn[k]}"><i style="${dot[k]}"></i>${t} <span>${n[k]}</span></button>`).join('')
-    + `<button class="ht" aria-pressed="${$('showOther').checked}" title="Lieux à plus de 40 km de tous les ports d'attache"><i style="background:${GREY}"></i>Hors trajet <span>${model.other.places.length}</span></button>`
-    + (model.hasVotes ? `<button class="disc" aria-pressed="${onlyDisc}" title="Seulement les lieux où nos votes diffèrent">À discuter <span>${nd}</span></button>` : '');
-  $('sf').querySelectorAll('button[data-k]').forEach((b) => b.addEventListener('click', () => { stOn[b.dataset.k] = !stOn[b.dataset.k]; applyFilter(); }));
-  $('sf').querySelector('.ht').addEventListener('click', () => { $('showOther').checked = !$('showOther').checked; toggleOther(); applyFilter(); });
-  const db = $('sf').querySelector('.disc'); if (db) db.addEventListener('click', () => { onlyDisc = !onlyDisc; applyFilter(); });
+  const shown = model.places.filter((p) => stOn[p.st] && rvOn[p.rvk] && (!p.hub.other || $('showOther').checked) && (!onlyDisc || p.disputed)).length;
+  const nr = { new: 0, todo: 0, done: 0 }; model.places.forEach((p) => { if (!p.hub.other || $('showOther').checked) nr[p.rvk]++; });
+  $('sf').innerHTML = `<button class="btn" id="fltBtn" aria-expanded="${fltOpen}">${ico('filter')}Filtres <span class="small">· ${shown} lieux affichés</span></button>
+    <div class="fltpanel" ${fltOpen ? '' : 'hidden'}>
+      ${STS.map(([k, t]) => `<label><input type="checkbox" data-k="${k}" ${stOn[k] ? 'checked' : ''}><i style="${dot[k]}"></i>${t} <span class="small">${n[k]}</span></label>`).join('')}
+      <label><input type="checkbox" data-ht ${$('showOther').checked ? 'checked' : ''}><i style="background:${GREY}"></i>Hors trajet <span class="small">${model.other.places.length}</span></label>
+      <div class="sep small">Révision des fiches</div>
+      ${Object.entries(RV_LABEL).map(([k, t]) => `<label><input type="checkbox" data-rv="${k}" ${rvOn[k] ? 'checked' : ''}><span class="rvtag rv-${k}">${t}</span> <span class="small">${nr[k]}</span></label>`).join('')}
+      ${model.hasVotes ? `<label class="sep"><input type="checkbox" data-disc ${onlyDisc ? 'checked' : ''}>Seulement « À discuter » <span class="small">${nd}</span></label>` : ''}
+    </div>`;
+  $('fltBtn').addEventListener('click', (e) => { e.stopPropagation(); fltOpen = !fltOpen; $('sf').querySelector('.fltpanel').hidden = !fltOpen; $('fltBtn').setAttribute('aria-expanded', fltOpen); });
+  $('sf').querySelectorAll('.fltpanel input').forEach((el) => el.addEventListener('change', () => {
+    if (el.dataset.k) stOn[el.dataset.k] = el.checked;
+    else if (el.dataset.rv) rvOn[el.dataset.rv] = el.checked;
+    else if (el.hasAttribute('data-ht')) { $('showOther').checked = el.checked; toggleOther(); }
+    else if (el.hasAttribute('data-disc')) onlyDisc = el.checked;
+    applyFilter();
+  }));
 }
+document.addEventListener('click', (e) => {
+  if (fltOpen && !e.target.closest('#sf')) { fltOpen = false; const pn = document.querySelector('.fltpanel'); if (pn) pn.hidden = true; const b = $('fltBtn'); if (b) b.setAttribute('aria-expanded', 'false'); }
+});
 function applyFilter() {
   renderFilter();
-  const vis = (st, disc) => stOn[st] && (!onlyDisc || disc);
-  for (const [p, mk] of markerOf) { const el = mk.getElement && mk.getElement(); if (el) el.style.display = vis(mk._st, p.disputed) ? '' : 'none'; }
-  document.querySelectorAll('.card').forEach((c) => { c.style.display = vis(c.dataset.st, !!c.dataset.disc) ? '' : 'none'; });
+  const vis = (st, disc, rv) => stOn[st] && rvOn[rv] && (!onlyDisc || disc);
+  for (const [p, mk] of markerOf) { const el = mk.getElement && mk.getElement(); if (el) el.style.display = vis(mk._st, p.disputed, p.rvk) ? '' : 'none'; }
+  document.querySelectorAll('.card').forEach((c) => { c.style.display = vis(c.dataset.st, !!c.dataset.disc, c.dataset.rv) ? '' : 'none'; });
   document.querySelectorAll('.group').forEach((g) => {
     const cards = [...g.querySelectorAll('.card')], total = cards.length;
-    const n = cards.filter((c) => vis(c.dataset.st, !!c.dataset.disc)).length;
+    const n = cards.filter((c) => vis(c.dataset.st, !!c.dataset.disc, c.dataset.rv)).length;
     g.querySelector('.count').textContent = n === total ? `${total} ${total > 1 ? 'lieux' : 'lieu'}` : `${n} sur ${total}`;
   });
 }
@@ -1192,9 +1286,9 @@ function showGeo(g) {
   const pin = `<svg width="30" height="42" viewBox="0 0 30 42"><path d="M15 1C7.3 1 1 7.2 1 14.8 1 25.5 15 41 15 41s14-15.5 14-26.2C29 7.2 22.7 1 15 1z" fill="${col}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="15" r="5.5" fill="#fff"/></svg>`;
   geoPin = L.marker([+g.lat, +g.lon], { icon: L.divIcon({ className: '', html: pin, iconSize: [30, 42], iconAnchor: [15, 41], popupAnchor: [0, -36] }), zIndexOffset: 2000 })
     .addTo(map).bindPopup(`<b>${esc(name)}</b>${type ? ` <span class="small">(${esc(type)})</span>` : ''}<br><span class="small">${esc(g.display_name.split(',').slice(1, 4).join(',').trim())}</span><br>${where}<br>${lat}, ${lon}
-    <br><button class="btn pbtn" id="copyGeo">Copier pour le Google Sheet</button><div class="small" id="copyMsg">Coller dans la colonne Lieu d'une nouvelle ligne : nom, coordonnées, statut, type et région se placent tout seuls.</div>`, { maxWidth: 260 });
+    <br><button class="btn pbtn" id="copyGeo">Ajouter à la liste de recherche</button><div class="small" id="copyMsg">Ce lieu attendra dans la liste de recherche, avec un point sur la carte. On fera sa fiche plus tard.</div>`, { maxWidth: 260 });
   map.flyTo([+g.lat, +g.lon], 11, { duration: .8 });
-  setTimeout(() => { geoPin.openPopup(); const b = $('copyGeo'); if (b) b.onclick = () => copyText(row); }, 850);
+  setTimeout(() => { geoPin.openPopup(); const b = $('copyGeo'); if (b) b.onclick = () => addPinPlace(name, lat, lon, inHub ? best.name : ''); }, 850);
 }
 async function copyText(t, msgId = 'copyMsg', done = 'Copié ! Coller dans la colonne Lieu d’une nouvelle ligne.') {
   try { await navigator.clipboard.writeText(t); }
