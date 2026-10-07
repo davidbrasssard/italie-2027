@@ -200,6 +200,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <dt>Boutons</dt><dd><b>Photos</b> et <b>YouTube</b> cherchent le nom du lieu. <b>Google Maps</b> ouvre ses coordonnées.</dd>
     <dt>Trajet (en haut)</dt><dd>Onglet <b>Trajet</b> : ordre, ports d'attache, nuits, comment on y arrive.</dd>
     <dt>Chercher</dt><dd>La boîte de recherche trouve d'abord nos lieux. Pour n'importe quel autre endroit, choisir « Chercher … sur la carte » : la carte y va et met une épingle temporaire, de la couleur du port d'attache auquel l'endroit se rattacherait (gris = hors trajet). Le bouton <b>Copier pour la feuille</b> copie une ligne complète : coller dans la colonne <b>Lieu</b> d'une nouvelle ligne de l'onglet Lieux, et le nom, les coordonnées, le statut, le type et la région se placent tout seuls.</dd>
+    <dt>Sans coordonnées</dt><dd>Les lieux sans coordonnées sont listés dans l'encadré jaune. Le bouton <b>Trouver les coordonnées</b> les cherche autour de leur région (colonne Région), puis copie toutes les coordonnées d'un coup, dans l'ordre : coller dans la case Coordonnées du premier lieu de la liste.</dd>
     <dt>Mise à jour</dt><dd>La page lit la feuille chaque fois qu'on l'ouvre. <b>Recharger</b> sert à celui qui vient de modifier la feuille : attendre environ 5 minutes, puis cliquer sur Recharger.</dd>
   </dl>
   <a class="btn" href="https://docs.google.com/spreadsheets/d/1mnxZiexvV5cnWcc1inZzZCftosAQsTyMMMLsrFbjyuY/edit" target="_blank" rel="noopener"><svg class="ic"><use href="#i-note"/></svg>Ouvrir la feuille Google</a>
@@ -220,7 +221,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture de la feuille Google…</div></section>
 </main>
 <footer>
-  <span>Version 0.6.0 · 6 octobre 2026</span>
+  <span>Version 0.6.1 · 6 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -320,7 +321,7 @@ function buildModel(lieux, trajet, liens, votes, voyageurs, regions) {
   for (const r of lieux) {
     const name = r['Lieu']; if (!name) continue;
     const at = parseCoords(r['Coordonnées']);
-    if (!at) { skipped.push(name); continue; }
+    if (!at) { skipped.push({ name, region: r['Région'] || '' }); continue; }
     let best = null, bd = Infinity;
     for (const h of hubs) { const d = km(at, h.at); if (d < bd) { bd = d; best = h; } }
     const p = { name, at, statut: r['Statut'] || '', type: r['Type'] || '', photo: r['Photo'] || '', note: r['Note'] || '', by: r['Ajouté par'] || '', wiki: r['Wikipédia'] || r['Wikipedia'] || '',
@@ -465,7 +466,7 @@ function render() {
   }
   // panel
   let html = `<div class="listbar"><button class="btn" id="toggleAll">Tout ouvrir</button></div>`;
-  if (m.skipped.length) html += `<div class="warn">Sans coordonnées (pas sur la carte) : ${m.skipped.map(esc).join(', ')}</div>`;
+  if (m.skipped.length) html += `<div class="warn">Sans coordonnées (pas sur la carte) : ${m.skipped.map((x) => esc(x.name)).join(', ')}<div style="margin-top:8px"><button class="btn" id="findCoords">${ico('search')}Trouver les coordonnées</button></div><div id="coordOut"></div></div>`;
   if (m.voteUnmatched && m.voteUnmatched.length) html += `<div class="warn">Dans l'onglet Votes, nom introuvable dans Lieux : ${[...new Set(m.voteUnmatched)].map(esc).join(', ')}</div>`;
   if (m.unmatched.length) html += `<div class="warn">Dans l'onglet Liens, nom introuvable dans Lieux : ${[...new Set(m.unmatched)].map(esc).join(', ')}</div>`;
   for (const g of [...m.hubs, m.other]) {
@@ -477,6 +478,7 @@ function render() {
       <div class="cards">${g.places.map((p) => cardHtml(p)).join('')}</div></details>`;
   }
   $('panel').innerHTML = html;
+  const fc = $('findCoords'); if (fc) fc.addEventListener('click', findCoords);
   const groups = () => [...document.querySelectorAll('.group')].filter((d) => d.style.display !== 'none');
   const syncToggle = () => { $('toggleAll').textContent = groups().some((d) => d.open) ? 'Tout fermer' : 'Tout ouvrir'; };
   $('toggleAll').addEventListener('click', () => { const anyOpen = groups().some((d) => d.open); groups().forEach((d) => { d.open = !anyOpen; }); syncToggle(); });
@@ -697,10 +699,44 @@ function showGeo(g) {
   map.flyTo([+g.lat, +g.lon], 11, { duration: .8 });
   setTimeout(() => { geoPin.openPopup(); const b = $('copyGeo'); if (b) b.onclick = () => copyText(row); }, 850);
 }
-async function copyText(t) {
+async function copyText(t, msgId = 'copyMsg', done = 'Copié ! Coller dans la colonne Lieu d’une nouvelle ligne.') {
   try { await navigator.clipboard.writeText(t); }
   catch { const a = document.createElement('textarea'); a.value = t; document.body.appendChild(a); a.select(); try { document.execCommand('copy'); } catch {} a.remove(); }
-  const m = $('copyMsg'); if (m) m.textContent = 'Copié ! Coller dans la colonne Lieu d’une nouvelle ligne.';
+  const m = $(msgId); if (m) m.textContent = done;
+}
+
+// ---- coordonnées manquantes : recherche autour de la zone de chaque lieu ----
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+async function nomi(q, at) {
+  await sleep(1100); // OpenStreetMap asks for at most one search per second
+  let u = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&accept-language=fr&q=${encodeURIComponent(q)}`;
+  if (at) { const d = 0.5; u += `&viewbox=${at[1] - d},${at[0] + d},${at[1] + d},${at[0] - d}&bounded=1`; }
+  const r = await fetch(u); if (!r.ok) return null;
+  const j = await r.json(); return j[0] || null;
+}
+async function findCoords() {
+  const list = model.skipped, out = $('coordOut'), btn = $('findCoords');
+  btn.disabled = true; const res = [];
+  for (let i = 0; i < list.length; i++) {
+    const x = list[i], hub = model.hubs.find((h) => norm(h.name) === norm(x.region)) || null;
+    out.innerHTML = `<p class="small">Recherche ${i + 1} sur ${list.length} : ${esc(x.name)}…</p>`;
+    const tries = [...new Set([x.name, x.name.split(' - ')[0], x.name.replace(/\s*\(.*?\)\s*/g, ' ').trim()])];
+    let g = null;
+    try {
+      for (const t of tries) { if (hub) g = await nomi(t, hub.at); if (g) break; }
+      if (!g) for (const t of tries) { g = await nomi(t, null); if (g) break; }
+    } catch { g = null; }
+    const at = g ? [+g.lat, +g.lon] : null;
+    const far = at && hub ? km(at, hub.at) > RADIUS_KM : false;
+    res.push({ x, g, at, far });
+  }
+  const lines = res.map((r) => (r.at ? `${r.at[0].toFixed(4)}, ${r.at[1].toFixed(4)}` : '')).join('\n');
+  const miss = res.filter((r) => !r.at).length, farN = res.filter((r) => r.far).length;
+  out.innerHTML = `<div class="links" style="margin-top:8px">${res.map((r) => `<div style="font-size:14px;border-left:3px solid ${r.at && !r.far ? '#2e7d4f' : '#b5541c'};padding:2px 0 2px 8px"><b>${esc(r.x.name)}</b> : ${r.at ? `${r.at[0].toFixed(4)}, ${r.at[1].toFixed(4)} <span class="small">(${esc(r.g.display_name.split(',').slice(0, 3).join(','))})</span>${r.far ? ' <b>loin de sa zone, à vérifier</b>' : ''}` : '<b>pas trouvé, à chercher à la main</b>'}</div>`).join('')}</div>
+    <p class="small">${res.length - miss} trouvés${miss ? `, ${miss} pas trouvés` : ''}${farN ? `, ${farN} à vérifier` : ''}. Dans l'onglet Lieux, cliquer la case <b>Coordonnées</b> de « ${esc(list[0].name)} », puis coller : chaque lieu reçoit ses coordonnées dans le même ordre (une case vide = pas trouvé).</p>
+    <button class="btn" id="copyCoords">Copier les coordonnées</button> <span class="small" id="coordMsg"></span>`;
+  $('copyCoords').onclick = () => copyText(lines, 'coordMsg', 'Copié ! Coller dans la case Coordonnées du premier lieu.');
+  btn.disabled = false;
 }
 $('q').addEventListener('input', showResults);
 $('q').addEventListener('focus', showResults);
