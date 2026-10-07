@@ -24,6 +24,7 @@
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --bg:#141a19; --ink:#e7ecea; --muted:#a4b0ab; --line:#2f3a37; --card:#1d2523; --soft:#26302d; --tip:#d7b45a; } }
 :root[data-theme="dark"]{ --bg:#141a19; --ink:#e7ecea; --muted:#a4b0ab; --line:#2f3a37; --card:#1d2523; --soft:#26302d; --tip:#d7b45a; }
 *,*::before,*::after{ box-sizing:inherit; }
+[hidden]{ display:none !important; }
 html,body{ height:100%; }
 body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:17px; line-height:1.45; display:flex; flex-direction:column; }
 header{ display:flex; align-items:center; gap:10px 22px; flex-wrap:wrap; padding:10px 18px; border-bottom:1px solid var(--line); }
@@ -291,7 +292,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
       <b>À explorer</b> (point creux) : trouvé, pas encore regardé de près.<br>
       <b>Bon candidat</b> (point plein) : un bon arrêt possible.<br>
       <b>Confirmé</b> (gros point cerclé) : on y va.<br>
-      <b>Mis de côté</b> (point pâle, caché par défaut) : on n'y va pas.<br>
+      <b>Mis de côté</b> (point pâle) : on n'y va pas.<br>
       Les boutons en haut cachent ou montrent chaque groupe.</dd>
     <dt>Région</dt><dd>En ouvrant un port d'attache, on voit le résumé et les astuces de sa région.</dd>
     <dt>Trajet</dt><dd>Trait plein : train · pointillé : avion · cercle avec auto : en auto.</dd>
@@ -378,7 +379,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture du Google Sheet…</div></section>
 </main>
 <footer>
-  <span>Version 0.11.1 · 7 octobre 2026</span>
+  <span>Version 0.11.3 · 7 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -1154,11 +1155,10 @@ function fitAll() {
   if (pts.length) map.fitBounds(L.latLngBounds(pts).pad(0.12));
 }
 const STS = [['explore', 'À explorer'], ['cand', 'Bon candidat'], ['conf', 'Confirmé'], ['aside', 'Mis de côté']];
-const stOn = { explore: true, cand: true, conf: true, aside: false }; let onlyDisc = false;
+const stOn = { explore: true, cand: true, conf: true, aside: true }; let onlyDisc = false;
 const rvOn = { new: true, todo: true, done: true };
 let fltOpen = false;
-const ST_DEFAULT = { explore: true, cand: true, conf: true, aside: false };
-const filtersActive = () => STS.some(([k]) => stOn[k] !== ST_DEFAULT[k]) || !$('showOther').checked || Object.values(rvOn).some((v) => !v) || onlyDisc;
+const filtersActive = () => STS.some(([k]) => !stOn[k]) || !$('showOther').checked || Object.values(rvOn).some((v) => !v) || onlyDisc;
 const passes = (p, skip) => (skip === 'st' || stOn[p.st]) && (skip === 'rv' || rvOn[p.rvk]) && (skip === 'other' || !p.hub.other || $('showOther').checked) && (!onlyDisc || p.disputed);
 function renderFilter() {
   // each count = what you'd see for that line, given the other choices
@@ -1203,7 +1203,6 @@ function applyFilter() {
     const cards = [...g.querySelectorAll('.card')], total = cards.length;
     const n = cards.filter((c) => vis(c.dataset.st, !!c.dataset.disc, c.dataset.rv)).length;
     g.querySelector('.count').textContent = n === total ? `${total} ${total > 1 ? 'lieux' : 'lieu'}` : `${n} sur ${total}`;
-    if (!g.dataset.other) g.style.display = n === 0 && filtersActive() ? 'none' : '';
   });
   const none = model.places.filter((p) => passes(p)).length === 0, em = $('fltEmpty');
   if (em) em.hidden = !none;
