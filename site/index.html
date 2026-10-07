@@ -364,8 +364,8 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <dl>
     <dt>Nom souligné</dt><dd>Toucher le nom pour voir le lieu sur la carte. Toucher un point sur la carte (pas besoin de viser juste, la zone autour compte aussi) ouvre sa fiche.</dd>
     <dt>Régions</dt><dd>La rangée de régions en haut de la liste choisit la région ; la liste montre alors seulement ses lieux. Les flèches ‹ › font défiler les régions quand elles ne tiennent pas toutes.</dd>
-    <dt>Ouvrir un lieu</dt><dd>Toucher un lieu dans la liste ouvre sa fiche. La bande de couleur en haut de la fiche indique la région ; la toucher montre la fiche de la région. Le <b>✕</b> ferme la fiche. L'en-tête de la fiche reste en haut pendant qu'on la lit.</dd>
-    <dt>Carte et liste</dt><dd>Sur un ordinateur, la fiche (d'un lieu ou d'une région) s'ouvre au-dessus de la liste ; le <b>✕</b> la ferme et la liste reprend toute la place. La barre entre la carte et la liste se glisse pour changer leur largeur (double-clic : taille de départ). Sur un téléphone, les boutons <b>Carte</b> et <b>Lieux</b> en bas passent de l'un à l'autre.</dd>
+    <dt>Ouvrir un lieu</dt><dd>Toucher un lieu dans la liste ouvre sa fiche. La bande de couleur en haut de la fiche indique la région ; la toucher montre la fiche de la région. Le <b>✕</b> d'un lieu ramène à la fiche de sa région. La page se rouvre là où on l'a laissée. L'en-tête de la fiche reste en haut pendant qu'on la lit.</dd>
+    <dt>Carte et liste</dt><dd>Sur un ordinateur, la fiche (d'un lieu ou d'une région) est toujours affichée au-dessus de la liste des lieux de la région. La barre entre la carte et la liste se glisse pour changer leur largeur (double-clic : taille de départ). Sur un téléphone, les boutons <b>Carte</b> et <b>Lieux</b> en bas passent de l'un à l'autre.</dd>
     <dt>Photos</dt><dd>L'onglet <b>Photos</b> montre les photos et vidéos choisies pour ce lieu, en grand ; elles défilent avec les flèches (ou en glissant le doigt sur un téléphone).</dd>
     <dt>Boutons</dt><dd>Dans une fiche : l'<b>épingle</b> ouvre le lieu dans Google Maps, le <b>crayon</b> permet de modifier la fiche. En haut de la page : <b>entonnoir</b> = filtres, <b>flèche circulaire</b> = recharger, <b>jumelles</b> = recherche, <b>?</b> = aide. Garder le doigt ou la souris sur un bouton affiche son nom.</dd>
     <dt>Couleur</dt><dd>Celle du port d'attache. <b>Gris</b> = Hors trajet : à plus de 40 km de tous les ports d'attache.</dd>
@@ -464,7 +464,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 </main>
 <nav class="mnav" aria-label="Affichage"><button data-mv="map" aria-pressed="true"><svg class="ic"><use href="#i-map"/></svg>Carte</button><button data-mv="list" aria-pressed="false"><svg class="ic"><use href="#i-list"/></svg>Lieux</button></nav>
 <footer>
-  <span>Version 0.15.0 · 7 octobre 2026</span>
+  <span>Version 0.16.0 · 7 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -835,6 +835,7 @@ function render() {
   toggleOther();
   applyFilter();
   fitAll();
+  restoreSelection();
   watchWiki();
 }
 
@@ -881,7 +882,7 @@ function placeHtml(p, want) {
       ${bandHtml(p.hub, true)}
       <div class="top psub"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span><button class="namelink" data-go="${i}" title="Voir sur la carte"><h3>${esc(p.name)}</h3></button>
         <a class="btn ibtn" href="https://www.google.com/maps/search/?api=1&query=${p.at[0]},${p.at[1]}" target="_blank" rel="noopener" title="Ouvrir dans Google Maps" aria-label="Ouvrir dans Google Maps">${ico('pin')}</a>
-        <button class="btn ibtn" data-edit="${i}" title="Modifier cette fiche" aria-label="Modifier cette fiche">${ico('pencil')}</button></div>
+        <button class="btn ibtn" data-edit="${i}" title="Modifier cette fiche" aria-label="Modifier cette fiche">${ico('pencil')}</button><button class="btn ibtn" data-region="${p.hub.other ? 'o' : p.hub.index}" title="Fermer le lieu et revenir à la région" aria-label="Fermer le lieu">${ico('x')}</button></div>
       <div class="tabs" role="tablist">${panes.map(([k, t], j) => `<button role="tab" data-tab="${k}" aria-selected="false">${t}</button>`).join('')}<button class="allbtn" aria-pressed="true" title="Voir une section à la fois">Par onglet</button></div>
     </div>
     <div class="facts">${p.rvk !== 'done' ? `<span class="rvtag rv-${p.rvk}">${RV_LABEL[p.rvk]}</span> ` : ''}${facts}</div>
@@ -892,7 +893,7 @@ function placeHtml(p, want) {
 function bandHtml(g, link) {
   const key = g.other ? 'o' : g.index;
   const label = `${g.other ? 'A' : esc(g.label)} · ${esc(g.name)}`;
-  return `<div class="rband" style="background:${colorOf(g)}">${link ? `<button class="rbname" data-region="${key}" title="Voir la fiche de la région">${label} ›</button>` : `<span class="rbname">${label}</span>`}<button class="btn ibtn xbtn" data-back title="Fermer" aria-label="Fermer">${ico('x')}</button></div>`;
+  return `<div class="rband" style="background:${colorOf(g)}">${link ? `<button class="rbname" data-region="${key}" title="Voir la fiche de la région">${label} ›</button>` : `<span class="rbname">${label}</span>`}</div>`;
 }
 function regionHtml(g, want) {
   const r = g.region || { resume: '', tips: [], links: [], media: [] };
@@ -938,24 +939,40 @@ function selectRow(i) {
   const p = model.places[i]; if (curG !== groupKey(p.hub)) selectRegion(p.hub);
   const r = $('r' + i); if (r) { r.classList.add('sel'); if (!isMobile()) r.scrollIntoView({ block: 'nearest' }); }
 }
-function showWindow(html) {
+function showWindow(html, user) {
   const pv = $('placeView'); pv.hidden = false; pv.innerHTML = html; pv.scrollTop = 0;
-  if (isMobile()) { $('listView').hidden = true; setView('list'); window.scrollTo(0, $('panel').offsetTop); }
+  if (isMobile() && user) { setView('list'); window.scrollTo(0, $('panel').offsetTop); }
   return pv;
 }
+// remember what was open, so the next visit starts there (on this device)
+function rememberSel() {
+  try { localStorage.setItem('last2027', JSON.stringify({ g: curG, place: curPlace != null ? model.places[curPlace].name : '' })); } catch {}
+}
+function restoreSelection() {
+  let st = null; try { st = JSON.parse(localStorage.getItem('last2027') || 'null'); } catch {}
+  const p = st && st.place ? model.places.find((x) => norm(x.name) === norm(st.place)) : null;
+  let g = p ? p.hub : (st && st.g != null && groupOf(st.g)) || null;
+  let first = null;
+  if (!g) { g = model.hubs.find((h) => h.places.length) || model.hubs[0] || (model.other.places.length ? model.other : null); first = g && g.places[0]; }
+  const target = p || first;
+  if (target) openPlace(model.places.indexOf(target), null, false); else if (g) openRegion(g, null, false);
+  if (g) setTimeout(() => fitGroup(g), 80);
+}
 let curRegion = null;
-function openPlace(i, want) {
+function openPlace(i, want, user = true) {
   const p = model.places[i]; if (!p) return;
   curPlace = i; curRegion = null;
-  const pv = showWindow(placeHtml(p, want));
+  const pv = showWindow(placeHtml(p, want), user);
   selectRow(i);
   fillWiki(pv.querySelector('.place'));
+  rememberSel();
 }
-function openRegion(g, want) {
+function openRegion(g, want, user = true) {
   curRegion = g; curPlace = null;
-  showWindow(regionHtml(g, want));
+  showWindow(regionHtml(g, want), user);
   document.querySelectorAll('.prow.sel').forEach((x) => x.classList.remove('sel'));
   selectRegion(g);
+  rememberSel();
 }
 function closePlace(scroll = true) {
   const i = curPlace; curPlace = null; curRegion = null;
@@ -1007,15 +1024,13 @@ $('panel').addEventListener('click', (e) => {
   const rc = e.target.closest('.rchip');
   if (rc) {
     const g = groupOf(rc.dataset.gr);
-    if (isMobile()) { if (curPlace != null) closePlace(false); selectRegion(g); }
-    else { openRegion(g); fitGroup(g); }
+    openRegion(g); fitGroup(g);
     return;
   }
   const go = e.target.closest('[data-go]');
   if (go) { const p = model.places[+go.dataset.go]; if (isMobile()) setView('map'); flyTo(p); return; }
   const rw = e.target.closest('[data-row]');
   if (rw) { const i = +rw.dataset.row; openPlace(i); if (!isMobile()) flyTo(model.places[i]); return; }
-  if (e.target.closest('[data-back]')) { closePlace(); return; }
   const ab = e.target.closest('.allbtn');
   if (ab) {
     const c = ab.closest('.place'), all = !c.classList.contains('all');
@@ -1337,12 +1352,9 @@ function popupHtml(p) {
   return `${img ? `<img src="${esc(img)}" alt="" onerror="this.remove()">` : ''}<b>${esc(p.num)} · ${esc(p.name)}</b>${lead}<button class="btn pbtn fiche" onclick="showCard(${i})">Voir la fiche</button>`;
 }
 function openGroup(idx, fit) {
-  if (!isMobile()) { const g = model.hubs[idx]; openRegion(g); if (fit) fitGroup(g); return; }
-  if (curPlace != null) closePlace(false);
-  setView('list');
-  selectRegion(model.hubs[idx]);
+  const g = model.hubs[idx]; openRegion(g); if (fit && !isMobile()) fitGroup(g);
 }
-function showCard(i) { openPlace(i); }
+function showCard(i) { openPlace(i); if (isMobile()) setView('list'); }
 function flyTo(p) {
   const mk = markerOf.get(p);
   if (p.hub.other && !$('showOther').checked) { $('showOther').checked = true; toggleOther(); }
