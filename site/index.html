@@ -34,7 +34,11 @@ header .sum{ color:var(--muted); }
 .btn{ font:inherit; font-size:14px; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:8px; padding:5px 10px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:5px; }
 .btn:hover{ border-color:var(--muted); }
 .btn:focus-visible,.tabs button:focus-visible{ outline:3px solid #1f5f99; outline-offset:2px; }
-main{ flex:1; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(340px,1fr); min-height:0; }
+main{ flex:1; display:grid; grid-template-columns:minmax(0,var(--mapw,1.6fr)) 8px minmax(380px,1fr); min-height:0; }
+#split{ cursor:col-resize; background:var(--line); position:relative; touch-action:none; }
+#split::after{ content:''; position:absolute; left:2px; top:50%; width:4px; height:44px; margin-top:-22px; border-radius:2px; background:var(--muted); opacity:.5; }
+#split:hover::after{ opacity:1; }
+body.dragging{ user-select:none; cursor:col-resize; }
 #map{ height:100%; min-height:420px; background:#dce8ef; }
 #panel{ overflow-y:auto; padding:14px 16px 40px; border-left:1px solid var(--line); }
 .group{ margin-bottom:10px; border:1px solid var(--line); border-radius:12px; background:var(--card); }
@@ -167,6 +171,16 @@ body.nolist main{ grid-template-columns:minmax(0,1fr); } body.nolist #panel{ dis
 .place .car .slide img{ max-height:62vh; }
 .place .tp{ padding-top:8px; scroll-margin-top:120px; }
 @media (max-width:900px){ .place .hd{ top:0; margin:0 -16px; } }
+@media (min-width:901px){
+  #panel{ display:flex; flex-direction:column; overflow:hidden; padding:0; border-left:0; }
+  #placeView{ flex:0 0 60%; overflow-y:auto; padding:14px 16px 16px; border-bottom:3px solid var(--line); background:var(--bg); }
+  #listView{ flex:1 1 0; overflow-y:auto; padding:14px 16px 40px; min-height:0; }
+  .place .back{ display:none; }
+  .group .zone{ display:none; }
+}
+.prow.sel{ border-color:var(--ink); background:var(--card); box-shadow:inset 4px 0 0 var(--ink); }
+.region .rname{ margin-right:auto; }
+.region .rname .small{ margin-top:2px; }
 .editbar{ margin-top:12px; padding-top:8px; border-top:1px dashed var(--line); }
 .edf{ display:block; margin-top:12px; }
 .edf .small{ display:block; margin-bottom:4px; }
@@ -254,7 +268,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 .leaflet-popup-content img{ width:200px; max-height:130px; object-fit:cover; border-radius:6px; display:block; margin-bottom:6px; }
 .leaflet-popup-content .pbtn{ margin-top:6px; }
 @media (prefers-reduced-motion:reduce){ .card{ transition:none; } }
-@media (max-width:900px){ .search input{ width:150px; } main{ grid-template-columns:minmax(0,1fr); } #map{ height:calc(100dvh - 170px); min-height:320px; } #panel{ border-left:0; overflow:visible; padding-bottom:90px; } body{ display:block; padding-bottom:64px; }
+@media (max-width:900px){ .search input{ width:150px; } main{ grid-template-columns:minmax(0,1fr); } #split{ display:none; } .xbtn{ display:none !important; } #map{ height:calc(100dvh - 170px); min-height:320px; } #panel{ border-left:0; overflow:visible; padding-bottom:90px; } body{ display:block; padding-bottom:64px; }
   .lay{ display:none !important; } footer{ display:none; }
   .mnav{ display:flex; position:fixed; left:0; right:0; bottom:0; z-index:3000; gap:8px; background:var(--card); border-top:1px solid var(--line); padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px)); }
   .mnav button{ flex:1; font:inherit; font-size:15px; display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:9px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink); }
@@ -295,6 +309,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <symbol id="i-binoculars" viewBox="0 0 24 24"><path d="M10 10h4"/><path d="M19 7V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/><path d="M20 21a2 2 0 0 0 2-2v-3.851c0-1.39-2-2.962-2-4.829V8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v11a2 2 0 0 0 2 2z"/><path d="M22 16H2"/><path d="M4 21a2 2 0 0 1-2-2v-3.851c0-1.39 2-2.962 2-4.829V8a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v11a2 2 0 0 1-2 2z"/><path d="M9 7V4a1 1 0 0 0-1-1H6a1 1 0 0 0-1 1v3"/></symbol>
   <symbol id="i-list" viewBox="0 0 24 24"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></symbol>
   <symbol id="i-arrowl" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
   <symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
 </svg>
 <dialog id="help"><div class="help">
@@ -323,7 +338,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <dl>
     <dt>Nom souligné</dt><dd>Toucher le nom pour voir le lieu sur la carte. Toucher un point sur la carte met sa fiche en évidence.</dd>
     <dt>Ouvrir un lieu</dt><dd>Toucher un lieu dans la liste ouvre sa fiche. La flèche ← en haut de la fiche ramène à la liste. L'en-tête de la fiche (nom, épingle, crayon, onglets) reste en haut pendant qu'on la lit.</dd>
-    <dt>Carte et liste</dt><dd>Sur un ordinateur, les boutons carte et liste en haut affichent ou cachent chacun des deux côtés. Sur un téléphone, les boutons <b>Carte</b> et <b>Lieux</b> en bas passent de l'un à l'autre.</dd>
+    <dt>Carte et liste</dt><dd>Sur un ordinateur, la fiche (d'un lieu ou d'une région) s'ouvre au-dessus de la liste ; le <b>✕</b> la ferme et la liste reprend toute la place. La barre entre la carte et la liste se glisse pour changer leur largeur (double-clic : taille de départ). Sur un téléphone, les boutons <b>Carte</b> et <b>Lieux</b> en bas passent de l'un à l'autre.</dd>
     <dt>Photos</dt><dd>L'onglet <b>Photos</b> montre les photos et vidéos choisies pour ce lieu, en grand ; elles défilent avec les flèches (ou en glissant le doigt sur un téléphone).</dd>
     <dt>Boutons</dt><dd>Dans une fiche : l'<b>épingle</b> ouvre le lieu dans Google Maps, le <b>crayon</b> permet de modifier la fiche. En haut de la page : <b>entonnoir</b> = filtres, <b>flèche circulaire</b> = recharger, <b>jumelles</b> = recherche, <b>?</b> = aide. Garder le doigt ou la souris sur un bouton affiche son nom.</dd>
     <dt>Couleur</dt><dd>Celle du port d'attache. <b>Gris</b> = Hors trajet : à plus de 40 km de tous les ports d'attache.</dd>
@@ -336,7 +351,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
       <b>Confirmé</b> (gros point cerclé) : on y va.<br>
       <b>Mis de côté</b> (point pâle) : on n'y va pas.<br>
       Les boutons en haut cachent ou montrent chaque groupe.</dd>
-    <dt>Région</dt><dd>En ouvrant un port d'attache, on voit le résumé et les astuces de sa région.</dd>
+    <dt>Région</dt><dd>Toucher une région (dans la liste ou son numéro sur la carte) montre sa fiche : Photos et vidéos, Aperçu, Astuces, Liens.</dd>
     <dt>Trajet</dt><dd>Trait plein : train · pointillé : avion · cercle avec auto : en auto.</dd>
   </dl></details>
 
@@ -411,7 +426,6 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <div class="search"><svg class="ic"><use href="#i-search"/></svg><input id="q" type="search" placeholder="Chercher un lieu" autocomplete="off" aria-label="Chercher un lieu"><div class="results" id="results"></div></div>
     <div class="sf" id="sf" role="group" aria-label="Filtrer par statut"></div>
     <input type="checkbox" id="showOther" checked hidden>
-    <span class="lay" role="group" aria-label="Affichage"><button class="btn ibtn" id="layMap" aria-pressed="true" title="Carte (afficher ou cacher)" aria-label="Carte"><svg class="ic"><use href="#i-map"/></svg></button><button class="btn ibtn" id="layList" aria-pressed="true" title="Liste des lieux (afficher ou cacher)" aria-label="Liste des lieux"><svg class="ic"><use href="#i-list"/></svg></button></span>
     <button class="btn ibtn" id="reload" title="Recharger" aria-label="Recharger"><svg class="ic"><use href="#i-refresh"/></svg></button>
     <button class="btn ibtn" id="toolsBtn" title="Research" aria-label="Research"><svg class="ic"><use href="#i-binoculars"/></svg></button>
     <button class="btn ibtn" id="helpBtn" title="Aide" aria-label="Aide"><svg class="ic"><use href="#i-help"/></svg></button>
@@ -419,11 +433,12 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 </header>
 <main>
   <div id="map" role="region" aria-label="Carte"></div>
+  <div id="split" title="Glisser pour changer la largeur (double-clic : taille de départ)"></div>
   <section id="panel" aria-live="polite"><div class="msg">Lecture du Google Sheet…</div></section>
 </main>
 <nav class="mnav" aria-label="Affichage"><button data-mv="map" aria-pressed="true"><svg class="ic"><use href="#i-map"/></svg>Carte</button><button data-mv="list" aria-pressed="false"><svg class="ic"><use href="#i-list"/></svg>Lieux</button></nav>
 <footer>
-  <span>Version 0.12.0 · 7 octobre 2026</span>
+  <span>Version 0.13.0 · 7 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -532,7 +547,7 @@ function buildModel(lieux, trajet, liens, votes, voyageurs, regions) {
   for (const r of regions) {
     const name = r['Région']; if (!name) continue;
     const more = col(r, 'Pour en savoir plus');
-    regionOf.set(norm(name), { resume: col(r, 'Aperçu') || col(r, 'Résumé'), tips: splitTips(col(r, 'Trucs et astuces') || col(r, 'Astuces')), links: more ? splitLabeled(more) : splitSources(col(r, 'Sources')).map((url) => ({ url, label: '' })) });
+    regionOf.set(norm(name), { media: String(col(r, 'Photo') || '').split(/\s*;\s*/).map((x) => x.trim()).filter((x) => /^https?:\/\//i.test(x)), resume: col(r, 'Aperçu') || col(r, 'Résumé'), tips: splitTips(col(r, 'Trucs et astuces') || col(r, 'Astuces')), links: more ? splitLabeled(more) : splitSources(col(r, 'Sources')).map((url) => ({ url, label: '' })) });
   }
   // stops = route in order; hubs = unique hub names (Paris twice -> one hub)
   const stops = trajet.map((r) => ({ order: +r['Ordre'] || 0, name: r["Port d'attache"], nights: +r['Nuits'] || 0, at: parseCoords(r['Coordonnées']), how: r['Comment on y arrive'] || '' }))
@@ -790,7 +805,7 @@ function render() {
       ${g.other ? '' : zoneHtml(g)}
       <div class="cards">${g.places.map((p) => rowHtml(p)).join('')}</div></details>`;
   }
-  $('panel').innerHTML = `<div id="listView">${html}</div><div id="placeView" hidden></div>`; curPlace = null;
+  $('panel').innerHTML = `<div id="placeView" hidden></div><div id="listView">${html}</div>`; curPlace = null; curRegion = null;
   const fc = $('findCoords'); if (fc) fc.addEventListener('click', findCoords);
   $('fltReset').addEventListener('click', showAllFilters);
   const groups = () => [...document.querySelectorAll('.group')].filter((d) => d.style.display !== 'none');
@@ -798,7 +813,8 @@ function render() {
   $('toggleAll').addEventListener('click', () => { const anyOpen = groups().some((d) => d.open); groups().forEach((d) => { d.open = !anyOpen; }); syncToggle(); });
   document.querySelectorAll('.group').forEach((d) => d.addEventListener('toggle', syncToggle));
   $('panel').querySelectorAll('.group > summary').forEach((el) => el.addEventListener('click', () => {
-    const d = el.parentElement; if (!d.open) setTimeout(() => fitGroup(d.dataset.other ? m.other : m.hubs[+d.id.slice(1)]), 0); }));
+    const d = el.parentElement, g = d.dataset.other ? m.other : m.hubs[+d.id.slice(1)];
+    if (!d.open) setTimeout(() => { fitGroup(g); if (!isMobile()) openRegion(g); }, 0); }));
   toggleOther();
   applyFilter();
   fitAll();
@@ -848,46 +864,93 @@ function placeHtml(p, want) {
       <button class="back" data-back title="Retour à la liste">${ico('arrowl')}${esc(zone)}</button>
       <div class="top"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span><button class="namelink" data-go="${i}" title="Voir sur la carte"><h3>${esc(p.name)}</h3></button>
         <a class="btn ibtn" href="https://www.google.com/maps/search/?api=1&query=${p.at[0]},${p.at[1]}" target="_blank" rel="noopener" title="Ouvrir dans Google Maps" aria-label="Ouvrir dans Google Maps">${ico('pin')}</a>
-        <button class="btn ibtn" data-edit="${i}" title="Modifier cette fiche" aria-label="Modifier cette fiche">${ico('pencil')}</button></div>
+        <button class="btn ibtn" data-edit="${i}" title="Modifier cette fiche" aria-label="Modifier cette fiche">${ico('pencil')}</button><button class="btn ibtn xbtn" data-back title="Fermer" aria-label="Fermer">${ico('x')}</button></div>
       <div class="tabs" role="tablist">${panes.map(([k, t], j) => `<button role="tab" data-tab="${k}" aria-selected="${j === sel}">${t}</button>`).join('')}<button class="allbtn" aria-pressed="false" title="Voir toutes les sections d'un coup">Tout voir</button></div>
     </div>
     <div class="facts">${p.rvk !== 'done' ? `<span class="rvtag rv-${p.rvk}">${RV_LABEL[p.rvk]}</span> ` : ''}${facts}</div>
     ${panes.map(([k, t, h], j) => `<section class="tp" data-tab="${k}" role="tabpanel" ${j === sel ? '' : 'hidden'}><div class="sub ph2">${t}</div>${h}</section>`).join('')}
   </article>`;
 }
+function regionHtml(g, want) {
+  const r = g.region || { resume: '', tips: [], links: [], media: [] };
+  const media = r.media || [];
+  const photosPane = `<div class="ph">${carouselHtml({ media, name: g.name })}</div>${media.length ? '' : `<p class="small">Pas encore de photos ni de vidéos pour cette région. <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(g.name)}" target="_blank" rel="noopener">Chercher des vidéos sur YouTube ↗</a></p>`}`;
+  const panes = [['ph', 'Photos', photosPane], ['ap', 'Aperçu', r.resume ? richText(r.resume) : '<p class="small">Pas encore de description de la région.</p>'],
+    r.tips.length ? ['tip', 'Astuces', tipsHtml(r.tips, '')] : null, r.links.length ? ['lnk', 'Liens', labeledHtml(r.links)] : null].filter(Boolean);
+  let sel = panes.findIndex(([k]) => k === want); if (sel < 0) sel = 1;
+  const meta = g.other ? 'Lieux à plus de 40 km de tous les ports d’attache' : `${g.nights.join(' + ')} n. · ${esc(g.how.filter(Boolean).join(' / '))} · ${g.places.length} lieu${g.places.length > 1 ? 'x' : ''}`;
+  return `<article class="place region" data-g="${g.other ? 'o' : g.index}">
+    <div class="hd">
+      <button class="back" data-back title="Retour à la liste">${ico('arrowl')}Liste</button>
+      <div class="top"><span class="badge" style="background:${colorOf(g)}">${g.other ? 'A' : esc(g.label)}</span><div class="rname"><h3>${esc(g.name)}</h3><div class="small">${meta}</div></div>
+        <button class="btn ibtn xbtn" data-back title="Fermer" aria-label="Fermer">${ico('x')}</button></div>
+      <div class="tabs" role="tablist">${panes.map(([k, t], j) => `<button role="tab" data-tab="${k}" aria-selected="${j === sel}">${t}</button>`).join('')}<button class="allbtn" aria-pressed="false" title="Voir toutes les sections d'un coup">Tout voir</button></div>
+    </div>
+    ${panes.map(([k, t, h], j) => `<section class="tp" data-tab="${k}" role="tabpanel" ${j === sel ? '' : 'hidden'}><div class="sub ph2">${t}</div>${h}</section>`).join('')}
+  </article>`;
+}
+function selectRow(i) {
+  document.querySelectorAll('.prow.sel').forEach((x) => x.classList.remove('sel'));
+  if (i == null) return;
+  const p = model.places[i], d = $('g' + (p.hub.other ? 'o' : p.hub.index)); if (d) d.open = true;
+  const r = $('r' + i); if (r) { r.classList.add('sel'); if (!isMobile()) r.scrollIntoView({ block: 'nearest' }); }
+}
+function showWindow(html) {
+  const pv = $('placeView'); pv.hidden = false; pv.innerHTML = html; pv.scrollTop = 0;
+  if (isMobile()) { $('listView').hidden = true; setView('list'); window.scrollTo(0, $('panel').offsetTop); }
+  return pv;
+}
+let curRegion = null;
 function openPlace(i, want) {
   const p = model.places[i]; if (!p) return;
-  curPlace = i;
-  $('listView').hidden = true;
-  const pv = $('placeView'); pv.hidden = false; pv.innerHTML = placeHtml(p, want);
-  $('panel').scrollTop = 0; if (isMobile()) { setView('list'); window.scrollTo(0, $('panel').offsetTop); }
+  curPlace = i; curRegion = null;
+  const pv = showWindow(placeHtml(p, want));
+  selectRow(i);
   fillWiki(pv.querySelector('.place'));
 }
+function openRegion(g, want) {
+  curRegion = g; curPlace = null;
+  showWindow(regionHtml(g, want));
+  document.querySelectorAll('.prow.sel').forEach((x) => x.classList.remove('sel'));
+  const d = $('g' + (g.other ? 'o' : g.index)); if (d) { d.open = true; if (!isMobile()) d.scrollIntoView({ block: 'nearest' }); }
+}
 function closePlace(scroll = true) {
-  const i = curPlace; curPlace = null;
+  const i = curPlace; curPlace = null; curRegion = null;
   $('placeView').hidden = true; $('placeView').innerHTML = ''; $('listView').hidden = false;
   if (i == null) return;
   const p = model.places[i], d = $('g' + (p.hub.other ? 'o' : p.hub.index)); if (d) d.open = true;
-  const r = $('r' + i); if (r && scroll) { r.scrollIntoView({ block: 'center' }); r.classList.add('hl'); setTimeout(() => r.classList.remove('hl'), 1500); }
+  const r = $('r' + i); if (r && scroll) r.scrollIntoView({ block: 'center' });
 }
-// ---- map / list layout: two buttons, both on by default; on a phone, one at a time ----
-const lay = { map: true, list: true }; let mview = 'map';
+// ---- layout: on a computer, map | divider | (window over list); on a phone, one view at a time ----
+let mview = 'map';
 function applyLayout() {
   const m = isMobile(), b = document.body.classList;
-  b.toggle('nomap', !m && !lay.map); b.toggle('nolist', !m && !lay.list);
   b.toggle('m-map', m && mview === 'map'); b.toggle('m-list', m && mview === 'list');
-  $('layMap').setAttribute('aria-pressed', lay.map); $('layList').setAttribute('aria-pressed', lay.list);
   document.querySelectorAll('.mnav button').forEach((x) => x.setAttribute('aria-pressed', x.dataset.mv === mview));
+  if (!m && curPlace == null && curRegion == null) $('listView') && ($('listView').hidden = false);
+  if (!m && $('listView')) $('listView').hidden = false;
   setTimeout(() => { map.invalidateSize(); if (mapShown() && !map._fitted && model) { map._fitted = true; fitAll(); } }, 60);
 }
-function setView(v) {
-  if (isMobile()) mview = v; else if (!lay[v]) lay[v] = true;
-  applyLayout();
-}
-$('layMap').addEventListener('click', () => { if (lay.map && !lay.list) return; lay.map = !lay.map; applyLayout(); });
-$('layList').addEventListener('click', () => { if (lay.list && !lay.map) return; lay.list = !lay.list; applyLayout(); });
+function setView(v) { if (isMobile()) mview = v; applyLayout(); }
 document.querySelectorAll('.mnav button').forEach((x) => x.addEventListener('click', () => { mview = x.dataset.mv; applyLayout(); }));
 window.addEventListener('resize', applyLayout);
+// draggable divider between the map and the right side (remembered on this device)
+(() => {
+  const sp = $('split'), mainEl = document.querySelector('main');
+  const setW = (px) => { mainEl.style.setProperty('--mapw', px ? px + 'px' : ''); };
+  try { const w = +localStorage.getItem('mapw2027'); if (w) setW(w); } catch {}
+  let drag = false;
+  sp.addEventListener('pointerdown', (e) => { drag = true; sp.setPointerCapture(e.pointerId); document.body.classList.add('dragging'); });
+  sp.addEventListener('pointermove', (e) => {
+    if (!drag) return; const r = mainEl.getBoundingClientRect();
+    setW(Math.max(260, Math.min(r.width - 380, e.clientX - r.left)));
+  });
+  sp.addEventListener('pointerup', () => {
+    if (!drag) return; drag = false; document.body.classList.remove('dragging'); map.invalidateSize();
+    try { localStorage.setItem('mapw2027', parseInt(getComputedStyle(mainEl).getPropertyValue('--mapw')) || ''); } catch {}
+  });
+  sp.addEventListener('dblclick', () => { setW(0); try { localStorage.removeItem('mapw2027'); } catch {} setTimeout(() => map.invalidateSize(), 50); });
+})();
 applyLayout();
 $('panel').addEventListener('click', (e) => {
   const ed = e.target.closest('[data-edit]');
@@ -895,9 +958,9 @@ $('panel').addEventListener('click', (e) => {
   const nv = e.target.closest('.car .nav');
   if (nv) { carGo(nv.closest('.car'), nv.classList.contains('next') ? 1 : -1); return; }
   const go = e.target.closest('[data-go]');
-  if (go) { const p = model.places[+go.dataset.go]; if (isMobile()) setView('map'); else if (!lay.map) setView('map'); flyTo(p); return; }
+  if (go) { const p = model.places[+go.dataset.go]; if (isMobile()) setView('map'); flyTo(p); return; }
   const rw = e.target.closest('[data-row]');
-  if (rw) { openPlace(+rw.dataset.row); return; }
+  if (rw) { const i = +rw.dataset.row; openPlace(i); if (!isMobile()) flyTo(model.places[i]); return; }
   if (e.target.closest('[data-back]')) { closePlace(); return; }
   const ab = e.target.closest('.allbtn');
   if (ab) {
@@ -914,7 +977,7 @@ $('panel').addEventListener('click', (e) => {
     const pane = c.querySelector(`.tp[data-tab="${tb.dataset.tab}"]`);
     if (c.classList.contains('all')) { pane.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     c.querySelectorAll('.tp').forEach((t) => { t.hidden = t !== pane; });
-    if (c.querySelector('.hd').getBoundingClientRect().top <= 1) $('panel').scrollTop = 0;
+    $('placeView').scrollTop = 0;
   }
 });
 // ---- Modifier une fiche : écrit dans le Google Sheet par le pont Apps Script ----
@@ -1214,6 +1277,7 @@ function popupHtml(p) {
   return `${img ? `<img src="${esc(img)}" alt="" onerror="this.remove()">` : ''}<b>${esc(p.num)} · ${esc(p.name)}</b>${lead}<button class="btn pbtn fiche" onclick="showCard(${i})">Voir la fiche</button>`;
 }
 function openGroup(idx, fit) {
+  if (!isMobile()) { const g = model.hubs[idx]; openRegion(g); if (fit) fitGroup(g); return; }
   if (curPlace != null) closePlace(false);
   setView('list');
   const d = $('g' + idx); if (!d) return;
