@@ -164,8 +164,8 @@ body.nolist main{ grid-template-columns:minmax(0,1fr); } body.nolist #panel{ dis
 .rband{ display:flex; align-items:center; gap:8px; margin:0 -16px; padding:7px 10px 7px 16px; color:#fff; }
 .rband .rbname{ font:inherit; font-family:var(--serif); font-size:19px; font-weight:700; color:#fff; background:none; border:0; padding:0; margin-right:auto; text-align:left; line-height:1.2; }
 button.rbname{ cursor:pointer; } button.rbname:hover{ text-decoration:underline; text-underline-offset:3px; }
-.rband .xbtn{ background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.45); color:#fff; }
-.rband .xbtn:hover{ background:rgba(255,255,255,.3); }
+.rband .rbbtn{ background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.45); color:#fff; }
+.rband .rbbtn:hover{ background:rgba(255,255,255,.3); }
 .place .psub{ margin-top:8px; }
 .place .psub h3{ font-size:20px; }
 .rmeta{ margin:6px 0 0; }
@@ -337,6 +337,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <symbol id="i-list" viewBox="0 0 24 24"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></symbol>
   <symbol id="i-arrowl" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></symbol>
   <symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
 </svg>
 <dialog id="help"><div class="help">
@@ -353,11 +354,11 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 
   <details class="hs"><summary>Modifier une fiche (photos, liens, textes)</summary>
   <dl>
-    <dt>1. Ouvrir</dt><dd>Ouvrir la fiche du lieu, puis toucher le <b>crayon</b> en haut.</dd>
+    <dt>1. Ouvrir</dt><dd>Ouvrir la fiche du lieu (ou de la région), puis toucher le <b>crayon</b> en haut. Pour une région, le crayon est dans la bande de couleur.</dd>
     <dt>2. Code</dt><dd>La première fois, entrer le code d'accès (le demander à David). La page s'en souvient ensuite sur cet appareil.</dd>
     <dt>3. Coller</dt><dd>Photos : une adresse d'image par ligne (clic droit sur l'image, « Copier l'adresse de l'image »). Pour en savoir plus : une courte description puis le lien, un par ligne. Trucs et astuces : un conseil par ligne. Icônes : la barre d'icônes en haut de l'écran les insère là où se trouve le curseur ; une ligne qui commence par « Distance : », « Durée : », « Difficulté : » ou « Pourquoi : » reçoit son icône toute seule. Dans les autres textes : une ligne vide = nouveau paragraphe, « - » au début d'une ligne = puce, **texte** entre deux paires d'étoiles = gras.</dd>
     <dt>Fiche revue</dt><dd>Cocher <b>Fiche revue</b> en bas quand la fiche est vraiment à nous. Ajouter une photo ou un lien ne suffit pas pour la cocher.</dd>
-    <dt>4. Enregistrer</dt><dd>La fiche change tout de suite sur votre écran. Les autres la verront d'ici environ 5 minutes.</dd>
+    <dt>4. Enregistrer</dt><dd>Toucher la <b>disquette</b> en haut à droite. La fiche change tout de suite sur votre écran. Les autres la verront d'ici environ 5 minutes.</dd>
   </dl></details>
 
   <details class="hs"><summary>Lire une fiche</summary>
@@ -436,7 +437,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   </div>
 </div></dialog>
 <dialog id="edit"><div class="help">
-  <div class="dhead"><button class="btn ibtn" id="edCancel" title="Fermer sans enregistrer" aria-label="Fermer"><svg class="ic"><use href="#i-x"/></svg></button><h2 id="edTitle">Modifier</h2><button class="btn primary" id="edSave">Enregistrer</button></div>
+  <div class="dhead"><button class="btn ibtn" id="edCancel" title="Fermer sans enregistrer" aria-label="Fermer"><svg class="ic"><use href="#i-x"/></svg></button><h2 id="edTitle">Modifier</h2><button class="btn primary ibtn" id="edSave" title="Enregistrer" aria-label="Enregistrer"><svg class="ic"><use href="#i-save"/></svg></button></div>
   <div class="small" id="edMsg" role="status"></div>
   <p class="small" style="margin:0">Les changements vont directement dans le Google Sheet. Les autres les verront d'ici environ 5 minutes.</p>
   <label class="edf" id="edKeyRow"><span class="sub">Code d'accès</span><span class="small">Demander le code à David. La page s'en souvient ensuite sur cet appareil.</span><input id="edKey" type="password" autocomplete="current-password"></label>
@@ -464,7 +465,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 </main>
 <nav class="mnav" aria-label="Affichage"><button data-mv="map" aria-pressed="true"><svg class="ic"><use href="#i-map"/></svg>Carte</button><button data-mv="list" aria-pressed="false"><svg class="ic"><use href="#i-list"/></svg>Lieux</button></nav>
 <footer>
-  <span>Version 0.16.0 · 7 octobre 2026</span>
+  <span>Version 0.17.0 · 7 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -549,6 +550,13 @@ function applyRaw(p) {
   const rv = norm(v['Révision']);
   p.rvk = rv === 'revu' ? 'done' : rv === 'nouveau' ? 'new' : rv === 'a revoir' ? 'todo' : (p.apercu || p.acces || p.faire || p.trucs.length || p.note ? 'todo' : 'new');
 }
+// region display values from its raw (editable) values
+function applyRegionRaw(reg) {
+  const v = reg.raw, more = String(v['Pour en savoir plus'] || '');
+  reg.media = String(v['Photo'] || '').split(/\s*;\s*/).map((x) => x.trim()).filter((x) => /^https?:\/\//i.test(x));
+  reg.resume = v['Aperçu'] || ''; reg.tips = splitTips(v['Trucs et astuces']);
+  reg.links = /;/.test(more) || !/\|/.test(more) ? splitLabeled(more) : splitSources(more).map((url) => ({ url, label: '' }));
+}
 // statuses (old words still understood)
 const ST_LABEL = { explore: 'À explorer', cand: 'Bon candidat', conf: 'Confirmé', aside: 'Mis de côté' };
 function baseKey(s) {
@@ -573,7 +581,8 @@ function buildModel(lieux, trajet, liens, votes, voyageurs, regions) {
   for (const r of regions) {
     const name = r['Région']; if (!name) continue;
     const more = col(r, 'Pour en savoir plus');
-    regionOf.set(norm(name), { media: String(col(r, 'Photo') || '').split(/\s*;\s*/).map((x) => x.trim()).filter((x) => /^https?:\/\//i.test(x)), resume: col(r, 'Aperçu') || col(r, 'Résumé'), tips: splitTips(col(r, 'Trucs et astuces') || col(r, 'Astuces')), links: more ? splitLabeled(more) : splitSources(col(r, 'Sources')).map((url) => ({ url, label: '' })) });
+    const raw = { 'Photo': col(r, 'Photo'), 'Aperçu': col(r, 'Aperçu') || col(r, 'Résumé'), 'Trucs et astuces': col(r, 'Trucs et astuces') || col(r, 'Astuces'), 'Pour en savoir plus': col(r, 'Pour en savoir plus') || col(r, 'Sources') };
+    regionOf.set(norm(name), { raw, media: String(col(r, 'Photo') || '').split(/\s*;\s*/).map((x) => x.trim()).filter((x) => /^https?:\/\//i.test(x)), resume: col(r, 'Aperçu') || col(r, 'Résumé'), tips: splitTips(col(r, 'Trucs et astuces') || col(r, 'Astuces')), links: more ? splitLabeled(more) : splitSources(col(r, 'Sources')).map((url) => ({ url, label: '' })) });
   }
   // stops = route in order; hubs = unique hub names (Paris twice -> one hub)
   const stops = trajet.map((r) => ({ order: +r['Ordre'] || 0, name: r["Port d'attache"], nights: +r['Nuits'] || 0, at: parseCoords(r['Coordonnées']), how: r['Comment on y arrive'] || '' }))
@@ -893,7 +902,8 @@ function placeHtml(p, want) {
 function bandHtml(g, link) {
   const key = g.other ? 'o' : g.index;
   const label = `${g.other ? 'A' : esc(g.label)} · ${esc(g.name)}`;
-  return `<div class="rband" style="background:${colorOf(g)}">${link ? `<button class="rbname" data-region="${key}" title="Voir la fiche de la région">${label} ›</button>` : `<span class="rbname">${label}</span>`}</div>`;
+  const pen = !link && !g.other ? `<button class="btn ibtn rbbtn" data-redit="${key}" title="Modifier la région" aria-label="Modifier la région">${ico('pencil')}</button>` : '';
+  return `<div class="rband" style="background:${colorOf(g)}">${link ? `<button class="rbname" data-region="${key}" title="Voir la fiche de la région">${label} ›</button>` : `<span class="rbname">${label}</span>`}${pen}</div>`;
 }
 function regionHtml(g, want) {
   const r = g.region || { resume: '', tips: [], links: [], media: [] };
@@ -1017,6 +1027,8 @@ $('panel').addEventListener('click', (e) => {
   if (ed) { openEditor(model.places[+ed.dataset.edit]); return; }
   const nv = e.target.closest('.car .nav');
   if (nv) { carGo(nv.closest('.car'), nv.classList.contains('next') ? 1 : -1); return; }
+  const re = e.target.closest('[data-redit]');
+  if (re) { openRegionEditor(groupOf(re.dataset.redit)); return; }
   const rb = e.target.closest('[data-region]');
   if (rb) { const g = groupOf(rb.dataset.region); openRegion(g); if (!isMobile()) fitGroup(g); return; }
   const rn = e.target.closest('[data-rnav]');
@@ -1076,28 +1088,52 @@ function fromEditor(kind, v) {
   if (kind === 'tips') return lines.map((x) => (/[.!?…)]$/.test(x) || /https?:\/\/\S+$/.test(x) ? x : x + '.')).join(' ');
   return String(v || '').replace(/\r/g, '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
 }
-let editing = null;
+let editing = null, edUI = [];
+const EDIT_UI_REGION = [
+  ['Photo', 'Photos et vidéos', 'Une adresse par ligne : vidéos YouTube (« 9 randonnées dans les Dolomites »), images. Elles s’affichent en haut de la fiche de la région.', 'lines', 3],
+  ['Aperçu', 'Aperçu', 'Quel genre de voyage cette région offre (montagne et randonnée, vignobles et culture, mer…), comment on s’y déplace, à quoi s’attendre en septembre.', 'text', 5],
+  ['Trucs et astuces', 'Trucs et astuces', 'Un conseil par ligne : cartes de transport, fermetures de fin de saison, réservations.', 'tips', 4],
+  ['Pour en savoir plus', 'Pour en savoir plus', 'Un lien par ligne : une courte description, puis l’adresse.', 'lines', 4],
+];
+function fieldsHtml(ui, raw) {
+  return ui.map(([f, label, hint, kind, rows], j) =>
+    `<label class="edf"><span class="sub">${label}</span><span class="small">${hint}</span>${kind === 'short'
+      ? `<input data-f="${j}" value="${esc(toEditor(kind, raw[f]))}">`
+      : `<textarea data-f="${j}" rows="${rows}">${esc(toEditor(kind, raw[f]))}</textarea>`}</label>`).join('');
+}
+function openRegionEditor(g) {
+  if (!g || g.other) return;
+  if (!g.region) { g.region = { raw: { 'Photo': '', 'Aperçu': '', 'Trucs et astuces': '', 'Pour en savoir plus': '' } }; applyRegionRaw(g.region); }
+  editing = { region: g }; lastBox = null; edUI = EDIT_UI_REGION;
+  $('edTitle').textContent = g.name;
+  $('edMsg').textContent = ''; $('edMsg').className = 'small';
+  let k = ''; try { k = localStorage.getItem(KEYSTORE) || ''; } catch {}
+  $('edKey').value = k; $('edKeyRow').hidden = !!k;
+  $('edFields').innerHTML = fieldsHtml(edUI, g.region.raw);
+  $('edRev').checked = false; $('edRev').closest('.edrev').hidden = true;
+  edSnap = edState();
+  $('edit').showModal();
+}
 function openEditor(p) {
-  editing = p; lastBox = null;
+  editing = p; lastBox = null; edUI = EDIT_UI.filter(([f]) => f !== 'Note' || p.raw['Note']);
+  $('edRev').closest('.edrev').hidden = false;
   $('edTitle').textContent = p.name;
   $('edMsg').textContent = ''; $('edMsg').className = 'small';
   let k = ''; try { k = localStorage.getItem(KEYSTORE) || ''; } catch {}
   $('edKey').value = k; $('edKeyRow').hidden = !!k;
-  $('edFields').innerHTML = EDIT_UI.filter(([f]) => f !== 'Note' || p.raw['Note']).map(([f, label, hint, kind, rows], j) =>
-    `<label class="edf"><span class="sub">${label}</span><span class="small">${hint}</span>${kind === 'short'
-      ? `<input data-f="${j}" value="${esc(toEditor(kind, p.raw[f]))}">`
-      : `<textarea data-f="${j}" rows="${rows}">${esc(toEditor(kind, p.raw[f]))}</textarea>`}</label>`).join('');
+  $('edFields').innerHTML = fieldsHtml(edUI, p.raw);
   $('edRev').checked = p.rvk === 'done';
   edSnap = edState();
   $('edit').showModal();
 }
 async function saveEditor() {
+  if (editing && editing.region) return saveRegionEditor();
   const p = editing; if (!p) return;
   const cle = $('edKey').value.trim();
   if (!cle) { $('edKeyRow').hidden = false; $('edKey').focus(); $('edMsg').textContent = 'Entrer le code d’accès.'; return; }
   const champs = {};
   $('edFields').querySelectorAll('[data-f]').forEach((el) => {
-    const [f, , , kind] = EDIT_UI[+el.dataset.f];
+    const [f, , , kind] = edUI[+el.dataset.f];
     const val = fromEditor(kind, el.value);
     if (val !== String(p.raw[f] || '').trim()) champs[f] = val;
   });
@@ -1133,6 +1169,33 @@ $('edIcons').addEventListener('click', (e) => {
   const box = lastBox || $('edFields').querySelector('textarea'); if (!box) return;
   box.focus(); box.setRangeText(`[${b.dataset.ic}] `, box.selectionStart, box.selectionEnd, 'end');
 });
+async function saveRegionEditor() {
+  const g = editing.region, reg = g.region;
+  const cle = $('edKey').value.trim();
+  if (!cle) { $('edKeyRow').hidden = false; $('edKey').focus(); $('edMsg').textContent = 'Entrer le code d’accès.'; return; }
+  const champs = {};
+  $('edFields').querySelectorAll('[data-f]').forEach((el) => {
+    const [f, , , kind] = edUI[+el.dataset.f];
+    const val = fromEditor(kind, el.value);
+    if (val !== String(reg.raw[f] || '').trim()) champs[f] = val;
+  });
+  if (!Object.keys(champs).length) { $('edit').close(); return; }
+  $('edSave').disabled = true; $('edMsg').className = 'small'; $('edMsg').textContent = 'Enregistrement…';
+  try {
+    const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'modifierRegion', region: g.name, champs }) });
+    const j = await r.json();
+    if (!j.ok) {
+      if (/code/i.test(j.erreur || '')) { try { localStorage.removeItem(KEYSTORE); } catch {} $('edKeyRow').hidden = false; }
+      throw new Error(j.erreur || 'Erreur');
+    }
+    try { localStorage.setItem(KEYSTORE, cle); } catch {}
+    Object.assign(reg.raw, champs); applyRegionRaw(reg);
+    if (curRegion === g) openRegion(g, null, false);
+    $('edit').close();
+  } catch (err) {
+    $('edMsg').className = 'small err'; $('edMsg').textContent = 'Pas enregistré : ' + err.message;
+  } finally { $('edSave').disabled = false; }
+}
 $('edSave').addEventListener('click', saveEditor);
 const edState = () => [...$('edFields').querySelectorAll('[data-f]')].map((el) => el.value).join('\u0001') + ($('edRev').checked ? '1' : '0');
 let edSnap = '';
