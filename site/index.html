@@ -77,6 +77,15 @@ main{ flex:1; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(340px,1
 .links a:hover{ border-left-color:var(--ink); }
 .links a span{ color:var(--muted); font-size:13px; }
 .links a .ic{ margin-top:3px; color:var(--muted); }
+.editbar{ margin-top:12px; padding-top:8px; border-top:1px dashed var(--line); }
+.edf{ display:block; margin-top:12px; }
+.edf .small{ display:block; margin-bottom:4px; }
+.edf textarea,.edf input{ font:inherit; font-size:16px; width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); resize:vertical; }
+.edf textarea:focus,.edf input:focus{ outline:3px solid #1f5f99; outline-offset:1px; }
+.edbtns{ display:flex; gap:10px; align-items:center; margin-top:16px; flex-wrap:wrap; }
+.edbtns #edSave{ background:var(--ink); color:var(--card); border-color:var(--ink); }
+.edbtns a{ margin-left:auto; color:var(--muted); }
+.err{ color:#9b2335; font-weight:700; }
 .car{ position:relative; margin-top:8px; }
 .car .slide img{ margin-top:0; max-height:260px; }
 .car .slide.vid{ aspect-ratio:16/9; }
@@ -130,6 +139,7 @@ main{ flex:1; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(340px,1
 .leaflet-popup-content .pbtn{ display:inline-flex; }
 .results .none{ padding:10px; color:var(--muted); font-size:14px; }
 dialog{ border:0; padding:0; border-radius:14px; width:min(640px,94vw); max-height:90vh; background:var(--card); color:var(--ink); box-shadow:0 20px 60px rgba(0,0,0,.35); }
+dialog{ overflow:auto; }
 dialog::backdrop{ background:rgba(15,22,20,.5); }
 .help{ padding:18px 22px 22px; }
 .help h2{ font-family:var(--serif); font-size:26px; margin:0 0 6px; }
@@ -187,6 +197,14 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <dt>Pas trouvé ?</dt><dd>Si la page ne trouve pas le lieu, l'ouvrir dans Google Maps, toucher <b>Partager</b>, puis <b>Copier le lien</b>, et coller ce lien dans la note.</dd>
   </dl></details>
 
+  <details class="hs"><summary>Modifier une fiche (photos, liens, textes)</summary>
+  <dl>
+    <dt>1. Ouvrir</dt><dd>Ouvrir la fiche avec <b>Détails</b>, puis toucher <b>✎ Modifier cette fiche</b> en bas.</dd>
+    <dt>2. Code</dt><dd>La première fois, entrer le code d'accès (le demander à David). La page s'en souvient ensuite sur cet appareil.</dd>
+    <dt>3. Coller</dt><dd>Photos : une adresse d'image par ligne (clic droit sur l'image, « Copier l'adresse de l'image »). Pour en savoir plus : une courte description puis le lien, un par ligne. Trucs et astuces : un conseil par ligne.</dd>
+    <dt>4. Enregistrer</dt><dd>La fiche change tout de suite sur votre écran. Les autres la verront d'ici environ 5 minutes.</dd>
+  </dl></details>
+
   <details class="hs"><summary>Lire une fiche</summary>
   <dl>
     <dt>Nom souligné</dt><dd>Toucher le nom pour voir le lieu sur la carte. Toucher un point sur la carte met sa fiche en évidence.</dd>
@@ -229,6 +247,14 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <a class="btn" href="https://docs.google.com/spreadsheets/d/1mnxZiexvV5cnWcc1inZzZCftosAQsTyMMMLsrFbjyuY/edit" target="_blank" rel="noopener"><svg class="ic"><use href="#i-note"/></svg>Ouvrir le Google Sheet</a>
   </details>
 </div></dialog>
+<dialog id="edit"><div class="help">
+  <h2 id="edTitle">Modifier</h2>
+  <p class="small" style="margin:0">Les changements vont directement dans le Google Sheet. Les autres les verront d'ici environ 5 minutes.</p>
+  <label class="edf" id="edKeyRow"><span class="sub">Code d'accès</span><span class="small">Demander le code à David. La page s'en souvient ensuite sur cet appareil.</span><input id="edKey" type="password" autocomplete="current-password"></label>
+  <div id="edFields"></div>
+  <div class="edbtns"><button class="btn" id="edSave">Enregistrer</button><button class="btn" id="edCancel">Annuler</button><a href="#" class="small" id="edForget">Oublier le code sur cet appareil</a></div>
+  <div class="small" id="edMsg" role="status"></div>
+</div></dialog>
 <header>
   <h1>Italie 2027</h1>
   <span class="sum" id="sum">Chargement…</span>
@@ -245,7 +271,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture du Google Sheet…</div></section>
 </main>
 <footer>
-  <span>Version 0.7.1 · 6 octobre 2026</span>
+  <span>Version 0.8.0 · 6 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -317,6 +343,15 @@ function splitLabeled(s) {
     return { url, label };
   }).filter(Boolean);
 }
+// the fields anyone with the access code can edit from the page (same list as the Apps Script bridge)
+const EDIT_FIELDS = ['Photo', 'Type', 'Aperçu', "Comment s'y rendre", 'Quoi faire', 'Trucs et astuces', 'Pour en savoir plus', 'Note'];
+function applyRaw(p) {
+  const v = p.raw;
+  p.photo = v['Photo']; p.type = v['Type']; p.note = v['Note'];
+  p.media = String(v['Photo'] || '').split(/\s*;\s*/).map((x) => x.trim()).filter((x) => /^https?:\/\//i.test(x) || /^photos\//i.test(x));
+  p.apercu = v['Aperçu']; p.acces = v["Comment s'y rendre"]; p.faire = v['Quoi faire'];
+  p.trucs = splitTips(v['Trucs et astuces']); p.plus = splitLabeled(v['Pour en savoir plus']);
+}
 // statuses (old words still understood)
 const ST_LABEL = { explore: 'À explorer', cand: 'Bon candidat', conf: 'Confirmé', aside: 'Mis de côté' };
 function baseKey(s) {
@@ -365,11 +400,12 @@ function buildModel(lieux, trajet, liens, votes, voyageurs, regions) {
     if (!at) { skipped.push({ name, region: r['Région'] || '', row: r._row }); continue; }
     let best = null, bd = Infinity;
     for (const h of hubs) { const d = km(at, h.at); if (d < bd) { bd = d; best = h; } }
-    const p = { name, at, statut: r['Statut'] || '', type: r['Type'] || '', photo: r['Photo'] || '', note: r['Note'] || '', by: r['Ajouté par'] || '', wiki: r['Wikipédia'] || r['Wikipedia'] || '',
+    const p = { name, at, row: r._row, statut: r['Statut'] || '', by: r['Ajouté par'] || '', wiki: r['Wikipédia'] || r['Wikipedia'] || '',
+      raw: Object.fromEntries(EDIT_FIELDS.map((f) => [f, col(r, f)])),
       tips: splitTips(r['Astuces']), sources: splitSources(r['Sources']),
-      media: String(r['Photo'] || '').split(/\s*;\s*/).map((x) => x.trim()).filter((x) => /^https?:\/\//i.test(x) || /^photos\//i.test(x)),
-      apercu: col(r, 'Aperçu'), acces: col(r, "Comment s'y rendre"), faire: col(r, 'Quoi faire'), trucs: splitTips(col(r, 'Trucs et astuces')), plus: splitLabeled(col(r, 'Pour en savoir plus')),
+
       links: linkRows.filter((l) => l.places.includes(norm(name))), dist: Math.round(bd) };
+    applyRaw(p);
     const home = best && bd <= RADIUS_KM ? best : other;
     p.hub = home; p.near = best ? best.name : ''; home.places.push(p); places.push(p);
   }
@@ -614,6 +650,7 @@ function cardHtml(p) {
       <div class="ph">${carouselHtml(p)}</div>
       ${tabs.length > 1 ? `<div class="tabs" role="tablist">${tabs.map(([k, t], j) => `<button role="tab" data-tab="${k}" aria-selected="${j === 0}">${t}</button>`).join('')}</div>` : ''}
       ${tabs.map(([k], j) => `<div class="tp" data-tab="${k}" role="tabpanel" ${j ? 'hidden' : ''}>${panes[k]}</div>`).join('')}
+      <div class="editbar"><button class="btn" data-edit="${i}">✎ Modifier cette fiche</button></div>
     </div>
   </article>`;
 }
@@ -623,6 +660,8 @@ function openCard(c, on) {
   const b = c.querySelector('[data-open]'); b.setAttribute('aria-expanded', on); b.textContent = on ? 'Fermer' : 'Détails';
 }
 $('panel').addEventListener('click', (e) => {
+  const ed = e.target.closest('[data-edit]');
+  if (ed) { openEditor(model.places[+ed.dataset.edit]); return; }
   const nv = e.target.closest('.car .nav');
   if (nv) { carGo(nv.closest('.car'), nv.classList.contains('next') ? 1 : -1); return; }
   const ob = e.target.closest('[data-open]');
@@ -634,6 +673,77 @@ $('panel').addEventListener('click', (e) => {
     c.querySelectorAll('.tp').forEach((t) => { t.hidden = t.dataset.tab !== tb.dataset.tab; });
   }
 });
+// ---- Modifier une fiche : écrit dans le Google Sheet par le pont Apps Script ----
+const BRIDGE = 'https://script.google.com/macros/s/AKfycbyCotxDUUTRLehfNSRBgFTfOD6vL8Al0S69w7j0mFk0k2JPUnExCZLYOlT1Nw4OucxcIw/exec';
+const KEYSTORE = 'cle2027';
+// how each field is shown in the editor: some are "one per line", stored with " ; " or as sentences
+const EDIT_UI = [
+  ['Photo', 'Photos et vidéos', 'Une adresse par ligne. Pour une image : clic droit sur l’image, « Copier l’adresse de l’image ». YouTube et Vimeo jouent dans la fiche.', 'lines', 3],
+  ['Aperçu', 'Aperçu', 'Pourquoi y aller, en une ou deux phrases.', 'text', 3],
+  ["Comment s'y rendre", 'Comment s’y rendre', 'Depuis le port d’attache : autobus, remontée, à pied, temps de trajet. Un lien à la fin d’une phrase devient un petit lien ↗.', 'text', 3],
+  ['Quoi faire', 'Quoi faire', 'La balade ou la visite, étape par étape.', 'text', 4],
+  ['Trucs et astuces', 'Trucs et astuces', 'Un conseil par ligne.', 'tips', 4],
+  ['Pour en savoir plus', 'Pour en savoir plus', 'Un lien par ligne : une courte description, puis l’adresse (ex. « Récit de la randonnée https://… »).', 'lines', 4],
+  ['Type', 'Type', 'Village, Sommet, Lac, Randonnée…', 'short', 1],
+  ['Note', 'Ancien résumé (Note)', 'Seulement pour les fiches pas encore refaites.', 'text', 3],
+];
+function toEditor(kind, v) {
+  v = String(v || '');
+  if (kind === 'lines') return v.split(/\s*;\s*/).map((x) => x.trim()).filter(Boolean).join('\n');
+  if (kind === 'tips') return splitTips(v).join('\n');
+  return v;
+}
+function fromEditor(kind, v) {
+  const lines = String(v || '').split(/\n+/).map((x) => x.trim()).filter(Boolean);
+  if (kind === 'lines') return lines.join(' ; ');
+  if (kind === 'tips') return lines.map((x) => (/[.!?…)]$/.test(x) || /https?:\/\/\S+$/.test(x) ? x : x + '.')).join(' ');
+  return lines.join(' ');
+}
+let editing = null;
+function openEditor(p) {
+  editing = p;
+  $('edTitle').textContent = p.name;
+  $('edMsg').textContent = ''; $('edMsg').className = 'small';
+  let k = ''; try { k = localStorage.getItem(KEYSTORE) || ''; } catch {}
+  $('edKey').value = k; $('edKeyRow').hidden = !!k;
+  $('edFields').innerHTML = EDIT_UI.filter(([f]) => f !== 'Note' || p.raw['Note']).map(([f, label, hint, kind, rows], j) =>
+    `<label class="edf"><span class="sub">${label}</span><span class="small">${hint}</span>${kind === 'short'
+      ? `<input data-f="${j}" value="${esc(toEditor(kind, p.raw[f]))}">`
+      : `<textarea data-f="${j}" rows="${rows}">${esc(toEditor(kind, p.raw[f]))}</textarea>`}</label>`).join('');
+  $('edit').showModal();
+}
+async function saveEditor() {
+  const p = editing; if (!p) return;
+  const cle = $('edKey').value.trim();
+  if (!cle) { $('edKeyRow').hidden = false; $('edKey').focus(); $('edMsg').textContent = 'Entrer le code d’accès.'; return; }
+  const champs = {};
+  $('edFields').querySelectorAll('[data-f]').forEach((el) => {
+    const [f, , , kind] = EDIT_UI[+el.dataset.f];
+    const val = fromEditor(kind, el.value);
+    if (val !== String(p.raw[f] || '').trim()) champs[f] = val;
+  });
+  if (!Object.keys(champs).length) { $('edit').close(); return; }
+  $('edSave').disabled = true; $('edMsg').className = 'small'; $('edMsg').textContent = 'Enregistrement…';
+  try {
+    const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'modifier', ligne: p.row, lieu: p.name, champs }) });
+    const j = await r.json();
+    if (!j.ok) {
+      if (/code/i.test(j.erreur || '')) { try { localStorage.removeItem(KEYSTORE); } catch {} $('edKeyRow').hidden = false; }
+      throw new Error(j.erreur || 'Erreur');
+    }
+    try { localStorage.setItem(KEYSTORE, cle); } catch {}
+    Object.assign(p.raw, champs); if (j.ligne) p.row = j.ligne; applyRaw(p);
+    // show the change right away (the published Google Sheet takes about 5 minutes to catch up)
+    const i = model.places.indexOf(p), old = $('c' + i);
+    if (old) { old.outerHTML = cardHtml(p); const c = $('c' + i); openCard(c, true); fillWiki(c); applyFilter(); }
+    $('edit').close();
+  } catch (err) {
+    $('edMsg').className = 'small err'; $('edMsg').textContent = 'Pas enregistré : ' + err.message;
+  } finally { $('edSave').disabled = false; }
+}
+$('edSave').addEventListener('click', saveEditor);
+$('edCancel').addEventListener('click', () => $('edit').close());
+$('edForget').addEventListener('click', (e) => { e.preventDefault(); try { localStorage.removeItem(KEYSTORE); } catch {} $('edKey').value = ''; $('edKeyRow').hidden = false; });
 let swipeX = null;
 $('panel').addEventListener('touchstart', (e) => { swipeX = e.target.closest('.car') ? e.touches[0].clientX : null; }, { passive: true });
 $('panel').addEventListener('touchend', (e) => {
