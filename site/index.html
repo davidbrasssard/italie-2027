@@ -77,6 +77,8 @@ main{ flex:1; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(340px,1
 .links a:hover{ border-left-color:var(--ink); }
 .links a span{ color:var(--muted); font-size:13px; }
 .links a .ic{ margin-top:3px; color:var(--muted); }
+.il{ color:var(--ink); font-size:13px; white-space:nowrap; text-decoration:none; border-bottom:1px solid var(--line); }
+.il:hover{ border-bottom-color:var(--ink); }
 .src summary{ cursor:pointer; color:var(--muted); font-size:14px; margin-top:8px; }
 .acts{ display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
 .msg{ padding:16px; color:var(--muted); }
@@ -196,8 +198,8 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 
   <details class="hs"><summary>Les onglets de la fiche</summary>
   <dl>
-    <dt>Résumé</dt><dd>Notre résumé du lieu, puis les <b>Astuces</b> pratiques. Sans résumé à nous, la page montre celui de Wikipédia.</dd>
-    <dt>Liens</dt><dd><b>Sources</b> : les sites qui appuient le résumé et les astuces. <b>Liens du groupe</b> : vidéos, blogues ou photos partagés par le groupe.</dd>
+    <dt>Fiche</dt><dd><b>Aperçu</b> (pourquoi y aller), <b>Comment s'y rendre</b>, <b>Quoi faire</b> et <b>Trucs et astuces</b>, tirés de récits de voyageurs. Un petit lien ↗ après une phrase mène au site dont elle parle (billets, horaires, refuge). Pour un lieu pas encore refait, l'onglet s'appelle <b>Résumé</b> ; sans texte à nous, la page montre Wikipédia.</dd>
+    <dt>Liens</dt><dd><b>Pour en savoir plus</b> : les meilleurs liens pour approfondir, avec ce qu'on y trouve. <b>Liens du groupe</b> : vidéos, blogues ou photos partagés par le groupe.</dd>
     <dt>Icônes</dt><dd><svg class="ic"><use href="#i-play"/></svg> vidéo · <svg class="ic"><use href="#i-image"/></svg> image · <svg class="ic"><use href="#i-globe"/></svg> site Web</dd>
     <dt>Avis</dt><dd>Les votes de chacun. <b>À discuter</b> = nos votes diffèrent. Un onglet vide n'apparaît pas.</dd>
   </dl></details>
@@ -205,10 +207,10 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <details class="hs"><summary>Pour le Google Sheet (David)</summary>
   <dl>
     <dt>Principe</dt><dd>Tout vient du Google Sheet « Italie 2027 – Lieux ». Pour changer la page, on change le Google Sheet. Le mode d'emploi complet est dans l'onglet <b>Mode d'emploi</b>.</dd>
-    <dt>Fiche</dt><dd>Onglet <b>Lieux</b> : Lieu, Statut, Type, Photo, <b>Note</b> (Résumé), <b>Astuces</b> (une phrase = une astuce), <b>Sources</b> (séparées par « ; »).</dd>
+    <dt>Fiche</dt><dd>Onglet <b>Lieux</b> : <b>Aperçu</b>, <b>Comment s'y rendre</b>, <b>Quoi faire</b>, <b>Trucs et astuces</b> (une phrase = un conseil), <b>Pour en savoir plus</b> (description puis lien, séparés par « ; »). Les anciennes colonnes Note, Astuces et Sources servent encore aux lieux pas encore refaits.</dd>
     <dt>Liens du groupe</dt><dd>Onglet <b>Liens</b> : Lien, Description (texte affiché), Lieux (écrits exactement comme dans Lieux).</dd>
     <dt>Votes</dt><dd>Onglet <b>Votes</b> : Lieu, Qui, Vote, Commentaire. Le dernier vote de chacun compte.</dd>
-    <dt>Région</dt><dd>Onglet <b>Régions</b>. Le nom doit être exactement le même que le port d'attache dans <b>Trajet</b>.</dd>
+    <dt>Région</dt><dd>Onglet <b>Régions</b> : Région, Aperçu (ou Résumé), Trucs et astuces (ou Astuces), Pour en savoir plus (ou Sources). Le nom doit être exactement le même que le port d'attache dans <b>Trajet</b>.</dd>
     <dt>Ajouter un lieu</dt><dd>« Copier pour le Google Sheet » copie une ligne complète : coller dans la colonne <b>Lieu</b> d'une nouvelle ligne, et le nom, les coordonnées, le statut, le type et la région se placent tout seuls.</dd>
     <dt>Sans coordonnées</dt><dd>Les lieux sans coordonnées sont listés dans l'encadré jaune. <b>Trouver les coordonnées</b> les cherche autour de leur région, puis donne un bouton <b>Copier</b> par bloc de lignes qui se suivent, avec la case exacte où coller (ex. A8). Pour un lieu pas trouvé : dans Google Maps, clic droit <b>sur le lieu lui-même</b> (le lac, le sommet, l'église, pas le départ du sentier), cliquer sur les coordonnées pour les copier, les coller dans sa case Coordonnées. Le nombre de décimales n'a pas d'importance.</dd>
     <dt>Mise à jour</dt><dd>La page lit le Google Sheet chaque fois qu'on l'ouvre. Après une modification, attendre environ 5 minutes, puis cliquer sur <b>Recharger</b>.</dd>
@@ -232,7 +234,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture du Google Sheet…</div></section>
 </main>
 <footer>
-  <span>Version 0.6.4 · 6 octobre 2026</span>
+  <span>Version 0.7.0 · 6 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -288,6 +290,22 @@ function splitTips(s) {
   if (!t || norm(t).startsWith('aucune astuce')) return [];
   return t.split(/(?<=[.!?])\s+(?=[A-ZÀ-ÖØ-Þ«"])/).map((x) => x.trim()).filter(Boolean);
 }
+// column by name, tolerant of accents/apostrophes (Comment s'y rendre vs Comment s’y rendre)
+const keyNorm = (k) => norm(String(k).replace(/[’`]/g, "'"));
+function col(r, name) {
+  if (r[name] !== undefined) return r[name] || '';
+  const want = keyNorm(name), k = Object.keys(r).find((x) => keyNorm(x) === want);
+  return k ? r[k] || '' : '';
+}
+// "Pour en savoir plus": pieces separated by ";", each = optional label + URL
+function splitLabeled(s) {
+  return String(s || '').split(/\s*;\s*(?=\S)/).map((part) => {
+    const m = part.match(/https?:\/\/\S+/i); if (!m) return null;
+    const url = m[0].replace(/[.,;:)\]]+$/, '');
+    const label = part.slice(0, m.index).replace(/[\s:—–-]+$/, '').trim();
+    return { url, label };
+  }).filter(Boolean);
+}
 // statuses (old words still understood)
 const ST_LABEL = { explore: 'À explorer', cand: 'Bon candidat', conf: 'Confirmé', aside: 'Mis de côté' };
 function baseKey(s) {
@@ -311,7 +329,8 @@ function buildModel(lieux, trajet, liens, votes, voyageurs, regions) {
   const regionOf = new Map();
   for (const r of regions) {
     const name = r['Région']; if (!name) continue;
-    regionOf.set(norm(name), { resume: r['Résumé'] || '', tips: splitTips(r['Astuces']), sources: splitSources(r['Sources']) });
+    const more = col(r, 'Pour en savoir plus');
+    regionOf.set(norm(name), { resume: col(r, 'Aperçu') || col(r, 'Résumé'), tips: splitTips(col(r, 'Trucs et astuces') || col(r, 'Astuces')), links: more ? splitLabeled(more) : splitSources(col(r, 'Sources')).map((url) => ({ url, label: '' })) });
   }
   // stops = route in order; hubs = unique hub names (Paris twice -> one hub)
   const stops = trajet.map((r) => ({ order: +r['Ordre'] || 0, name: r["Port d'attache"], nights: +r['Nuits'] || 0, at: parseCoords(r['Coordonnées']), how: r['Comment on y arrive'] || '' }))
@@ -337,6 +356,7 @@ function buildModel(lieux, trajet, liens, votes, voyageurs, regions) {
     for (const h of hubs) { const d = km(at, h.at); if (d < bd) { bd = d; best = h; } }
     const p = { name, at, statut: r['Statut'] || '', type: r['Type'] || '', photo: r['Photo'] || '', note: r['Note'] || '', by: r['Ajouté par'] || '', wiki: r['Wikipédia'] || r['Wikipedia'] || '',
       tips: splitTips(r['Astuces']), sources: splitSources(r['Sources']),
+      apercu: col(r, 'Aperçu'), acces: col(r, "Comment s'y rendre"), faire: col(r, 'Quoi faire'), trucs: splitTips(col(r, 'Trucs et astuces')), plus: splitLabeled(col(r, 'Pour en savoir plus')),
       links: linkRows.filter((l) => l.places.includes(norm(name))), dist: Math.round(bd) };
     const home = best && bd <= RADIUS_KM ? best : other;
     p.hub = home; p.near = best ? best.name : ''; home.places.push(p); places.push(p);
@@ -422,7 +442,7 @@ async function load() {
     const k = pick((h) => h.includes('Lien') && !h.includes('Lieu'));
     const vo = pick((h) => h.includes('Qui') && h.includes('Vote'));
     const vy = pick((h) => h.includes('Voyageur') || h.includes('Voyageurs'));
-    const rg = pick((h) => h.includes('Région') && h.includes('Résumé') && !h.includes('Lieu'));
+    const rg = pick((h) => h.includes('Région') && (h.includes('Résumé') || h.includes('Aperçu')) && !h.includes('Lieu'));
     model = buildModel(l, t, k, vo, vy, rg);
     render();
     $('stamp').textContent = 'Google Sheet lu à ' + new Date().toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' }) + ' (un changement peut prendre environ 5 minutes à apparaître)';
@@ -432,15 +452,31 @@ async function load() {
   }
 }
 
-function tipsHtml(tips) {
-  return tips.length ? `<div class="tips"><b>Astuces</b><ul>${tips.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div>` : '';
+// text with web addresses -> text with small "↗ site" links
+function linkify(t) {
+  const out = []; let last = 0; const re = /https?:\/\/[^\s<>"]+/gi; let m;
+  while ((m = re.exec(t))) {
+    let url = m[0]; const trail = (url.match(/[.,;:)\]]+$/) || [''])[0];
+    if (trail) url = url.slice(0, -trail.length);
+    out.push(esc(t.slice(last, m.index).replace(/\s+$/, ' ')));
+    out.push(`<a class="il" href="${esc(url)}" target="_blank" rel="noopener">↗ ${esc(linkLabel(url))}</a>${esc(trail)}`);
+    last = m.index + m[0].length;
+  }
+  out.push(esc(t.slice(last)));
+  return out.join('');
+}
+function tipsHtml(tips, title = 'Astuces') {
+  return tips.length ? `<div class="tips"><b>${title}</b><ul>${tips.map((t) => `<li>${linkify(t)}</li>`).join('')}</ul></div>` : '';
+}
+function labeledHtml(list) {
+  return list.length ? `<div class="links">${list.map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico(linkKind(l.url))}<span style="color:var(--ink);font-size:15px">${esc(l.label || linkLabel(l.url))}${l.label ? ` <span>· ${esc(linkLabel(l.url))}</span>` : ''}</span></a>`).join('')}</div>` : '';
 }
 function sourcesHtml(urls) {
   return urls.length ? `<div class="links">${urls.map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener">${ico(linkKind(u))}<span style="color:var(--ink);font-size:15px">${esc(linkLabel(u))}</span></a>`).join('')}</div>` : '';
 }
 function zoneHtml(g) {
   const r = g.region; if (!r || (!r.resume && !r.tips.length)) return '';
-  return `<div class="zone">${r.resume ? `<p>${esc(r.resume)}</p>` : ''}${tipsHtml(r.tips)}${r.sources.length ? `<details class="src"><summary>Sources de la région (${r.sources.length})</summary>${sourcesHtml(r.sources)}</details>` : ''}</div>`;
+  return `<div class="zone">${r.resume ? `<p>${linkify(r.resume)}</p>` : ''}${tipsHtml(r.tips, 'Trucs et astuces')}${r.links.length ? `<details class="src"><summary>Pour en savoir plus (${r.links.length})</summary>${labeledHtml(r.links)}</details>` : ''}</div>`;
 }
 
 function render() {
@@ -519,10 +555,14 @@ function cardHtml(p) {
     p.dist < 1 ? '<b>Port d\'attache</b>' : `À <b>${p.dist} km</b> de ${esc(p.near)}`].filter(Boolean).join(' · ');
   const q = encodeURIComponent(p.name);
   // tabs: Résumé always; Liens and Avis only when they have something
-  const hasLinks = p.sources.length || p.links.length, hasVotes = p.votes && p.votes.size;
-  const tabs = [['res', 'Résumé'], hasLinks ? ['lnk', 'Liens'] : null, hasVotes ? ['avis', 'Avis'] : null].filter(Boolean);
-  const res = `${p.note ? `<p>${esc(p.note)}</p>` : `<div class="wk"><p class="small">Pas encore de résumé.</p></div>`}${tipsHtml(p.tips)}`;
-  const lnk = hasLinks ? `${p.sources.length ? `<div class="sub">Sources</div>${sourcesHtml(p.sources)}` : ''}${p.links.length ? `<div class="sub">Liens du groupe</div><div class="links">${p.links.map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico(linkKind(l.url))}<span style="color:var(--ink);font-size:15px">${esc(l.desc || l.url)} <span>· ${linkLabel(l.url)}</span></span></a>`).join('')}</div>` : ''}` : '';
+  const isNew = !!(p.apercu || p.acces || p.faire || p.trucs.length);
+  const hasLinks = p.plus.length || p.sources.length || p.links.length, hasVotes = p.votes && p.votes.size;
+  const tabs = [['res', isNew ? 'Fiche' : 'Résumé'], hasLinks ? ['lnk', 'Liens'] : null, hasVotes ? ['avis', 'Avis'] : null].filter(Boolean);
+  const sec = (title, txt) => txt ? `<div class="sub">${title}</div><p style="margin-top:0">${linkify(txt)}</p>` : '';
+  const res = isNew
+    ? `${p.apercu ? `<p>${linkify(p.apercu)}</p>` : ''}${sec('Comment s’y rendre', p.acces)}${sec('Quoi faire', p.faire)}${tipsHtml(p.trucs, 'Trucs et astuces')}`
+    : `${p.note ? `<p>${esc(p.note)}</p>` : `<div class="wk"><p class="small">Pas encore de résumé.</p></div>`}${tipsHtml(p.tips)}`;
+  const lnk = hasLinks ? `${p.plus.length ? `<div class="sub">Pour en savoir plus</div>${labeledHtml(p.plus)}` : ''}${p.sources.length ? `<div class="sub">Sources</div>${sourcesHtml(p.sources)}` : ''}${p.links.length ? `<div class="sub">Liens du groupe</div><div class="links">${p.links.map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico(linkKind(l.url))}<span style="color:var(--ink);font-size:15px">${esc(l.desc || l.url)} <span>· ${linkLabel(l.url)}</span></span></a>`).join('')}</div>` : ''}` : '';
   const avis = hasVotes ? `<div class="sub">Votes${p.disputed ? '<span class="vtag d">À discuter</span>' : p.agreed ? '<span class="vtag a">D\'accord</span>' : ''}</div><div class="votes">${[...p.votes].map(([who, v]) => `<div><b>${esc(who)}</b> : ${esc(v.vote)}${v.comment ? ` <span class="c">« ${esc(v.comment)} »</span>` : ''}</div>`).join('')}${p.waiting.length ? `<div class="c">En attente : ${p.waiting.map(esc).join(', ')}</div>` : ''}</div>` : '';
   const panes = { res, lnk, avis };
   return `<article class="card${rev ? ' isrev' : ''}${p.st === 'aside' ? ' isaside' : ''}" id="c${i}" data-i="${i}" data-st="${p.st}" ${p.disputed ? 'data-disc="1"' : ''}>
@@ -556,7 +596,7 @@ $('panel').addEventListener('click', (e) => {
 function popupHtml(p) {
   const i = model.places.indexOf(p);
   const w = WIKI.get(p), img = p.photo || (w && w.img) || '';
-  const lead = p.note ? (p.note.length > 160 ? p.note.slice(0, 157).trim() + '…' : p.note) : '';
+  const txt = p.apercu || p.note, lead = txt ? (txt.length > 160 ? txt.slice(0, 157).trim() + '…' : txt).replace(/https?:\/\/\S+/g, '') : '';
   return `${img ? `<img src="${esc(img)}" alt="" onerror="this.remove()">` : ''}<b>${esc(p.num)} · ${esc(p.name)}</b>${lead ? `<br>${esc(lead)}` : ''}<br><button class="btn pbtn fiche" onclick="showCard(${i})">Voir la fiche</button>`;
 }
 function openGroup(idx, fit) {
@@ -651,7 +691,7 @@ async function fillWiki(card) {
   if (!p.photo && w.img) card.querySelector('.ph').innerHTML = `<img src="${esc(w.img)}" alt="${esc(p.name)}" loading="lazy" onerror="this.parentNode.innerHTML=''"><div class="cap">Photo : Wikipédia</div>`;
   // text: only when we have no Note of our own
   const wk = card.querySelector('.wk');
-  if (wk && !p.note) wk.innerHTML = `<p>${esc(w.text)}</p><a href="${esc(w.url)}" target="_blank" rel="noopener">Résumé tiré de Wikipédia${w.lang === 'en' ? ' (anglais)' : ''}</a>`;
+  if (wk && !p.note && !p.apercu) wk.innerHTML = `<p>${esc(w.text)}</p><a href="${esc(w.url)}" target="_blank" rel="noopener">Résumé tiré de Wikipédia${w.lang === 'en' ? ' (anglais)' : ''}</a>`;
 }
 let wikiObs = null;
 function watchWiki() {
@@ -664,7 +704,7 @@ let hits = [], sel = 0;
 function showResults() {
   const q = norm($('q').value), box = $('results');
   if (!q || !model) { box.style.display = 'none'; return; }
-  hits = model.places.filter((p) => norm(p.name).includes(q) || norm(p.note).includes(q)).slice(0, 30); sel = 0;
+  hits = model.places.filter((p) => norm(p.name).includes(q) || norm(p.note).includes(q) || norm(p.apercu).includes(q)).slice(0, 30); sel = 0;
   const raw = $('q').value.trim();
   box.innerHTML = (hits.length ? hits.map((p, j) => `<button data-j="${j}" class="${j === 0 ? 'on' : ''}"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span>${esc(p.name)}</button>`).join('') : '<div class="none">Aucun de nos lieux</div>')
     + (raw.length >= 3 ? `<button data-geo="1" class="${hits.length ? '' : 'on'}"><svg class="ic"><use href="#i-search"/></svg>Chercher « ${esc(raw)} » sur la carte</button>` : '');
