@@ -80,6 +80,39 @@ main{ flex:1; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(340px,1
 p.rt{ margin:0 0 6px; }
 ul.rt{ margin:0 0 8px; padding-left:20px; }
 ul.rt li{ margin:2px 0; }
+.hd{ background:var(--bg); }
+.card.open .hd{ position:sticky; top:0; z-index:6; margin:-9px -10px 0; padding:9px 10px 0; border-radius:10px 10px 0 0; box-shadow:0 1px 0 var(--line); }
+.card .top .edit{ margin-left:auto; }
+.card .top .edit + .more{ margin-left:0; }
+.tabs{ overflow-x:auto; scrollbar-width:none; }
+.tabs .allbtn{ margin-left:auto; font:inherit; font-size:13px; background:none; border:0; color:var(--muted); cursor:pointer; white-space:nowrap; padding:5px 6px; }
+.tabs .allbtn[aria-pressed="true"]{ color:var(--ink); font-weight:700; }
+.tabs button[data-tab]{ white-space:nowrap; }
+.tp{ scroll-margin-top:96px; }
+.tp .ph2{ display:none; }
+.card.all .tp .ph2{ display:block; margin-top:14px; font-size:15px; color:var(--ink); }
+.card.all .tabs button[data-tab]{ border-bottom-color:transparent; font-weight:400; color:var(--muted); }
+.ti{ width:17px; height:17px; vertical-align:-3px; margin-right:5px; color:var(--muted); }
+ul.rt li.hasic{ list-style:none; margin-left:-20px; }
+.pap{ max-height:170px; overflow-y:auto; font-size:14px; margin-top:4px; }
+.pap p.rt,.pap p{ margin:0 0 4px; }
+.icobar{ display:flex; flex-wrap:wrap; gap:4px; align-items:center; margin-top:12px; padding:8px; background:var(--soft); border-radius:8px; }
+.icobar .small{ flex-basis:100%; }
+.icobar .btn{ padding:5px 7px; }
+@media (max-width:520px){ .card .top .edit span{ display:none; } }
+#tools{ width:min(780px,96vw); }
+.tltabs{ display:flex; gap:6px; margin:10px 0 4px; flex-wrap:wrap; }
+.tltabs button{ font:inherit; font-size:15px; border:1px solid var(--line); background:var(--card); color:var(--muted); border-radius:8px; padding:6px 12px; cursor:pointer; }
+.tltabs button[aria-pressed="true"]{ background:var(--ink); color:var(--card); border-color:var(--ink); }
+.tlh{ font-family:var(--serif); font-size:19px; margin:20px 0 0; padding-top:12px; border-top:1px solid var(--line); }
+.tlrow{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:0 12px; }
+.edf select{ font:inherit; font-size:16px; width:100%; padding:7px 8px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); }
+.tlbtns{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:10px; }
+.btn.primary{ background:var(--ink); color:var(--card); border-color:var(--ink); }
+.picks{ display:flex; flex-direction:column; gap:5px; margin:8px 0; }
+.picks label{ font-size:15px; }
+.okline{ margin:8px 0; padding:6px 10px; border-left:3px solid #2e7d4f; font-size:14px; color:var(--muted); }
+.tlsum{ font-size:14px; color:var(--muted); line-height:1.8; margin-top:6px; }
 .editbar{ margin-top:12px; padding-top:8px; border-top:1px dashed var(--line); }
 .edf{ display:block; margin-top:12px; }
 .edf .small{ display:block; margin-bottom:4px; }
@@ -184,6 +217,21 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <symbol id="i-map" viewBox="0 0 24 24"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></symbol>
   <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></symbol>
   <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="i-footprints" viewBox="0 0 24 24"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/></symbol>
+  <symbol id="i-cablecar" viewBox="0 0 24 24"><path d="M10 3h.01"/><path d="M14 2h.01"/><path d="m2 9 20-5"/><path d="M12 12V6.5"/><rect width="16" height="10" x="4" y="12" rx="3"/><path d="M9 12v5"/><path d="M15 12v5"/><path d="M4 17h16"/></symbol>
+  <symbol id="i-bus" viewBox="0 0 24 24"><path d="M8 6v6"/><path d="M15 6v6"/><path d="M2 12h19.6"/><path d="M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"/><circle cx="7" cy="18" r="2"/><path d="M9 18h5"/><circle cx="16" cy="18" r="2"/></symbol>
+  <symbol id="i-utensils" viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></symbol>
+  <symbol id="i-mountain" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></symbol>
+  <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol>
+  <symbol id="i-parking" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
   <symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
 </svg>
 <dialog id="help"><div class="help">
@@ -202,16 +250,16 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 
   <details class="hs"><summary>Modifier une fiche (photos, liens, textes)</summary>
   <dl>
-    <dt>1. Ouvrir</dt><dd>Ouvrir la fiche avec <b>Détails</b>, puis toucher <b>✎ Modifier cette fiche</b> en bas.</dd>
+    <dt>1. Ouvrir</dt><dd>Toucher <b>Modifier</b> (le crayon) en haut de la fiche.</dd>
     <dt>2. Code</dt><dd>La première fois, entrer le code d'accès (le demander à David). La page s'en souvient ensuite sur cet appareil.</dd>
-    <dt>3. Coller</dt><dd>Photos : une adresse d'image par ligne (clic droit sur l'image, « Copier l'adresse de l'image »). Pour en savoir plus : une courte description puis le lien, un par ligne. Trucs et astuces : un conseil par ligne. Dans les autres textes : une ligne vide = nouveau paragraphe, « - » au début d'une ligne = puce, **texte** entre deux paires d'étoiles = gras.</dd>
+    <dt>3. Coller</dt><dd>Photos : une adresse d'image par ligne (clic droit sur l'image, « Copier l'adresse de l'image »). Pour en savoir plus : une courte description puis le lien, un par ligne. Trucs et astuces : un conseil par ligne. Icônes : la barre d'icônes en haut de l'écran les insère là où se trouve le curseur ; une ligne qui commence par « Distance : », « Durée : », « Difficulté : » ou « Pourquoi : » reçoit son icône toute seule. Dans les autres textes : une ligne vide = nouveau paragraphe, « - » au début d'une ligne = puce, **texte** entre deux paires d'étoiles = gras.</dd>
     <dt>4. Enregistrer</dt><dd>La fiche change tout de suite sur votre écran. Les autres la verront d'ici environ 5 minutes.</dd>
   </dl></details>
 
   <details class="hs"><summary>Lire une fiche</summary>
   <dl>
     <dt>Nom souligné</dt><dd>Toucher le nom pour voir le lieu sur la carte. Toucher un point sur la carte met sa fiche en évidence.</dd>
-    <dt>Détails</dt><dd>Chaque fiche est fermée au départ. <b>Détails</b> l'ouvre.</dd>
+    <dt>Détails</dt><dd>Chaque fiche est fermée au départ. <b>Détails</b> l'ouvre. Son en-tête (nom, Modifier, Fermer, onglets) reste en haut pendant qu'on la lit.</dd>
     <dt>Photos</dt><dd>En ouvrant une fiche, les photos et vidéos choisies pour ce lieu défilent avec les flèches (ou en glissant le doigt sur un téléphone).</dd>
     <dt>Boutons</dt><dd><b>YouTube</b> cherche le nom du lieu. <b>Google Maps</b> ouvre l'endroit exact. Le bouton <b>Photos</b> (recherche Google) n'apparaît que si le lieu n'a pas encore ses propres photos.</dd>
     <dt>Couleur</dt><dd>Celle du port d'attache. <b>Gris</b> = Hors trajet : à plus de 40 km de tous les ports d'attache.</dd>
@@ -229,7 +277,8 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 
   <details class="hs"><summary>Les onglets de la fiche</summary>
   <dl>
-    <dt>Fiche</dt><dd><b>Aperçu</b> (pourquoi y aller), <b>Comment s'y rendre</b>, <b>Quoi faire</b> et <b>Trucs et astuces</b>, tirés de récits de voyageurs. Un petit lien ↗ après une phrase mène au site dont elle parle (billets, horaires, refuge). Pour un lieu pas encore refait, l'onglet s'appelle <b>Résumé</b> ; sans texte à nous, la page montre Wikipédia.</dd>
+    <dt>Onglets</dt><dd>Un onglet par section : <b>Aperçu</b>, <b>Y aller</b>, <b>À faire</b>, <b>Astuces</b>, <b>Liens</b>, <b>Avis</b>. <b>Tout voir</b> montre tout d'un coup, pour lire la fiche au complet.</dd>
+    <dt>Contenu</dt><dd><b>Aperçu</b> (pourquoi y aller), <b>Comment s'y rendre</b>, <b>Quoi faire</b> et <b>Trucs et astuces</b>, tirés de récits de voyageurs. Un petit lien ↗ après une phrase mène au site dont elle parle (billets, horaires, refuge). Pour un lieu pas encore refait, l'onglet s'appelle <b>Résumé</b> ; sans texte à nous, la page montre Wikipédia.</dd>
     <dt>Liens</dt><dd><b>Pour en savoir plus</b> : les meilleurs liens pour approfondir, avec ce qu'on y trouve. <b>Liens du groupe</b> : vidéos, blogues ou photos partagés par le groupe.</dd>
     <dt>Icônes</dt><dd><svg class="ic"><use href="#i-play"/></svg> vidéo · <svg class="ic"><use href="#i-image"/></svg> image · <svg class="ic"><use href="#i-globe"/></svg> site Web</dd>
     <dt>Avis</dt><dd>Les votes de chacun. <b>À discuter</b> = nos votes diffèrent. Un onglet vide n'apparaît pas.</dd>
@@ -250,10 +299,38 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <a class="btn" href="https://docs.google.com/spreadsheets/d/1mnxZiexvV5cnWcc1inZzZCftosAQsTyMMMLsrFbjyuY/edit" target="_blank" rel="noopener"><svg class="ic"><use href="#i-note"/></svg>Ouvrir le Google Sheet</a>
   </details>
 </div></dialog>
+<dialog id="tools" lang="en"><div class="help">
+  <button class="btn close" id="tlClose">Close</button>
+  <h2>Tools</h2>
+  <div class="tltabs"><button data-tl="reg" aria-pressed="true">Research a region</button><button data-tl="pl" aria-pressed="false">Research places</button></div>
+  <div id="tlReg">
+    <h3 class="tlh">1. Build the region prompt</h3>
+    <div class="tlrow"><label class="edf"><span class="sub">Region</span><select id="tlRegion"></select></label><label class="edf" id="tlNewWrap" hidden><span class="sub">New region name</span><input id="tlNew"></label><label class="edf"><span class="sub">Staying in</span><input id="tlBase"></label></div>
+    <div class="tlbtns"><button class="btn" id="tlCopyReg">Copy region prompt</button><span class="small" id="tlMsg1">Paste it into a new ChatGPT conversation, then bring the answer to Claude to check.</span></div>
+    <h3 class="tlh">2. Paste the checked answer and pick places</h3>
+    <label class="edf"><textarea id="tlPaste1" rows="4" placeholder="Paste the checked answer here (both blocks)"></textarea></label>
+    <div id="tlParsed1"></div>
+    <div class="tlbtns"><button class="btn" id="tlCopyLieuR" hidden>Copy place prompt</button><span class="small" id="tlMsg2"></span></div>
+  </div>
+  <div id="tlPl" hidden>
+    <h3 class="tlh">1. Choose places</h3>
+    <div id="tlEmpty"></div>
+    <label class="edf"><span class="sub">Or type new places (one per line)</span><textarea id="tlNewPlaces" rows="3"></textarea></label>
+    <label class="edf"><span class="sub">Staying in</span><input id="tlBase2" value="pas encore décidé"></label>
+    <div class="tlbtns"><button class="btn" id="tlCopyLieuP">Copy place prompt</button><span class="small" id="tlMsg3"></span></div>
+  </div>
+  <h3 class="tlh" id="tlStep3">3. Paste the checked place cards and save</h3>
+  <label class="edf"><textarea id="tlPaste2" rows="4" placeholder="Paste the checked place cards here"></textarea></label>
+  <div id="tlSummary" class="tlsum"></div>
+  <label class="edf" id="tlKeyRow" hidden><span class="sub">Access code</span><input id="tlKey" type="password" autocomplete="current-password"></label>
+  <div class="tlbtns"><button class="btn primary" id="tlSave">Save to Google Sheet</button></div>
+  <div id="tlResult" class="small" role="status"></div>
+</div></dialog>
 <dialog id="edit"><div class="help">
   <h2 id="edTitle">Modifier</h2>
   <p class="small" style="margin:0">Les changements vont directement dans le Google Sheet. Les autres les verront d'ici environ 5 minutes.</p>
   <label class="edf" id="edKeyRow"><span class="sub">Code d'accès</span><span class="small">Demander le code à David. La page s'en souvient ensuite sur cet appareil.</span><input id="edKey" type="password" autocomplete="current-password"></label>
+  <div class="icobar" id="edIcons" aria-label="Icônes à insérer"></div>
   <div id="edFields"></div>
   <div class="edbtns"><button class="btn" id="edSave">Enregistrer</button><button class="btn" id="edCancel">Annuler</button><a href="#" class="small" id="edForget">Oublier le code sur cet appareil</a></div>
   <div class="small" id="edMsg" role="status"></div>
@@ -266,6 +343,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <div class="sf" id="sf" role="group" aria-label="Filtrer par statut"></div>
     <input type="checkbox" id="showOther" checked hidden>
     <button class="btn" id="reload" title="Relire le Google Sheet"><svg class="ic"><use href="#i-refresh"/></svg>Recharger</button>
+    <button class="btn" id="toolsBtn" title="Research tools (David)"><svg class="ic"><use href="#i-wrench"/></svg>Tools</button>
     <button class="btn" id="helpBtn" title="Comment lire une fiche"><svg class="ic"><use href="#i-help"/></svg>Aide</button>
   </div>
 </header>
@@ -274,7 +352,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture du Google Sheet…</div></section>
 </main>
 <footer>
-  <span>Version 0.8.1 · 6 octobre 2026</span>
+  <span>Version 0.10.0 · 7 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -516,12 +594,32 @@ function linkify(t) {
   out.push(esc(t.slice(last)));
   return out.join('');
 }
+// uniform icons: [code] typed in the text (the editor's icon bar inserts them)
+const ICONS = [['rando', 'footprints', 'Randonnée'], ['remontee', 'cablecar', 'Remontée'], ['bus', 'bus', 'Autobus'], ['repas', 'utensils', 'Repas'],
+  ['vue', 'mountain', 'Point de vue'], ['billet', 'ticket', 'Billet'], ['duree', 'clock', 'Durée'], ['distance', 'route', 'Distance'],
+  ['difficulte', 'gauge', 'Difficulté'], ['parking', 'parking', 'Stationnement'], ['attention', 'alert', 'Attention'], ['aime', 'heart', 'Pourquoi']];
+const ICON_OF = Object.fromEntries(ICONS.map(([c, id]) => [c, id]));
+const EMOJI_OF = { '🥾': 'rando', '🚠': 'remontee', '🚡': 'remontee', '🚌': 'bus', '🍽️': 'repas', '🍽': 'repas', '⛰️': 'vue', '🏔️': 'vue', '🎟️': 'billet', '⏱️': 'duree', '⚠️': 'attention' };
+// bullets that start with these words get their icon automatically
+const AUTO_ICON = [[/^distance\b/i, 'distance'], [/^dur[ée]e\b/i, 'duree'], [/^difficult[ée]\b/i, 'difficulte'], [/^pourquoi\b/i, 'aime'], [/^d[ée]nivel[ée]\b/i, 'vue'], [/^prix\b/i, 'billet'], [/^stationnement\b/i, 'parking']];
+const tico = (code) => `<svg class="ic ti" aria-hidden="true"><use href="#i-${ICON_OF[code]}"/></svg>`;
+function iconize(h) {
+  for (const [e, c] of Object.entries(EMOJI_OF)) h = h.split(e).join(`[${c}]`);
+  return h.replace(/\[([a-z]+)\]\s?/g, (m, c) => (ICON_OF[c] ? tico(c) : m));
+}
 // light formatting typed in the editor: new line = new paragraph, "- " = bullet, **text** = bold
-function inlineFmt(t) { return linkify(t).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); }
+function inlineFmt(t) { return iconize(linkify(t).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')); }
 function richText(t) {
   const lines = String(t || '').replace(/\r/g, '').split('\n');
   let html = '', list = [];
-  const flush = () => { if (list.length) { html += `<ul class="rt">${list.map((x) => `<li>${inlineFmt(x)}</li>`).join('')}</ul>`; list = []; } };
+  const li = (x) => {
+    const auto = AUTO_ICON.find(([re]) => re.test(x));
+    if (auto) return `<li class="hasic">${tico(auto[1])}${inlineFmt(x)}</li>`;
+    const m = x.match(/^\[([a-z]+)\]/);
+    if (m && ICON_OF[m[1]]) return `<li class="hasic">${inlineFmt(x)}</li>`;
+    return `<li>${inlineFmt(x)}</li>`;
+  };
+  const flush = () => { if (list.length) { html += `<ul class="rt">${list.map(li).join('')}</ul>`; list = []; } };
   for (const raw of lines) {
     const l = raw.trim();
     if (!l) { flush(); continue; }
@@ -532,7 +630,7 @@ function richText(t) {
   return html;
 }
 function tipsHtml(tips, title = 'Astuces') {
-  return tips.length ? `<div class="tips"><b>${title}</b><ul>${tips.map((t) => `<li>${inlineFmt(t)}</li>`).join('')}</ul></div>` : '';
+  return tips.length ? `<div class="tips">${title ? `<b>${title}</b>` : ''}<ul>${tips.map((t) => `<li>${inlineFmt(t)}</li>`).join('')}</ul></div>` : '';
 }
 function labeledHtml(list) {
   return list.length ? `<div class="links">${list.map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico(linkKind(l.url))}<span style="color:var(--ink);font-size:15px">${esc(l.label || linkLabel(l.url))}${l.label ? ` <span>· ${esc(linkLabel(l.url))}</span>` : ''}</span></a>`).join('')}</div>` : '';
@@ -599,7 +697,7 @@ function render() {
       : p.st === 'aside' ? { radius: 5, color: '#fff', weight: 1.5, fillColor: colorOf(g), fillOpacity: .35, opacity: .6 }
       : { radius: 6, color: '#fff', weight: 2, fillColor: colorOf(g), fillOpacity: 1 })
       .bindTooltip(`${p.num} ${p.name}`, { direction: 'top', offset: [0, -6] })
-      .bindPopup(() => popupHtml(p), { maxWidth: 240 })
+      .bindPopup(() => popupHtml(p), { maxWidth: 290 })
       .on('popupopen', async (e) => { if (!WIKI.has(p)) { await wikiFor(p); e.popup.setContent(popupHtml(p)); } })
       .on('click', () => { if (!matchMedia('(max-width:900px)').matches) highlight(p, false); });
     mk.addTo(g.other ? layers.other : layers.places); markerOf.set(p, mk); mk._st = p.st;
@@ -647,34 +745,38 @@ function cardHtml(p) {
   const facts = [`Statut : <b class="st-${p.st}">${esc(p.stLabel)}</b>${p.byVotes ? ' <span class="small">(selon les votes)</span>' : ''}`, p.type ? `Type : <b>${esc(p.type)}</b>` : '',
     p.dist < 1 ? '<b>Port d\'attache</b>' : `À <b>${p.dist} km</b> de ${esc(p.near)}`].filter(Boolean).join(' · ');
   const q = encodeURIComponent(p.name);
-  // tabs: Résumé always; Liens and Avis only when they have something
   const isNew = !!(p.apercu || p.acces || p.faire || p.trucs.length);
   const hasLinks = p.plus.length || p.sources.length || p.links.length, hasVotes = p.votes && p.votes.size;
-  const tabs = [['res', isNew ? 'Fiche' : 'Résumé'], hasLinks ? ['lnk', 'Liens'] : null, hasVotes ? ['avis', 'Avis'] : null].filter(Boolean);
-  const sec = (title, txt) => txt ? `<div class="sub">${title}</div>${richText(txt)}` : '';
-  const res = isNew
-    ? `${p.apercu ? richText(p.apercu) : ''}${sec('Comment s’y rendre', p.acces)}${sec('Quoi faire', p.faire)}${tipsHtml(p.trucs, 'Trucs et astuces')}`
-    : `${p.note ? `<p>${esc(p.note)}</p>` : `<div class="wk"><p class="small">Pas encore de résumé.</p></div>`}${tipsHtml(p.tips)}`;
-  const lnk = hasLinks ? `${p.plus.length ? `<div class="sub">Pour en savoir plus</div>${labeledHtml(p.plus)}` : ''}${p.sources.length ? `<div class="sub">Sources</div>${sourcesHtml(p.sources)}` : ''}${p.links.length ? `<div class="sub">Liens du groupe</div><div class="links">${p.links.map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico(linkKind(l.url))}<span style="color:var(--ink);font-size:15px">${esc(l.desc || l.url)} <span>· ${linkLabel(l.url)}</span></span></a>`).join('')}</div>` : ''}` : '';
-  const avis = hasVotes ? `<div class="sub">Votes${p.disputed ? '<span class="vtag d">À discuter</span>' : p.agreed ? '<span class="vtag a">D\'accord</span>' : ''}</div><div class="votes">${[...p.votes].map(([who, v]) => `<div><b>${esc(who)}</b> : ${esc(v.vote)}${v.comment ? ` <span class="c">« ${esc(v.comment)} »</span>` : ''}</div>`).join('')}${p.waiting.length ? `<div class="c">En attente : ${p.waiting.map(esc).join(', ')}</div>` : ''}</div>` : '';
-  const panes = { res, lnk, avis };
+  const linksPane = `${p.plus.length ? `<div class="sub">Pour en savoir plus</div>${labeledHtml(p.plus)}` : ''}${p.sources.length ? `<div class="sub">Sources</div>${sourcesHtml(p.sources)}` : ''}${p.links.length ? `<div class="sub">Liens du groupe</div><div class="links">${p.links.map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico(linkKind(l.url))}<span style="color:var(--ink);font-size:15px">${esc(l.desc || l.url)} <span>· ${linkLabel(l.url)}</span></span></a>`).join('')}</div>` : ''}`;
+  const avisPane = hasVotes ? `<div class="sub">Votes${p.disputed ? '<span class="vtag d">À discuter</span>' : p.agreed ? '<span class="vtag a">D\'accord</span>' : ''}</div><div class="votes">${[...p.votes].map(([who, v]) => `<div><b>${esc(who)}</b> : ${esc(v.vote)}${v.comment ? ` <span class="c">« ${esc(v.comment)} »</span>` : ''}</div>`).join('')}${p.waiting.length ? `<div class="c">En attente : ${p.waiting.map(esc).join(', ')}</div>` : ''}</div>` : '';
+  // one tab per section; empty sections get no tab
+  const panes = (isNew ? [
+    p.apercu ? ['ap', 'Aperçu', richText(p.apercu)] : null,
+    p.acces ? ['go', 'Y aller', richText(p.acces)] : null,
+    p.faire ? ['do', 'À faire', richText(p.faire)] : null,
+    p.trucs.length ? ['tip', 'Astuces', tipsHtml(p.trucs, '')] : null,
+  ] : [['res', 'Résumé', `${p.note ? `<p>${esc(p.note)}</p>` : `<div class="wk"><p class="small">Pas encore de résumé.</p></div>`}${tipsHtml(p.tips)}`]])
+    .concat([hasLinks ? ['lnk', 'Liens', linksPane] : null, hasVotes ? ['avis', 'Avis', avisPane] : null]).filter(Boolean);
+  const tabbar = panes.length > 1 ? `<div class="tabs" role="tablist">${panes.map(([k, t], j) => `<button role="tab" data-tab="${k}" aria-selected="${j === 0}">${t}</button>`).join('')}<button class="allbtn" aria-pressed="false" title="Voir toutes les sections d'un coup">Tout voir</button></div>` : '';
   return `<article class="card${rev ? ' isrev' : ''}${p.st === 'aside' ? ' isaside' : ''}" id="c${i}" data-i="${i}" data-st="${p.st}" ${p.disputed ? 'data-disc="1"' : ''}>
-    <div class="top"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span><button class="namelink" data-go="${i}" title="Voir sur la carte">${ico('pin')}<h3>${esc(p.name)}</h3></button><button class="btn more" data-open aria-expanded="false" aria-controls="b${i}">Détails</button></div>
+    <div class="hd">
+      <div class="top"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span><button class="namelink" data-go="${i}" title="Voir sur la carte">${ico('pin')}<h3>${esc(p.name)}</h3></button><button class="btn more edit" data-edit="${i}" title="Modifier cette fiche">${ico('pencil')}<span>Modifier</span></button><button class="btn more" data-open aria-expanded="false" aria-controls="b${i}">Détails</button></div>
+      <div class="tabwrap" hidden>${tabbar}</div>
+    </div>
     ${facts ? `<div class="facts">${facts}</div>` : ''}
     <div class="acts">${p.media.length ? '' : `<a class="btn" href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">${ico('camera')}Photos</a>`}
       <a class="btn" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">${ico('play')}YouTube</a>
       <a class="btn" href="https://www.google.com/maps/search/?api=1&query=${p.at[0]},${p.at[1]}" target="_blank" rel="noopener">${ico('map')}Google Maps</a></div>
     <div class="body" id="b${i}" hidden>
       <div class="ph">${carouselHtml(p)}</div>
-      ${tabs.length > 1 ? `<div class="tabs" role="tablist">${tabs.map(([k, t], j) => `<button role="tab" data-tab="${k}" aria-selected="${j === 0}">${t}</button>`).join('')}</div>` : ''}
-      ${tabs.map(([k], j) => `<div class="tp" data-tab="${k}" role="tabpanel" ${j ? 'hidden' : ''}>${panes[k]}</div>`).join('')}
-      <div class="editbar"><button class="btn" data-edit="${i}">✎ Modifier cette fiche</button></div>
+      ${panes.map(([k, t, h], j) => `<section class="tp" data-tab="${k}" role="tabpanel" ${j ? 'hidden' : ''}><div class="sub ph2">${t}</div>${h}</section>`).join('')}
     </div>
   </article>`;
 }
 function openCard(c, on) {
   c.classList.toggle('open', on);
   c.querySelector('.body').hidden = !on;
+  c.querySelector('.tabwrap').hidden = !on;
   const b = c.querySelector('[data-open]'); b.setAttribute('aria-expanded', on); b.textContent = on ? 'Fermer' : 'Détails';
 }
 $('panel').addEventListener('click', (e) => {
@@ -684,11 +786,22 @@ $('panel').addEventListener('click', (e) => {
   if (nv) { carGo(nv.closest('.car'), nv.classList.contains('next') ? 1 : -1); return; }
   const ob = e.target.closest('[data-open]');
   if (ob) { const c = ob.closest('.card'); openCard(c, !c.classList.contains('open')); return; }
-  const tb = e.target.closest('.tabs button');
+  const ab = e.target.closest('.allbtn');
+  if (ab) {
+    const c = ab.closest('.card'), all = !c.classList.contains('all');
+    c.classList.toggle('all', all); ab.setAttribute('aria-pressed', all); ab.textContent = all ? 'Par onglet' : 'Tout voir';
+    const sel = c.querySelector('.tabs button[aria-selected="true"]') || c.querySelector('.tabs button[data-tab]');
+    c.querySelectorAll('.tp').forEach((t) => { t.hidden = !all && t.dataset.tab !== sel.dataset.tab; });
+    return;
+  }
+  const tb = e.target.closest('.tabs button[data-tab]');
   if (tb) {
     const c = tb.closest('.card');
-    c.querySelectorAll('.tabs button').forEach((b) => b.setAttribute('aria-selected', b === tb));
-    c.querySelectorAll('.tp').forEach((t) => { t.hidden = t.dataset.tab !== tb.dataset.tab; });
+    c.querySelectorAll('.tabs button[data-tab]').forEach((b) => b.setAttribute('aria-selected', b === tb));
+    const pane = c.querySelector(`.tp[data-tab="${tb.dataset.tab}"]`);
+    if (c.classList.contains('all')) { pane.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+    c.querySelectorAll('.tp').forEach((t) => { t.hidden = t !== pane; });
+    if (c.querySelector('.hd').getBoundingClientRect().top <= 1) c.scrollIntoView({ block: 'start' });
   }
 });
 // ---- Modifier une fiche : écrit dans le Google Sheet par le pont Apps Script ----
@@ -719,7 +832,7 @@ function fromEditor(kind, v) {
 }
 let editing = null;
 function openEditor(p) {
-  editing = p;
+  editing = p; lastBox = null;
   $('edTitle').textContent = p.name;
   $('edMsg').textContent = ''; $('edMsg').className = 'small';
   let k = ''; try { k = localStorage.getItem(KEYSTORE) || ''; } catch {}
@@ -759,9 +872,166 @@ async function saveEditor() {
     $('edMsg').className = 'small err'; $('edMsg').textContent = 'Pas enregistré : ' + err.message;
   } finally { $('edSave').disabled = false; }
 }
+let lastBox = null;
+$('edFields').addEventListener('focusin', (e) => { if (e.target.matches('textarea')) lastBox = e.target; });
+$('edIcons').innerHTML = `<span class="small">Icônes : toucher pour insérer dans le texte</span>` + ICONS.map(([c, id, label]) => `<button type="button" class="btn" data-ic="${c}" title="${label}"><svg class="ic"><use href="#i-${id}"/></svg></button>`).join('');
+$('edIcons').addEventListener('mousedown', (e) => { if (e.target.closest('[data-ic]')) e.preventDefault(); }); // keep the cursor in the text box
+$('edIcons').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-ic]'); if (!b) return;
+  const box = lastBox || $('edFields').querySelector('textarea'); if (!box) return;
+  box.focus(); box.setRangeText(`[${b.dataset.ic}] `, box.selectionStart, box.selectionEnd, 'end');
+});
 $('edSave').addEventListener('click', saveEditor);
 $('edCancel').addEventListener('click', () => $('edit').close());
 $('edForget').addEventListener('click', (e) => { e.preventDefault(); try { localStorage.removeItem(KEYSTORE); } catch {} $('edKey').value = ''; $('edKeyRow').hidden = false; });
+// ---- Tools (English, for David): research a region or places, then save to the Google Sheet ----
+let PROMPTS = null;
+async function getPrompts() {
+  if (PROMPTS) return PROMPTS;
+  const r = await fetch(BRIDGE + '?action=prompts'); const j = await r.json();
+  if (!j.ok) throw new Error(j.erreur || 'no prompts'); PROMPTS = j; return j;
+}
+const tl = { path: 'reg', region: null, list: [], cards: [] };
+const tsvRows = (t) => String(t || '').replace(/\r/g, '').split('\n').filter((l) => l.trim() && !/^```/.test(l.trim())).map((l) => l.split('\t').map((x) => x.trim()));
+const para = (s) => String(s || '').replace(/\s*¶\s*/g, '\n').trim();
+const tlRegionName = () => ($('tlRegion').value === '__new' ? $('tlNew').value.trim() : $('tlRegion').value);
+function tlSyncBase() { const n = $('tlRegion').value === '__new'; $('tlNewWrap').hidden = !n; if (!n) $('tlBase').value = $('tlRegion').value; }
+function tlSetPath(path) {
+  tl.path = path;
+  document.querySelectorAll('#tools .tltabs button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.tl === path));
+  $('tlReg').hidden = path !== 'reg'; $('tlPl').hidden = path !== 'pl';
+  $('tlStep3').textContent = path === 'reg' ? '3. Paste the checked place cards and save' : '2. Paste the checked place cards and save';
+  tlSummary();
+}
+function openTools() {
+  $('tlRegion').innerHTML = model.hubs.map((h) => `<option>${esc(h.name)}</option>`).join('') + '<option value="__new">+ New region…</option>';
+  tlSyncBase(); tlRenderEmpty(); tlSummary();
+  let k = ''; try { k = localStorage.getItem(KEYSTORE) || ''; } catch {}
+  $('tlKey').value = k; $('tlKeyRow').hidden = !!k;
+  $('tools').showModal();
+}
+async function tlCopy(kind, vals, msgId) {
+  try {
+    const P = await getPrompts(); let t = kind === 'region' ? P.region : P.lieu;
+    for (const [k, v] of Object.entries(vals)) t = t.split(`{${k}}`).join(v);
+    await copyText(t, msgId, 'Copied. Paste it into a new ChatGPT conversation.');
+  } catch (e) { $(msgId).textContent = 'Could not load the prompts: ' + e.message; }
+}
+// step 2 (region path): read the region line and the work list
+function tlReadAnswer() {
+  const rows = tsvRows($('tlPaste1').value), name = tlRegionName();
+  const reg = rows.find((r) => r.length >= 4 && norm(r[0]) === norm(name)) || rows.find((r) => r.length >= 4);
+  tl.region = reg ? { 'Région': name || reg[0], 'Aperçu': para(reg[1]), 'Trucs et astuces': para(reg[2]), 'Pour en savoir plus': para(reg[3]) } : null;
+  tl.list = rows.filter((r) => r !== reg && r.length >= 2 && r.length < 4).map((r) => ({ name: r[0], why: r[1] || '' }));
+  const out = [];
+  if (tl.region) out.push(`<div class="okline">✓ Region card read: « ${esc(tl.region['Aperçu'].slice(0, 160))}${tl.region['Aperçu'].length > 160 ? '…' : ''} »</div>`);
+  else if (rows.length) out.push('<div class="err">No region line found. It should be one line with 4 columns separated by tabs.</div>');
+  if (tl.list.length) out.push(`<div class="picks">${tl.list.map((p, j) => `<label><input type="checkbox" data-pk="${j}" checked> <b>${esc(p.name)}</b> <span class="small">${esc(p.why)}</span></label>`).join('')}</div>`);
+  else if (rows.length) out.push('<div class="err">No places found. The work list should have one place per line, 3 columns separated by tabs.</div>');
+  $('tlParsed1').innerHTML = out.join('');
+  $('tlCopyLieuR').hidden = !tl.list.length; tlCountPicks();
+  tlSummary();
+}
+function tlCountPicks() {
+  const n = $('tlParsed1').querySelectorAll('[data-pk]:checked').length;
+  $('tlCopyLieuR').textContent = `Copy place prompt (${n} place${n > 1 ? 's' : ''})`;
+}
+// places path: places already in the Google Sheet without a card
+function tlRenderEmpty() {
+  const empty = model.places.filter((p) => !p.apercu && !p.acces && !p.faire && !p.trucs.length && !p.note);
+  const noCoord = model.skipped.map((x) => ({ name: x.name, by: '' }));
+  const all = empty.map((p) => ({ name: p.name, by: p.by })).concat(noCoord.filter((x) => !empty.some((p) => norm(p.name) === norm(x.name))));
+  $('tlEmpty').innerHTML = all.length
+    ? `<div class="small" style="margin-bottom:4px">Already in the Google Sheet, without a card:</div><div class="picks">${all.map((p) => `<label><input type="checkbox" data-em="${esc(p.name)}"> <b>${esc(p.name)}</b>${p.by ? ` <span class="small">· ${esc(p.by)}</span>` : ''}</label>`).join('')}</div>`
+    : '<div class="small">Every place in the Google Sheet already has a card.</div>';
+}
+// last step: read the place cards and say what will happen
+function tlSummary() {
+  const rows = tsvRows($('tlPaste2').value);
+  tl.cards = rows.filter((r) => r.length >= 6).map((r) => ({ 'Lieu': r[0], 'Aperçu': para(r[1]), "Comment s'y rendre": para(r[2]), 'Quoi faire': para(r[3]), 'Trucs et astuces': para(r[4]), 'Pour en savoir plus': para(r[5]) }));
+  const bad = rows.filter((r) => r.length > 1 && r.length < 6).length;
+  const known = new Set(model.places.map((p) => norm(p.name)).concat(model.skipped.map((x) => norm(x.name))));
+  const out = [];
+  if (tl.path === 'reg' && tl.region) {
+    const exists = model.hubs.some((h) => norm(h.name) === norm(tl.region['Région']) && h.region);
+    out.push(`<div>${ico('refresh')} Region ${esc(tl.region['Région'])}: will be ${exists ? 'updated' : 'added'}</div>`);
+  }
+  const fresh = tl.cards.filter((c) => !known.has(norm(c['Lieu']))), old = tl.cards.filter((c) => known.has(norm(c['Lieu'])));
+  if (fresh.length) out.push(`<div>${ico('plus')} ${fresh.length} new place${fresh.length > 1 ? 's' : ''}: ${fresh.map((c) => esc(c['Lieu'])).join(', ')}</div>`);
+  if (old.length) out.push(`<div>${ico('refresh')} ${old.length} existing place${old.length > 1 ? 's' : ''} updated: ${old.map((c) => esc(c['Lieu'])).join(', ')}</div>`);
+  if (tl.cards.length) out.push(`<div>${ico('pin')} Coordinates: found automatically after saving</div>`);
+  if (bad) out.push(`<div class="err">${bad} line${bad > 1 ? 's' : ''} could not be read (each card needs 6 columns separated by tabs).</div>`);
+  $('tlSummary').innerHTML = out.join('');
+}
+async function tlSave() {
+  const cle = $('tlKey').value.trim(), res = $('tlResult');
+  if (!cle) { $('tlKeyRow').hidden = false; $('tlKey').focus(); res.textContent = 'Enter the access code first.'; return; }
+  const region = tl.path === 'reg' ? tl.region : null;
+  if (!tl.cards.length && !region) { res.textContent = 'Nothing to save yet.'; return; }
+  const regName = region ? region['Région'] : '';
+  $('tlSave').disabled = true; res.className = 'small'; res.textContent = 'Saving…';
+  try {
+    const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'enregistrer', region, lieux: tl.cards.map((c) => Object.assign({}, c, regName ? { 'Région': regName } : {})) }) });
+    const j = await r.json();
+    if (!j.ok) { if (/code/i.test(j.erreur || '')) { try { localStorage.removeItem(KEYSTORE); } catch {} $('tlKeyRow').hidden = false; } throw new Error(j.erreur || 'Error'); }
+    try { localStorage.setItem(KEYSTORE, cle); } catch {}
+    const lines = [];
+    if (j.region) lines.push(`Region ${esc(regName)} ${j.region === 'ajoutée' ? 'added' : 'updated'}.`);
+    const added = j.lieux.filter((l) => l.action === 'ajouté').length, upd = j.lieux.length - added;
+    if (j.lieux.length) lines.push(`${added} place${added === 1 ? '' : 's'} added, ${upd} updated.`);
+    res.innerHTML = lines.join(' ') + ' Finding coordinates…';
+    // coordinates: only for places that don't have any yet
+    const withCoords = new Set(model.places.map((p) => norm(p.name)));
+    const need = j.lieux.map((l) => l.lieu).filter((n) => !withCoords.has(norm(n)));
+    const hub = model.hubs.find((h) => norm(h.name) === norm(regName)) || model.hubs.find((h) => norm(h.name) === norm(tl.path === 'reg' ? $('tlBase').value : $('tlBase2').value)) || null;
+    const items = [], missed = [];
+    for (let k = 0; k < need.length; k++) {
+      const name = need[k];
+      res.innerHTML = lines.join(' ') + ` Finding coordinates ${k + 1} of ${need.length}: ${esc(name)}…`;
+      const tries = [...new Set([name, name.split(' - ')[0], name.replace(/\s*\(.*?\)\s*/g, ' ').trim()])];
+      let g = null;
+      try {
+        if (hub) for (const t of tries) { g = await nomi(t, hub.at); if (g) break; }
+        if (!g) for (const t of tries) { g = await nomi(t, null); if (g) break; }
+      } catch { g = null; }
+      if (g) items.push({ lieu: name, coords: `${(+g.lat).toFixed(4)}, ${(+g.lon).toFixed(4)}` }); else missed.push(name);
+    }
+    if (items.length) {
+      const r2 = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'coordonnees', items }) });
+      const j2 = await r2.json(); if (!j2.ok) throw new Error(j2.erreur || 'coordinates');
+    }
+    if (need.length) lines.push(`Coordinates found for ${items.length} of ${need.length}.`);
+    if (missed.length) lines.push(`<b>Not found, add by hand from Google Maps:</b> ${missed.map(esc).join(', ')}.`);
+    lines.push('Done. The map shows the changes in about 5 minutes: then press Recharger.');
+    res.innerHTML = lines.join(' ');
+  } catch (err) {
+    res.className = 'small err'; res.textContent = 'Not saved: ' + err.message;
+  } finally { $('tlSave').disabled = false; }
+}
+$('toolsBtn').addEventListener('click', () => { if (model) openTools(); });
+$('tlClose').addEventListener('click', () => $('tools').close());
+document.querySelectorAll('#tools .tltabs button').forEach((b) => b.addEventListener('click', () => tlSetPath(b.dataset.tl)));
+$('tlRegion').addEventListener('change', () => { tlSyncBase(); tlReadAnswer(); });
+$('tlNew').addEventListener('input', () => { $('tlBase').value = $('tlNew').value; });
+$('tlCopyReg').addEventListener('click', () => {
+  const name = tlRegionName(); if (!name) { $('tlMsg1').textContent = 'Pick or type a region first.'; return; }
+  tlCopy('region', { REGION: name, BASE: $('tlBase').value.trim() || 'pas encore décidé' }, 'tlMsg1');
+});
+$('tlPaste1').addEventListener('input', tlReadAnswer);
+$('tlParsed1').addEventListener('change', tlCountPicks);
+$('tlCopyLieuR').addEventListener('click', () => {
+  const names = [...$('tlParsed1').querySelectorAll('[data-pk]:checked')].map((c) => tl.list[+c.dataset.pk].name);
+  if (!names.length) { $('tlMsg2').textContent = 'Tick at least one place.'; return; }
+  tlCopy('lieu', { LIEUX: names.join(', '), BASE: $('tlBase').value.trim() || 'pas encore décidé' }, 'tlMsg2');
+});
+$('tlCopyLieuP').addEventListener('click', () => {
+  const names = [...$('tlEmpty').querySelectorAll('[data-em]:checked')].map((c) => c.dataset.em)
+    .concat($('tlNewPlaces').value.split('\n').map((x) => x.trim()).filter(Boolean));
+  if (!names.length) { $('tlMsg3').textContent = 'Tick or type at least one place.'; return; }
+  tlCopy('lieu', { LIEUX: names.join(', '), BASE: $('tlBase2').value.trim() || 'pas encore décidé' }, 'tlMsg3');
+});
+$('tlPaste2').addEventListener('input', tlSummary);
+$('tlSave').addEventListener('click', tlSave);
 let swipeX = null;
 $('panel').addEventListener('touchstart', (e) => { swipeX = e.target.closest('.car') ? e.touches[0].clientX : null; }, { passive: true });
 $('panel').addEventListener('touchend', (e) => {
@@ -772,8 +1042,8 @@ function popupHtml(p) {
   const i = model.places.indexOf(p);
   const pic = p.media.find((u) => !ytId(u) && !vimeoId(u) && !/facebook\.com|fb\.watch|instagram\.com|tiktok\.com/i.test(u));
   const w = WIKI.get(p), img = pic || (!p.media.length && w && w.img) || '';
-  const txt = p.apercu || p.note, lead = txt ? (txt.length > 160 ? txt.slice(0, 157).trim() + '…' : txt).replace(/https?:\/\/\S+/g, '') : '';
-  return `${img ? `<img src="${esc(img)}" alt="" onerror="this.remove()">` : ''}<b>${esc(p.num)} · ${esc(p.name)}</b>${lead ? `<br>${esc(lead)}` : ''}<br><button class="btn pbtn fiche" onclick="showCard(${i})">Voir la fiche</button>`;
+  const lead = p.apercu ? `<div class="pap">${richText(p.apercu)}</div>` : p.note ? `<div class="pap"><p>${esc(p.note.length > 200 ? p.note.slice(0, 197).trim() + '…' : p.note)}</p></div>` : '';
+  return `${img ? `<img src="${esc(img)}" alt="" onerror="this.remove()">` : ''}<b>${esc(p.num)} · ${esc(p.name)}</b>${lead}<button class="btn pbtn fiche" onclick="showCard(${i})">Voir la fiche</button>`;
 }
 function openGroup(idx, fit) {
   const d = $('g' + idx); if (!d) return;
