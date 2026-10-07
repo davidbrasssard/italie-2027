@@ -122,7 +122,9 @@ dialog{ border:0; padding:0; border-radius:14px; width:min(640px,94vw); max-heig
 dialog::backdrop{ background:rgba(15,22,20,.5); }
 .help{ padding:18px 22px 22px; }
 .help h2{ font-family:var(--serif); font-size:26px; margin:0 0 6px; }
-.help h3{ font-family:var(--serif); font-size:20px; margin:18px 0 0; }
+.hs{ border-top:1px solid var(--line); margin-top:10px; }
+.hs > summary{ font-family:var(--serif); font-size:20px; font-weight:700; cursor:pointer; padding:10px 0 4px; }
+.hs > summary:focus-visible{ outline:3px solid #1f5f99; outline-offset:2px; }
 .help dl{ display:grid; grid-template-columns:max-content 1fr; gap:8px 14px; margin:10px 0; font-size:16px; }
 .help dt{ font-weight:700; }
 .help dd{ margin:0; color:var(--muted); }
@@ -162,48 +164,57 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 </svg>
 <dialog id="help"><div class="help">
   <button class="btn close" id="helpClose">Fermer</button>
-  <h2>Comment lire une fiche</h2>
-  <p style="margin:0;color:var(--muted)">Tout vient de la feuille Google « Italie 2027 – Lieux ». Pour changer quelque chose sur la page, on le change dans la feuille.</p>
+  <h2>Aide</h2>
+  <p style="margin:0;color:var(--muted)">Toucher un titre pour l'ouvrir ou le fermer.</p>
+
+  <details class="hs" open><summary>Suggérer un lieu</summary>
+  <dl>
+    <dt>1. Trouver</dt><dd>Taper le nom dans la boîte <b>Chercher un lieu</b>, puis choisir « Chercher … sur la carte ». Vérifier que l'épingle est au bon endroit.</dd>
+    <dt>2. Copier</dt><dd>Cliquer <b>Copier pour le Google Sheet</b>, puis coller dans une note sur votre téléphone ou ordinateur (une ligne par lieu).</dd>
+    <dt>3. Ajouter</dt><dd>Sous chaque lieu, écrire en quelques mots pourquoi il vous plaît, et coller les liens à partager (vidéo, blogue, photos).</dd>
+    <dt>4. Envoyer</dt><dd>Quand vous en avez quelques-uns, envoyer la note à David. Il les ajoute à la carte.</dd>
+    <dt>Pas trouvé ?</dt><dd>Si la page ne trouve pas le lieu, l'ouvrir dans Google Maps, toucher <b>Partager</b>, puis <b>Copier le lien</b>, et coller ce lien dans la note.</dd>
+  </dl></details>
+
+  <details class="hs"><summary>Lire une fiche</summary>
   <dl>
     <dt>Nom souligné</dt><dd>Toucher le nom pour voir le lieu sur la carte. Toucher un point sur la carte met sa fiche en évidence.</dd>
-    <dt>Détails</dt><dd>Chaque fiche est fermée au départ. Le bouton <b>Détails</b> l'ouvre et montre ses onglets : <b>Résumé</b>, <b>Liens</b> et <b>Avis</b>. Un onglet vide n'apparaît pas.</dd>
-    <dt>Distance</dt><dd>À vol d'oiseau, depuis le port d'attache le plus proche. Calculée par la page.</dd>
-    <dt>Numéro (ex. 3.4)</dt><dd>Port d'attache n° 3, 4<sup>e</sup> lieu. Calculé par la page. <b>A</b> = Hors trajet.</dd>
-    <dt>Couleur</dt><dd>Celle du port d'attache. <b>Gris</b> = Hors trajet : à plus de 40 km de tous les ports d'attache du trajet actuel. Si on ajoute un port d'attache tout près (onglet Trajet), ces lieux s'y rattachent tout seuls.</dd>
-    <dt>Statut, Type</dt><dd>Onglet <b>Lieux</b>, colonnes <b>Statut</b> et <b>Type</b>.</dd>
+    <dt>Détails</dt><dd>Chaque fiche est fermée au départ. <b>Détails</b> l'ouvre.</dd>
+    <dt>Boutons</dt><dd><b>Photos</b> et <b>YouTube</b> cherchent le nom du lieu. <b>Google Maps</b> ouvre l'endroit exact.</dd>
+    <dt>Couleur</dt><dd>Celle du port d'attache. <b>Gris</b> = Hors trajet : à plus de 40 km de tous les ports d'attache.</dd>
+    <dt>Numéro (ex. 3.4)</dt><dd>Port d'attache n° 3, 4<sup>e</sup> lieu. <b>A</b> = Hors trajet.</dd>
+    <dt>Distance</dt><dd>À vol d'oiseau, depuis le port d'attache le plus proche.</dd>
     <dt>Statut</dt><dd>
-      <b>À explorer</b> (point creux) : on a trouvé l'endroit, mais on ne l'a pas encore vraiment regardé. C'est le choix par défaut.<br>
-      <b>Bon candidat</b> (point plein) : on a fait nos recherches, c'est un bon arrêt possible.<br>
+      <b>À explorer</b> (point creux) : trouvé, pas encore regardé de près.<br>
+      <b>Bon candidat</b> (point plein) : un bon arrêt possible.<br>
       <b>Confirmé</b> (gros point cerclé) : on y va.<br>
-      <b>Mis de côté</b> (point pâle, caché par défaut) : on n'y va pas. La ligne reste dans la feuille.<br>
+      <b>Mis de côté</b> (point pâle, caché par défaut) : on n'y va pas.<br>
       Les boutons en haut cachent ou montrent chaque groupe.</dd>
-  </dl>
-  <h3>Onglet Résumé</h3>
+    <dt>Région</dt><dd>En ouvrant un port d'attache, on voit le résumé et les astuces de sa région.</dd>
+    <dt>Trajet</dt><dd>Trait plein : train · pointillé : avion · cercle avec auto : en auto.</dd>
+  </dl></details>
+
+  <details class="hs"><summary>Les onglets de la fiche</summary>
   <dl>
-    <dt>Résumé</dt><dd>Onglet <b>Lieux</b>, colonne <b>Note</b>. S'il n'y a pas encore de Note, la page montre le résumé de Wikipédia à la place (rien n'est écrit dans la feuille).</dd>
-    <dt>Astuces</dt><dd>Onglet <b>Lieux</b>, colonne <b>Astuces</b>. Chaque phrase devient une astuce. « Aucune astuce sourcée » n'est pas affiché.</dd>
-    <dt>Photo</dt><dd>Onglet <b>Lieux</b>, colonne <b>Photo</b> (un lien vers une image). Sinon, la photo de Wikipédia si elle existe.</dd>
-  </dl>
-  <h3>Onglet Liens</h3>
-  <dl>
-    <dt>Sources</dt><dd>Onglet <b>Lieux</b>, colonne <b>Sources</b> : les liens qui appuient le résumé et les astuces, séparés par « ; ».</dd>
-    <dt>Liens du groupe</dt><dd>Onglet <b>Liens</b> : vidéos, blogues ou photos partagés par le groupe. Texte affiché = colonne <b>Description</b>. Le lien apparaît sur chaque lieu nommé dans la colonne <b>Lieux</b>.</dd>
+    <dt>Résumé</dt><dd>Notre résumé du lieu, puis les <b>Astuces</b> pratiques. Sans résumé à nous, la page montre celui de Wikipédia.</dd>
+    <dt>Liens</dt><dd><b>Sources</b> : les sites qui appuient le résumé et les astuces. <b>Liens du groupe</b> : vidéos, blogues ou photos partagés par le groupe.</dd>
     <dt>Icônes</dt><dd><svg class="ic"><use href="#i-play"/></svg> vidéo · <svg class="ic"><use href="#i-image"/></svg> image · <svg class="ic"><use href="#i-globe"/></svg> site Web</dd>
-  </dl>
-  <h3>Onglet Avis</h3>
+    <dt>Avis</dt><dd>Les votes de chacun. <b>À discuter</b> = nos votes diffèrent. Un onglet vide n'apparaît pas.</dd>
+  </dl></details>
+
+  <details class="hs"><summary>Pour le Google Sheet (David)</summary>
   <dl>
-    <dt>Votes</dt><dd>Onglet <b>Votes</b> : une ligne par avis (Lieu, Qui, Vote, Commentaire). Si quelqu'un vote deux fois pour le même lieu, c'est le dernier vote qui compte. <b>À discuter</b> = nos votes diffèrent.</dd>
+    <dt>Principe</dt><dd>Tout vient du Google Sheet « Italie 2027 – Lieux ». Pour changer la page, on change le Google Sheet. Le mode d'emploi complet est dans l'onglet <b>Mode d'emploi</b>.</dd>
+    <dt>Fiche</dt><dd>Onglet <b>Lieux</b> : Lieu, Statut, Type, Photo, <b>Note</b> (Résumé), <b>Astuces</b> (une phrase = une astuce), <b>Sources</b> (séparées par « ; »).</dd>
+    <dt>Liens du groupe</dt><dd>Onglet <b>Liens</b> : Lien, Description (texte affiché), Lieux (écrits exactement comme dans Lieux).</dd>
+    <dt>Votes</dt><dd>Onglet <b>Votes</b> : Lieu, Qui, Vote, Commentaire. Le dernier vote de chacun compte.</dd>
+    <dt>Région</dt><dd>Onglet <b>Régions</b>. Le nom doit être exactement le même que le port d'attache dans <b>Trajet</b>.</dd>
+    <dt>Ajouter un lieu</dt><dd>« Copier pour le Google Sheet » copie une ligne complète : coller dans la colonne <b>Lieu</b> d'une nouvelle ligne, et le nom, les coordonnées, le statut, le type et la région se placent tout seuls.</dd>
+    <dt>Sans coordonnées</dt><dd>Les lieux sans coordonnées sont listés dans l'encadré jaune. <b>Trouver les coordonnées</b> les cherche autour de leur région, puis donne un bouton <b>Copier</b> par bloc de lignes qui se suivent, avec la case exacte où coller (ex. A8). Pour un lieu pas trouvé : dans Google Maps, clic droit <b>sur le lieu lui-même</b> (le lac, le sommet, l'église, pas le départ du sentier), cliquer sur les coordonnées pour les copier, les coller dans sa case Coordonnées. Le nombre de décimales n'a pas d'importance.</dd>
+    <dt>Mise à jour</dt><dd>La page lit le Google Sheet chaque fois qu'on l'ouvre. Après une modification, attendre environ 5 minutes, puis cliquer sur <b>Recharger</b>.</dd>
   </dl>
-  <h3>Le reste</h3>
-  <dl>
-    <dt>Région</dt><dd>En ouvrant un port d'attache, on voit le résumé et les astuces de sa région : onglet <b>Régions</b>. Le nom dans Régions doit être exactement le même que dans Trajet.</dd>
-    <dt>Boutons</dt><dd><b>Photos</b> et <b>YouTube</b> cherchent le nom du lieu. <b>Google Maps</b> ouvre ses coordonnées.</dd>
-    <dt>Trajet (en haut)</dt><dd>Onglet <b>Trajet</b> : ordre, ports d'attache, nuits, comment on y arrive.</dd>
-    <dt>Chercher</dt><dd>La boîte de recherche trouve d'abord nos lieux. Pour n'importe quel autre endroit, choisir « Chercher … sur la carte » : la carte y va et met une épingle temporaire, de la couleur du port d'attache auquel l'endroit se rattacherait (gris = hors trajet). Le bouton <b>Copier pour la feuille</b> copie une ligne complète : coller dans la colonne <b>Lieu</b> d'une nouvelle ligne de l'onglet Lieux, et le nom, les coordonnées, le statut, le type et la région se placent tout seuls.</dd>
-    <dt>Sans coordonnées</dt><dd>Les lieux sans coordonnées sont listés dans l'encadré jaune. Le bouton <b>Trouver les coordonnées</b> les cherche autour de leur région (colonne Région), puis donne un bouton <b>Copier</b> par bloc de lignes qui se suivent, avec la case exacte où coller (ex. A8). Chaque nom retombe sur lui-même, ses coordonnées se placent à côté.</dd>
-    <dt>Mise à jour</dt><dd>La page lit la feuille chaque fois qu'on l'ouvre. <b>Recharger</b> sert à celui qui vient de modifier la feuille : attendre environ 5 minutes, puis cliquer sur Recharger.</dd>
-  </dl>
-  <a class="btn" href="https://docs.google.com/spreadsheets/d/1mnxZiexvV5cnWcc1inZzZCftosAQsTyMMMLsrFbjyuY/edit" target="_blank" rel="noopener"><svg class="ic"><use href="#i-note"/></svg>Ouvrir la feuille Google</a>
+  <a class="btn" href="https://docs.google.com/spreadsheets/d/1mnxZiexvV5cnWcc1inZzZCftosAQsTyMMMLsrFbjyuY/edit" target="_blank" rel="noopener"><svg class="ic"><use href="#i-note"/></svg>Ouvrir le Google Sheet</a>
+  </details>
 </div></dialog>
 <header>
   <h1>Italie 2027</h1>
@@ -212,16 +223,16 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <div class="search"><svg class="ic"><use href="#i-search"/></svg><input id="q" type="search" placeholder="Chercher un lieu" autocomplete="off" aria-label="Chercher un lieu"><div class="results" id="results"></div></div>
     <div class="sf" id="sf" role="group" aria-label="Filtrer par statut"></div>
     <input type="checkbox" id="showOther" checked hidden>
-    <button class="btn" id="reload" title="Relire la feuille Google"><svg class="ic"><use href="#i-refresh"/></svg>Recharger</button>
+    <button class="btn" id="reload" title="Relire le Google Sheet"><svg class="ic"><use href="#i-refresh"/></svg>Recharger</button>
     <button class="btn" id="helpBtn" title="Comment lire une fiche"><svg class="ic"><use href="#i-help"/></svg>Aide</button>
   </div>
 </header>
 <main>
   <div id="map" role="region" aria-label="Carte"></div>
-  <section id="panel" aria-live="polite"><div class="msg">Lecture de la feuille Google…</div></section>
+  <section id="panel" aria-live="polite"><div class="msg">Lecture du Google Sheet…</div></section>
 </main>
 <footer>
-  <span>Version 0.6.3 · 6 octobre 2026</span>
+  <span>Version 0.6.4 · 6 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -414,10 +425,10 @@ async function load() {
     const rg = pick((h) => h.includes('Région') && h.includes('Résumé') && !h.includes('Lieu'));
     model = buildModel(l, t, k, vo, vy, rg);
     render();
-    $('stamp').textContent = 'Feuille lue à ' + new Date().toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' }) + ' (un changement peut prendre environ 5 minutes à apparaître)';
+    $('stamp').textContent = 'Google Sheet lu à ' + new Date().toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' }) + ' (un changement peut prendre environ 5 minutes à apparaître)';
   } catch (e) {
     $('sum').textContent = '';
-    $('panel').innerHTML = `<div class="msg">Impossible de lire la feuille Google (${esc(e.message)}). Vérifier qu'elle est toujours publiée sur le Web, puis cliquer sur Recharger.</div>`;
+    $('panel').innerHTML = `<div class="msg">Impossible de lire le Google Sheet (${esc(e.message)}). Vérifier qu'il est toujours publié sur le Web, puis cliquer sur Recharger.</div>`;
   }
 }
 
@@ -604,7 +615,7 @@ function toggleOther() {
   const g = document.querySelector('[data-other]'); if (g) g.style.display = on ? '' : 'none';
 }
 $('showOther').addEventListener('change', () => { toggleOther(); applyFilter(); });
-// ---- Wikipédia : photo + résumé automatiques (affichés seulement, jamais écrits dans la feuille) ----
+// ---- Wikipédia : photo + résumé automatiques (affichés seulement, jamais écrits dans le Google Sheet) ----
 const WIKI = new Map(), WCACHE = {};
 try { Object.assign(WCACHE, JSON.parse(localStorage.getItem('wiki1') || '{}')); } catch {}
 function wikiTitle(p) {
@@ -695,7 +706,7 @@ function showGeo(g) {
   const pin = `<svg width="30" height="42" viewBox="0 0 30 42"><path d="M15 1C7.3 1 1 7.2 1 14.8 1 25.5 15 41 15 41s14-15.5 14-26.2C29 7.2 22.7 1 15 1z" fill="${col}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="15" r="5.5" fill="#fff"/></svg>`;
   geoPin = L.marker([+g.lat, +g.lon], { icon: L.divIcon({ className: '', html: pin, iconSize: [30, 42], iconAnchor: [15, 41], popupAnchor: [0, -36] }), zIndexOffset: 2000 })
     .addTo(map).bindPopup(`<b>${esc(name)}</b>${type ? ` <span class="small">(${esc(type)})</span>` : ''}<br><span class="small">${esc(g.display_name.split(',').slice(1, 4).join(',').trim())}</span><br>${where}<br>${lat}, ${lon}
-    <br><button class="btn pbtn" id="copyGeo">Copier pour la feuille</button><div class="small" id="copyMsg">Coller dans la colonne Lieu d'une nouvelle ligne : nom, coordonnées, statut, type et région se placent tout seuls.</div>`, { maxWidth: 260 });
+    <br><button class="btn pbtn" id="copyGeo">Copier pour le Google Sheet</button><div class="small" id="copyMsg">Coller dans la colonne Lieu d'une nouvelle ligne : nom, coordonnées, statut, type et région se placent tout seuls.</div>`, { maxWidth: 260 });
   map.flyTo([+g.lat, +g.lon], 11, { duration: .8 });
   setTimeout(() => { geoPin.openPopup(); const b = $('copyGeo'); if (b) b.onclick = () => copyText(row); }, 850);
 }
