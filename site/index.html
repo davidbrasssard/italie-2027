@@ -77,6 +77,9 @@ main{ flex:1; display:grid; grid-template-columns:minmax(0,1.6fr) minmax(340px,1
 .links a:hover{ border-left-color:var(--ink); }
 .links a span{ color:var(--muted); font-size:13px; }
 .links a .ic{ margin-top:3px; color:var(--muted); }
+p.rt{ margin:0 0 6px; }
+ul.rt{ margin:0 0 8px; padding-left:20px; }
+ul.rt li{ margin:2px 0; }
 .editbar{ margin-top:12px; padding-top:8px; border-top:1px dashed var(--line); }
 .edf{ display:block; margin-top:12px; }
 .edf .small{ display:block; margin-bottom:4px; }
@@ -201,7 +204,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <dl>
     <dt>1. Ouvrir</dt><dd>Ouvrir la fiche avec <b>Détails</b>, puis toucher <b>✎ Modifier cette fiche</b> en bas.</dd>
     <dt>2. Code</dt><dd>La première fois, entrer le code d'accès (le demander à David). La page s'en souvient ensuite sur cet appareil.</dd>
-    <dt>3. Coller</dt><dd>Photos : une adresse d'image par ligne (clic droit sur l'image, « Copier l'adresse de l'image »). Pour en savoir plus : une courte description puis le lien, un par ligne. Trucs et astuces : un conseil par ligne.</dd>
+    <dt>3. Coller</dt><dd>Photos : une adresse d'image par ligne (clic droit sur l'image, « Copier l'adresse de l'image »). Pour en savoir plus : une courte description puis le lien, un par ligne. Trucs et astuces : un conseil par ligne. Dans les autres textes : une ligne vide = nouveau paragraphe, « - » au début d'une ligne = puce, **texte** entre deux paires d'étoiles = gras.</dd>
     <dt>4. Enregistrer</dt><dd>La fiche change tout de suite sur votre écran. Les autres la verront d'ici environ 5 minutes.</dd>
   </dl></details>
 
@@ -271,7 +274,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <section id="panel" aria-live="polite"><div class="msg">Lecture du Google Sheet…</div></section>
 </main>
 <footer>
-  <span>Version 0.8.0 · 6 octobre 2026</span>
+  <span>Version 0.8.1 · 6 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -513,8 +516,23 @@ function linkify(t) {
   out.push(esc(t.slice(last)));
   return out.join('');
 }
+// light formatting typed in the editor: new line = new paragraph, "- " = bullet, **text** = bold
+function inlineFmt(t) { return linkify(t).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); }
+function richText(t) {
+  const lines = String(t || '').replace(/\r/g, '').split('\n');
+  let html = '', list = [];
+  const flush = () => { if (list.length) { html += `<ul class="rt">${list.map((x) => `<li>${inlineFmt(x)}</li>`).join('')}</ul>`; list = []; } };
+  for (const raw of lines) {
+    const l = raw.trim();
+    if (!l) { flush(); continue; }
+    const b = l.match(/^[-•]\s+(.*)$/);
+    if (b) list.push(b[1]); else { flush(); html += `<p class="rt">${inlineFmt(l)}</p>`; }
+  }
+  flush();
+  return html;
+}
 function tipsHtml(tips, title = 'Astuces') {
-  return tips.length ? `<div class="tips"><b>${title}</b><ul>${tips.map((t) => `<li>${linkify(t)}</li>`).join('')}</ul></div>` : '';
+  return tips.length ? `<div class="tips"><b>${title}</b><ul>${tips.map((t) => `<li>${inlineFmt(t)}</li>`).join('')}</ul></div>` : '';
 }
 function labeledHtml(list) {
   return list.length ? `<div class="links">${list.map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico(linkKind(l.url))}<span style="color:var(--ink);font-size:15px">${esc(l.label || linkLabel(l.url))}${l.label ? ` <span>· ${esc(linkLabel(l.url))}</span>` : ''}</span></a>`).join('')}</div>` : '';
@@ -551,7 +569,7 @@ function carGo(car, dir) {
 }
 function zoneHtml(g) {
   const r = g.region; if (!r || (!r.resume && !r.tips.length)) return '';
-  return `<div class="zone">${r.resume ? `<p>${linkify(r.resume)}</p>` : ''}${tipsHtml(r.tips, 'Trucs et astuces')}${r.links.length ? `<details class="src"><summary>Pour en savoir plus (${r.links.length})</summary>${labeledHtml(r.links)}</details>` : ''}</div>`;
+  return `<div class="zone">${r.resume ? richText(r.resume) : ''}${tipsHtml(r.tips, 'Trucs et astuces')}${r.links.length ? `<details class="src"><summary>Pour en savoir plus (${r.links.length})</summary>${labeledHtml(r.links)}</details>` : ''}</div>`;
 }
 
 function render() {
@@ -633,9 +651,9 @@ function cardHtml(p) {
   const isNew = !!(p.apercu || p.acces || p.faire || p.trucs.length);
   const hasLinks = p.plus.length || p.sources.length || p.links.length, hasVotes = p.votes && p.votes.size;
   const tabs = [['res', isNew ? 'Fiche' : 'Résumé'], hasLinks ? ['lnk', 'Liens'] : null, hasVotes ? ['avis', 'Avis'] : null].filter(Boolean);
-  const sec = (title, txt) => txt ? `<div class="sub">${title}</div><p style="margin-top:0">${linkify(txt)}</p>` : '';
+  const sec = (title, txt) => txt ? `<div class="sub">${title}</div>${richText(txt)}` : '';
   const res = isNew
-    ? `${p.apercu ? `<p>${linkify(p.apercu)}</p>` : ''}${sec('Comment s’y rendre', p.acces)}${sec('Quoi faire', p.faire)}${tipsHtml(p.trucs, 'Trucs et astuces')}`
+    ? `${p.apercu ? richText(p.apercu) : ''}${sec('Comment s’y rendre', p.acces)}${sec('Quoi faire', p.faire)}${tipsHtml(p.trucs, 'Trucs et astuces')}`
     : `${p.note ? `<p>${esc(p.note)}</p>` : `<div class="wk"><p class="small">Pas encore de résumé.</p></div>`}${tipsHtml(p.tips)}`;
   const lnk = hasLinks ? `${p.plus.length ? `<div class="sub">Pour en savoir plus</div>${labeledHtml(p.plus)}` : ''}${p.sources.length ? `<div class="sub">Sources</div>${sourcesHtml(p.sources)}` : ''}${p.links.length ? `<div class="sub">Liens du groupe</div><div class="links">${p.links.map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico(linkKind(l.url))}<span style="color:var(--ink);font-size:15px">${esc(l.desc || l.url)} <span>· ${linkLabel(l.url)}</span></span></a>`).join('')}</div>` : ''}` : '';
   const avis = hasVotes ? `<div class="sub">Votes${p.disputed ? '<span class="vtag d">À discuter</span>' : p.agreed ? '<span class="vtag a">D\'accord</span>' : ''}</div><div class="votes">${[...p.votes].map(([who, v]) => `<div><b>${esc(who)}</b> : ${esc(v.vote)}${v.comment ? ` <span class="c">« ${esc(v.comment)} »</span>` : ''}</div>`).join('')}${p.waiting.length ? `<div class="c">En attente : ${p.waiting.map(esc).join(', ')}</div>` : ''}</div>` : '';
@@ -680,8 +698,8 @@ const KEYSTORE = 'cle2027';
 const EDIT_UI = [
   ['Photo', 'Photos et vidéos', 'Une adresse par ligne. Pour une image : clic droit sur l’image, « Copier l’adresse de l’image ». YouTube et Vimeo jouent dans la fiche.', 'lines', 3],
   ['Aperçu', 'Aperçu', 'Pourquoi y aller, en une ou deux phrases.', 'text', 3],
-  ["Comment s'y rendre", 'Comment s’y rendre', 'Depuis le port d’attache : autobus, remontée, à pied, temps de trajet. Un lien à la fin d’une phrase devient un petit lien ↗.', 'text', 3],
-  ['Quoi faire', 'Quoi faire', 'La balade ou la visite, étape par étape.', 'text', 4],
+  ["Comment s'y rendre", 'Comment s’y rendre', 'Depuis le port d’attache : autobus, remontée, à pied, temps de trajet. Un lien à la fin d’une phrase devient un petit lien ↗. Même mise en forme que Quoi faire.', 'text', 4],
+  ['Quoi faire', 'Quoi faire', 'La balade ou la visite, étape par étape. Mise en forme : une ligne vide = nouveau paragraphe ; « - » au début d’une ligne = puce ; **texte** entre deux paires d’étoiles = gras.', 'text', 8],
   ['Trucs et astuces', 'Trucs et astuces', 'Un conseil par ligne.', 'tips', 4],
   ['Pour en savoir plus', 'Pour en savoir plus', 'Un lien par ligne : une courte description, puis l’adresse (ex. « Récit de la randonnée https://… »).', 'lines', 4],
   ['Type', 'Type', 'Village, Sommet, Lac, Randonnée…', 'short', 1],
@@ -697,7 +715,7 @@ function fromEditor(kind, v) {
   const lines = String(v || '').split(/\n+/).map((x) => x.trim()).filter(Boolean);
   if (kind === 'lines') return lines.join(' ; ');
   if (kind === 'tips') return lines.map((x) => (/[.!?…)]$/.test(x) || /https?:\/\/\S+$/.test(x) ? x : x + '.')).join(' ');
-  return lines.join(' ');
+  return String(v || '').replace(/\r/g, '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
 }
 let editing = null;
 function openEditor(p) {
