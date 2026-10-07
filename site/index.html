@@ -95,7 +95,8 @@ ul.rt li{ margin:2px 0; }
 .tabs button[data-tab]{ white-space:nowrap; }
 .tp{ scroll-margin-top:96px; }
 .tp .ph2{ display:none; }
-.card.all .tp .ph2{ display:block; margin-top:14px; font-size:15px; color:var(--ink); }
+.card.all .tp .ph2,.place.all .tp .ph2{ display:block; margin-top:16px; font-size:15px; color:var(--ink); border-top:1px solid var(--line); padding-top:10px; }
+.place.all .tp:first-of-type .ph2{ border-top:0; padding-top:0; margin-top:6px; }
 .card.all .tabs button[data-tab]{ border-bottom-color:transparent; font-weight:400; color:var(--muted); }
 .ti{ width:17px; height:17px; vertical-align:-3px; margin-right:5px; color:var(--muted); }
 ul.rt li.hasic{ list-style:none; margin-left:-20px; }
@@ -176,11 +177,24 @@ body.nolist main{ grid-template-columns:minmax(0,1fr); } body.nolist #panel{ dis
   #placeView{ flex:0 0 60%; overflow-y:auto; padding:14px 16px 16px; border-bottom:3px solid var(--line); background:var(--bg); }
   #listView{ flex:1 1 0; overflow-y:auto; padding:14px 16px 40px; min-height:0; }
   .place .back{ display:none; }
-  .group .zone{ display:none; }
+  #rplaces .zone{ display:none; }
 }
 .prow.sel{ border-color:var(--ink); background:var(--card); box-shadow:inset 4px 0 0 var(--ink); }
 .region .rname{ margin-right:auto; }
 .region .rname .small{ margin-top:2px; }
+.rbar{ display:flex; align-items:center; gap:4px; margin:0 0 10px; }
+.rchips{ display:flex; gap:6px; overflow-x:auto; scroll-behavior:smooth; scrollbar-width:none; flex:1; padding:2px; }
+.rchips::-webkit-scrollbar{ display:none; }
+.rchip{ flex:none; font:inherit; font-size:15px; display:inline-flex; align-items:center; gap:7px; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:20px; padding:4px 12px 4px 4px; cursor:pointer; white-space:nowrap; }
+.rchip .badge{ min-width:24px; height:24px; }
+.rchip .cnt{ color:var(--muted); }
+.rchip[aria-pressed="true"]{ background:var(--ink); color:var(--card); border-color:var(--ink); }
+.rchip[aria-pressed="true"] .cnt{ color:var(--card); opacity:.8; }
+.rnav{ flex:none; width:30px; height:30px; border-radius:50%; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:20px; line-height:1; cursor:pointer; }
+.rhead{ margin:2px 0 10px; }
+.rhead h2{ font-family:var(--serif); font-size:22px; margin:0; line-height:1.1; }
+.rhead .meta{ color:var(--muted); font-size:14px; }
+#rplaces .cards{ padding:0; }
 .editbar{ margin-top:12px; padding-top:8px; border-top:1px dashed var(--line); }
 .edf{ display:block; margin-top:12px; }
 .edf .small{ display:block; margin-bottom:4px; }
@@ -243,7 +257,10 @@ body.nolist main{ grid-template-columns:minmax(0,1fr); } body.nolist #panel{ dis
 .leaflet-popup-content .pbtn{ display:inline-flex; }
 .results .none{ padding:10px; color:var(--muted); font-size:14px; }
 dialog{ border:0; padding:0; border-radius:14px; width:min(640px,94vw); max-height:90vh; background:var(--card); color:var(--ink); box-shadow:0 20px 60px rgba(0,0,0,.35); }
-dialog{ overflow:auto; }
+dialog{ overflow:hidden; }
+dialog > .help{ max-height:90vh; overflow-y:auto; }
+.dhead{ position:sticky; top:-18px; z-index:5; display:flex; align-items:center; gap:10px; margin:-18px -22px 12px; padding:12px 16px; background:var(--card); border-bottom:1px solid var(--line); }
+.dhead h2{ margin:0 !important; flex:1; font-size:22px !important; line-height:1.15; }
 dialog::backdrop{ background:rgba(15,22,20,.5); }
 .help{ padding:18px 22px 22px; }
 .help h2{ font-family:var(--serif); font-size:26px; margin:0 0 6px; }
@@ -313,8 +330,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
 </svg>
 <dialog id="help"><div class="help">
-  <button class="btn close" id="helpClose">Fermer</button>
-  <h2>Aide</h2>
+  <div class="dhead"><button class="btn ibtn" id="helpClose" title="Fermer" aria-label="Fermer"><svg class="ic"><use href="#i-x"/></svg></button><h2>Aide</h2></div>
   <p style="margin:0;color:var(--muted)">Toucher un titre pour l'ouvrir ou le fermer.</p>
 
   <details class="hs" open><summary>Suggérer un lieu</summary>
@@ -337,6 +353,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <details class="hs"><summary>Lire une fiche</summary>
   <dl>
     <dt>Nom souligné</dt><dd>Toucher le nom pour voir le lieu sur la carte. Toucher un point sur la carte met sa fiche en évidence.</dd>
+    <dt>Régions</dt><dd>La rangée de régions en haut de la liste choisit la région ; la liste montre alors seulement ses lieux. Les flèches ‹ › font défiler les régions quand elles ne tiennent pas toutes.</dd>
     <dt>Ouvrir un lieu</dt><dd>Toucher un lieu dans la liste ouvre sa fiche. La flèche ← en haut de la fiche ramène à la liste. L'en-tête de la fiche (nom, épingle, crayon, onglets) reste en haut pendant qu'on la lit.</dd>
     <dt>Carte et liste</dt><dd>Sur un ordinateur, la fiche (d'un lieu ou d'une région) s'ouvre au-dessus de la liste ; le <b>✕</b> la ferme et la liste reprend toute la place. La barre entre la carte et la liste se glisse pour changer leur largeur (double-clic : taille de départ). Sur un téléphone, les boutons <b>Carte</b> et <b>Lieux</b> en bas passent de l'un à l'autre.</dd>
     <dt>Photos</dt><dd>L'onglet <b>Photos</b> montre les photos et vidéos choisies pour ce lieu, en grand ; elles défilent avec les flèches (ou en glissant le doigt sur un téléphone).</dd>
@@ -357,7 +374,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 
   <details class="hs"><summary>Les onglets de la fiche</summary>
   <dl>
-    <dt>Onglets</dt><dd>Un onglet par section : <b>Aperçu</b>, <b>Y aller</b>, <b>À faire</b>, <b>Astuces</b>, <b>Liens</b>, <b>Avis</b>. <b>Tout voir</b> montre tout d'un coup, pour lire la fiche au complet.</dd>
+    <dt>Sections</dt><dd>La fiche montre toutes ses sections l'une sous l'autre : <b>Photos</b>, <b>Aperçu</b>, <b>Y aller</b>, <b>À faire</b>, <b>Astuces</b>, <b>Liens</b>. Les noms en haut servent de raccourcis. <b>Par onglet</b> montre une section à la fois.</dd>
     <dt>Contenu</dt><dd><b>Aperçu</b> (pourquoi y aller), <b>Comment s'y rendre</b>, <b>Quoi faire</b> et <b>Trucs et astuces</b>, tirés de récits de voyageurs. Un petit lien ↗ après une phrase mène au site dont elle parle (billets, horaires, refuge). Pour un lieu pas encore refait, l'onglet s'appelle <b>Résumé</b> ; sans texte à nous, la page montre Wikipédia.</dd>
     <dt>Liens</dt><dd><b>Pour en savoir plus</b> : les meilleurs liens pour approfondir, avec ce qu'on y trouve. <b>Liens du groupe</b> : vidéos, blogues ou photos partagés par le groupe.</dd>
     <dt>Icônes</dt><dd><svg class="ic"><use href="#i-play"/></svg> vidéo · <svg class="ic"><use href="#i-image"/></svg> image · <svg class="ic"><use href="#i-globe"/></svg> site Web</dd>
@@ -380,8 +397,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   </details>
 </div></dialog>
 <dialog id="tools" lang="en"><div class="help">
-  <button class="btn close" id="tlClose">Close</button>
-  <h2>Research</h2>
+  <div class="dhead"><button class="btn ibtn" id="tlClose" title="Close" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button><h2>Research</h2></div>
   <label class="edf" id="tlKeyRow" hidden><span class="sub">Access code</span><input id="tlKey" type="password" autocomplete="current-password"></label>
   <div class="tltabs"><button data-tl="pl" aria-pressed="true">Places</button><button data-tl="reg" aria-pressed="false">A region</button></div>
   <div id="tlPl">
@@ -410,14 +426,14 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   </div>
 </div></dialog>
 <dialog id="edit"><div class="help">
-  <h2 id="edTitle">Modifier</h2>
+  <div class="dhead"><button class="btn ibtn" id="edCancel" title="Fermer sans enregistrer" aria-label="Fermer"><svg class="ic"><use href="#i-x"/></svg></button><h2 id="edTitle">Modifier</h2><button class="btn primary" id="edSave">Enregistrer</button></div>
+  <div class="small" id="edMsg" role="status"></div>
   <p class="small" style="margin:0">Les changements vont directement dans le Google Sheet. Les autres les verront d'ici environ 5 minutes.</p>
   <label class="edf" id="edKeyRow"><span class="sub">Code d'accès</span><span class="small">Demander le code à David. La page s'en souvient ensuite sur cet appareil.</span><input id="edKey" type="password" autocomplete="current-password"></label>
   <div class="icobar" id="edIcons" aria-label="Icônes à insérer"></div>
   <div id="edFields"></div>
   <label class="edrev"><input type="checkbox" id="edRev"> <b>Fiche revue</b> <span class="small">Cocher quand la fiche est vraiment à nous (comme Resciesa). Elle sort alors de la liste « À revoir ». On peut toujours l’enrichir ensuite.</span></label>
-  <div class="edbtns"><button class="btn" id="edSave">Enregistrer</button><button class="btn" id="edCancel">Annuler</button><a href="#" class="small" id="edForget">Oublier le code sur cet appareil</a></div>
-  <div class="small" id="edMsg" role="status"></div>
+  <div class="edbtns"><a href="#" class="small" id="edForget">Oublier le code sur cet appareil</a></div>
 </div></dialog>
 <header>
   <h1>Italie 2027</h1>
@@ -438,7 +454,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 </main>
 <nav class="mnav" aria-label="Affichage"><button data-mv="map" aria-pressed="true"><svg class="ic"><use href="#i-map"/></svg>Carte</button><button data-mv="list" aria-pressed="false"><svg class="ic"><use href="#i-list"/></svg>Lieux</button></nav>
 <footer>
-  <span>Version 0.13.0 · 7 octobre 2026</span>
+  <span>Version 0.14.0 · 7 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -792,29 +808,20 @@ function render() {
       .on('click', () => { if (!matchMedia('(max-width:900px)').matches) highlight(p, false); });
     mk.addTo(g.other ? layers.other : layers.places); markerOf.set(p, mk); mk._st = p.st;
   }
-  // panel
-  let html = `<div class="listbar"><button class="btn" id="toggleAll">Tout ouvrir</button></div><div class="warn" id="fltEmpty" hidden>Aucun lieu ne correspond aux filtres. <button class="btn" id="fltReset">Tout afficher</button></div>`;
+  // panel: a row of regions, then the places of the selected region
+  const groupsAll = [...m.hubs, m.other].filter((g) => !g.other || g.places.length);
+  let html = `<div class="rbar"><button class="rnav" data-rnav="-1" aria-label="Régions précédentes">‹</button><div class="rchips" id="rchips">${groupsAll.map((g) => `<button class="rchip" data-gr="${g.other ? 'o' : g.index}" aria-pressed="false"><span class="badge" style="background:${colorOf(g)}">${g.other ? 'A' : esc(g.label)}</span><span class="rcname">${esc(g.name)}</span><span class="small cnt"></span></button>`).join('')}</div><button class="rnav" data-rnav="1" aria-label="Régions suivantes">›</button></div>`;
+  html += `<div class="warn" id="fltEmpty" hidden>Aucun lieu ne correspond aux filtres. <button class="btn" id="fltReset">Tout afficher</button></div>`;
   if (m.skipped.length) html += `<div class="warn">Sans coordonnées (pas sur la carte) : ${m.skipped.map((x) => esc(x.name)).join(', ')}<div style="margin-top:8px"><button class="btn" id="findCoords">${ico('search')}Trouver les coordonnées</button></div><div id="coordOut"></div></div>`;
   if (m.voteUnmatched && m.voteUnmatched.length) html += `<div class="warn">Dans l'onglet Votes, nom introuvable dans Lieux : ${[...new Set(m.voteUnmatched)].map(esc).join(', ')}</div>`;
   if (m.unmatched.length) html += `<div class="warn">Dans l'onglet Liens, nom introuvable dans Lieux : ${[...new Set(m.unmatched)].map(esc).join(', ')}</div>`;
-  for (const g of [...m.hubs, m.other]) {
-    if (!g.places.length && g.other) continue;
-    const meta = g.other ? 'À plus de 40 km de tous les ports d’attache du trajet actuel. Si on ajoute un port d’attache tout près, ces lieux s’y rattachent tout seuls.' : `${g.nights.join(' + ')} n. · ${esc(g.how.filter(Boolean).join(' / '))}`;
-    html += `<details class="group" id="g${g.other ? 'o' : g.index}" ${g.other ? 'data-other="1"' : ''}>
-      <summary><span class="badge" style="background:${colorOf(g)}">${g.other ? 'A' : esc(g.label)}</span><div><h2>${esc(g.name)}</h2><div class="meta">${meta}</div></div><span class="count">${g.places.length} lieux</span></summary>
-      ${g.other ? '' : zoneHtml(g)}
-      <div class="cards">${g.places.map((p) => rowHtml(p)).join('')}</div></details>`;
-  }
+  html += `<div id="rplaces"></div>`;
   $('panel').innerHTML = `<div id="placeView" hidden></div><div id="listView">${html}</div>`; curPlace = null; curRegion = null;
   const fc = $('findCoords'); if (fc) fc.addEventListener('click', findCoords);
   $('fltReset').addEventListener('click', showAllFilters);
-  const groups = () => [...document.querySelectorAll('.group')].filter((d) => d.style.display !== 'none');
-  const syncToggle = () => { $('toggleAll').textContent = groups().some((d) => d.open) ? 'Tout fermer' : 'Tout ouvrir'; };
-  $('toggleAll').addEventListener('click', () => { const anyOpen = groups().some((d) => d.open); groups().forEach((d) => { d.open = !anyOpen; }); syncToggle(); });
-  document.querySelectorAll('.group').forEach((d) => d.addEventListener('toggle', syncToggle));
-  $('panel').querySelectorAll('.group > summary').forEach((el) => el.addEventListener('click', () => {
-    const d = el.parentElement, g = d.dataset.other ? m.other : m.hubs[+d.id.slice(1)];
-    if (!d.open) setTimeout(() => { fitGroup(g); if (!isMobile()) openRegion(g); }, 0); }));
+  const keep = curG != null && groupOf(curG) && (curG !== 'o' || m.other.places.length) ? groupOf(curG) : groupsAll[0];
+  selectRegion(keep, false);
+  syncRegionArrows();
   toggleOther();
   applyFilter();
   fitAll();
@@ -859,16 +866,16 @@ function placeHtml(p, want) {
   // open on the requested tab, else the first text tab (not Photos)
   let sel = panes.findIndex(([k]) => k === want); if (sel < 0) sel = panes.length > 1 ? 1 : 0;
   const zone = p.hub.other ? 'Hors trajet' : p.hub.name;
-  return `<article class="place" data-i="${i}">
+  return `<article class="place all" data-i="${i}">
     <div class="hd">
       <button class="back" data-back title="Retour à la liste">${ico('arrowl')}${esc(zone)}</button>
       <div class="top"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span><button class="namelink" data-go="${i}" title="Voir sur la carte"><h3>${esc(p.name)}</h3></button>
         <a class="btn ibtn" href="https://www.google.com/maps/search/?api=1&query=${p.at[0]},${p.at[1]}" target="_blank" rel="noopener" title="Ouvrir dans Google Maps" aria-label="Ouvrir dans Google Maps">${ico('pin')}</a>
         <button class="btn ibtn" data-edit="${i}" title="Modifier cette fiche" aria-label="Modifier cette fiche">${ico('pencil')}</button><button class="btn ibtn xbtn" data-back title="Fermer" aria-label="Fermer">${ico('x')}</button></div>
-      <div class="tabs" role="tablist">${panes.map(([k, t], j) => `<button role="tab" data-tab="${k}" aria-selected="${j === sel}">${t}</button>`).join('')}<button class="allbtn" aria-pressed="false" title="Voir toutes les sections d'un coup">Tout voir</button></div>
+      <div class="tabs" role="tablist">${panes.map(([k, t], j) => `<button role="tab" data-tab="${k}" aria-selected="false">${t}</button>`).join('')}<button class="allbtn" aria-pressed="true" title="Voir une section à la fois">Par onglet</button></div>
     </div>
     <div class="facts">${p.rvk !== 'done' ? `<span class="rvtag rv-${p.rvk}">${RV_LABEL[p.rvk]}</span> ` : ''}${facts}</div>
-    ${panes.map(([k, t, h], j) => `<section class="tp" data-tab="${k}" role="tabpanel" ${j === sel ? '' : 'hidden'}><div class="sub ph2">${t}</div>${h}</section>`).join('')}
+    ${panes.map(([k, t, h], j) => `<section class="tp" data-tab="${k}" role="tabpanel"><div class="sub ph2">${t}</div>${h}</section>`).join('')}
   </article>`;
 }
 function regionHtml(g, want) {
@@ -879,20 +886,41 @@ function regionHtml(g, want) {
     r.tips.length ? ['tip', 'Astuces', tipsHtml(r.tips, '')] : null, r.links.length ? ['lnk', 'Liens', labeledHtml(r.links)] : null].filter(Boolean);
   let sel = panes.findIndex(([k]) => k === want); if (sel < 0) sel = 1;
   const meta = g.other ? 'Lieux à plus de 40 km de tous les ports d’attache' : `${g.nights.join(' + ')} n. · ${esc(g.how.filter(Boolean).join(' / '))} · ${g.places.length} lieu${g.places.length > 1 ? 'x' : ''}`;
-  return `<article class="place region" data-g="${g.other ? 'o' : g.index}">
+  return `<article class="place region all" data-g="${g.other ? 'o' : g.index}">
     <div class="hd">
       <button class="back" data-back title="Retour à la liste">${ico('arrowl')}Liste</button>
       <div class="top"><span class="badge" style="background:${colorOf(g)}">${g.other ? 'A' : esc(g.label)}</span><div class="rname"><h3>${esc(g.name)}</h3><div class="small">${meta}</div></div>
         <button class="btn ibtn xbtn" data-back title="Fermer" aria-label="Fermer">${ico('x')}</button></div>
-      <div class="tabs" role="tablist">${panes.map(([k, t], j) => `<button role="tab" data-tab="${k}" aria-selected="${j === sel}">${t}</button>`).join('')}<button class="allbtn" aria-pressed="false" title="Voir toutes les sections d'un coup">Tout voir</button></div>
+      <div class="tabs" role="tablist">${panes.map(([k, t], j) => `<button role="tab" data-tab="${k}" aria-selected="false">${t}</button>`).join('')}<button class="allbtn" aria-pressed="true" title="Voir une section à la fois">Par onglet</button></div>
     </div>
-    ${panes.map(([k, t, h], j) => `<section class="tp" data-tab="${k}" role="tabpanel" ${j === sel ? '' : 'hidden'}><div class="sub ph2">${t}</div>${h}</section>`).join('')}
+    ${panes.map(([k, t, h], j) => `<section class="tp" data-tab="${k}" role="tabpanel"><div class="sub ph2">${t}</div>${h}</section>`).join('')}
   </article>`;
 }
+let curG = null;
+const groupKey = (g) => (g.other ? 'o' : g.index);
+const groupOf = (k) => (k === 'o' ? model.other : model.hubs[+k]);
+function selectRegion(g, scroll = true) {
+  if (!g || !$('rplaces')) return;
+  curG = groupKey(g);
+  document.querySelectorAll('.rchip').forEach((c) => c.setAttribute('aria-pressed', c.dataset.gr === String(curG)));
+  const chip = document.querySelector(`.rchip[data-gr="${curG}"]`);
+  if (chip && scroll) chip.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  const meta = g.other ? 'À plus de 40 km de tous les ports d’attache. Si on ajoute un port d’attache tout près, ces lieux s’y rattachent tout seuls.' : `${g.nights.join(' + ')} n. · ${esc(g.how.filter(Boolean).join(' / '))}`;
+  $('rplaces').innerHTML = `<div class="rhead"><h2>${esc(g.name)}</h2><div class="meta">${meta}</div></div>${g.other ? '' : zoneHtml(g)}<div class="cards">${g.places.length ? g.places.map((p) => rowHtml(p)).join('') : '<p class="small">Pas encore de lieux dans cette région.</p>'}</div>`;
+  if (curPlace != null) { const r = $('r' + curPlace); if (r) r.classList.add('sel'); }
+  $('listView').scrollTop = 0;
+  if (model) applyFilter();
+}
+function syncRegionArrows() {
+  const box = $('rchips'); if (!box) return;
+  const over = box.scrollWidth > box.clientWidth + 2;
+  document.querySelectorAll('.rnav').forEach((b) => { b.hidden = !over; });
+}
+window.addEventListener('resize', syncRegionArrows);
 function selectRow(i) {
   document.querySelectorAll('.prow.sel').forEach((x) => x.classList.remove('sel'));
   if (i == null) return;
-  const p = model.places[i], d = $('g' + (p.hub.other ? 'o' : p.hub.index)); if (d) d.open = true;
+  const p = model.places[i]; if (curG !== groupKey(p.hub)) selectRegion(p.hub);
   const r = $('r' + i); if (r) { r.classList.add('sel'); if (!isMobile()) r.scrollIntoView({ block: 'nearest' }); }
 }
 function showWindow(html) {
@@ -912,13 +940,13 @@ function openRegion(g, want) {
   curRegion = g; curPlace = null;
   showWindow(regionHtml(g, want));
   document.querySelectorAll('.prow.sel').forEach((x) => x.classList.remove('sel'));
-  const d = $('g' + (g.other ? 'o' : g.index)); if (d) { d.open = true; if (!isMobile()) d.scrollIntoView({ block: 'nearest' }); }
+  selectRegion(g);
 }
 function closePlace(scroll = true) {
   const i = curPlace; curPlace = null; curRegion = null;
   $('placeView').hidden = true; $('placeView').innerHTML = ''; $('listView').hidden = false;
   if (i == null) return;
-  const p = model.places[i], d = $('g' + (p.hub.other ? 'o' : p.hub.index)); if (d) d.open = true;
+  const p = model.places[i]; if (curG !== groupKey(p.hub)) selectRegion(p.hub);
   const r = $('r' + i); if (r && scroll) r.scrollIntoView({ block: 'center' });
 }
 // ---- layout: on a computer, map | divider | (window over list); on a phone, one view at a time ----
@@ -957,6 +985,15 @@ $('panel').addEventListener('click', (e) => {
   if (ed) { openEditor(model.places[+ed.dataset.edit]); return; }
   const nv = e.target.closest('.car .nav');
   if (nv) { carGo(nv.closest('.car'), nv.classList.contains('next') ? 1 : -1); return; }
+  const rn = e.target.closest('[data-rnav]');
+  if (rn) { $('rchips').scrollBy({ left: +rn.dataset.rnav * 260, behavior: 'smooth' }); return; }
+  const rc = e.target.closest('.rchip');
+  if (rc) {
+    const g = groupOf(rc.dataset.gr);
+    if (isMobile()) { if (curPlace != null) closePlace(false); selectRegion(g); }
+    else { openRegion(g); fitGroup(g); }
+    return;
+  }
   const go = e.target.closest('[data-go]');
   if (go) { const p = model.places[+go.dataset.go]; if (isMobile()) setView('map'); flyTo(p); return; }
   const rw = e.target.closest('[data-row]');
@@ -966,7 +1003,8 @@ $('panel').addEventListener('click', (e) => {
   if (ab) {
     const c = ab.closest('.place'), all = !c.classList.contains('all');
     c.classList.toggle('all', all); ab.setAttribute('aria-pressed', all); ab.textContent = all ? 'Par onglet' : 'Tout voir';
-    const sel = c.querySelector('.tabs button[aria-selected="true"]') || c.querySelector('.tabs button[data-tab]');
+    const tbs = c.querySelectorAll('.tabs button[data-tab]'), sel = c.querySelector('.tabs button[aria-selected="true"]') || tbs[1] || tbs[0];
+    if (!all) tbs.forEach((b) => b.setAttribute('aria-selected', b === sel)); else tbs.forEach((b) => b.setAttribute('aria-selected', 'false'));
     c.querySelectorAll('.tp').forEach((t) => { t.hidden = !all && t.dataset.tab !== sel.dataset.tab; });
     return;
   }
@@ -975,7 +1013,7 @@ $('panel').addEventListener('click', (e) => {
     const c = tb.closest('.place');
     c.querySelectorAll('.tabs button[data-tab]').forEach((b) => b.setAttribute('aria-selected', b === tb));
     const pane = c.querySelector(`.tp[data-tab="${tb.dataset.tab}"]`);
-    if (c.classList.contains('all')) { pane.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+    if (c.classList.contains('all')) { c.querySelectorAll('.tabs button[data-tab]').forEach((b) => b.setAttribute('aria-selected', 'false')); pane.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     c.querySelectorAll('.tp').forEach((t) => { t.hidden = t !== pane; });
     $('placeView').scrollTop = 0;
   }
@@ -1018,6 +1056,7 @@ function openEditor(p) {
       ? `<input data-f="${j}" value="${esc(toEditor(kind, p.raw[f]))}">`
       : `<textarea data-f="${j}" rows="${rows}">${esc(toEditor(kind, p.raw[f]))}</textarea>`}</label>`).join('');
   $('edRev').checked = p.rvk === 'done';
+  edSnap = edState();
   $('edit').showModal();
 }
 async function saveEditor() {
@@ -1063,7 +1102,11 @@ $('edIcons').addEventListener('click', (e) => {
   box.focus(); box.setRangeText(`[${b.dataset.ic}] `, box.selectionStart, box.selectionEnd, 'end');
 });
 $('edSave').addEventListener('click', saveEditor);
-$('edCancel').addEventListener('click', () => $('edit').close());
+const edState = () => [...$('edFields').querySelectorAll('[data-f]')].map((el) => el.value).join('\u0001') + ($('edRev').checked ? '1' : '0');
+let edSnap = '';
+const edDirty = () => edState() !== edSnap;
+$('edCancel').addEventListener('click', () => { if (!edDirty() || confirm('Quitter sans enregistrer ?')) $('edit').close(); });
+$('edit').addEventListener('cancel', (e) => { if (edDirty() && !confirm('Quitter sans enregistrer ?')) e.preventDefault(); });
 $('edForget').addEventListener('click', (e) => { e.preventDefault(); try { localStorage.removeItem(KEYSTORE); } catch {} $('edKey').value = ''; $('edKeyRow').hidden = false; });
 // ---- Research (English, for David): places or a region, then save ----
 let PROMPTS = null;
@@ -1280,9 +1323,7 @@ function openGroup(idx, fit) {
   if (!isMobile()) { const g = model.hubs[idx]; openRegion(g); if (fit) fitGroup(g); return; }
   if (curPlace != null) closePlace(false);
   setView('list');
-  const d = $('g' + idx); if (!d) return;
-  d.open = true; d.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  if (fit) fitGroup(model.hubs[idx]);
+  selectRegion(model.hubs[idx]);
 }
 function showCard(i) { openPlace(i); }
 function flyTo(p) {
@@ -1351,10 +1392,10 @@ function applyFilter() {
   const vis = (st, disc, rv) => stOn[st] && rvOn[rv] && (!onlyDisc || disc);
   for (const [p, mk] of markerOf) { const el = mk.getElement && mk.getElement(); if (el) el.style.display = vis(mk._st, p.disputed, p.rvk) ? '' : 'none'; }
   document.querySelectorAll('.prow').forEach((c) => { c.style.display = vis(c.dataset.st, !!c.dataset.disc, c.dataset.rv) ? '' : 'none'; });
-  document.querySelectorAll('.group').forEach((g) => {
-    const cards = [...g.querySelectorAll('.prow')], total = cards.length;
-    const n = cards.filter((c) => vis(c.dataset.st, !!c.dataset.disc, c.dataset.rv)).length;
-    g.querySelector('.count').textContent = n === total ? `${total} ${total > 1 ? 'lieux' : 'lieu'}` : `${n} sur ${total}`;
+  document.querySelectorAll('.rchip').forEach((c) => {
+    const g = groupOf(c.dataset.gr); if (!g) return;
+    const total = g.places.length, n = g.places.filter((p) => passes(p)).length;
+    c.querySelector('.cnt').textContent = n === total ? total : `${n}/${total}`;
   });
   const none = model.places.filter((p) => passes(p)).length === 0, em = $('fltEmpty');
   if (em) em.hidden = !none;
@@ -1362,7 +1403,8 @@ function applyFilter() {
 function toggleOther() {
   const on = $('showOther').checked;
   if (on) map.addLayer(layers.other); else map.removeLayer(layers.other);
-  const g = document.querySelector('[data-other]'); if (g) g.style.display = on ? '' : 'none';
+  const chip = document.querySelector('.rchip[data-gr="o"]'); if (chip) chip.hidden = !on;
+  if (!on && curG === 'o') selectRegion(model.hubs[0]);
 }
 $('showOther').addEventListener('change', () => { toggleOther(); applyFilter(); });
 // ---- Wikipédia : photo + résumé automatiques (affichés seulement, jamais écrits dans le Google Sheet) ----
