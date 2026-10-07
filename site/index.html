@@ -134,6 +134,39 @@ ul.rt li.hasic{ list-style:none; margin-left:-20px; }
 .rv-done{ background:#e3f1e8; color:#2e7d4f; }
 .edrev{ display:flex; gap:8px; align-items:flex-start; flex-wrap:wrap; margin-top:16px; padding:10px; background:var(--soft); border-radius:8px; }
 .edrev .small{ flex-basis:100%; }
+.mnav{ display:none; }
+.ibtn{ padding:6px 8px; position:relative; }
+.ibtn .ic{ width:18px; height:18px; }
+.fcount{ font-size:12px; font-weight:700; margin-left:2px; }
+.lay{ display:inline-flex; }
+.lay .btn{ border-radius:0; } .lay .btn:first-child{ border-radius:8px 0 0 8px; } .lay .btn:last-child{ border-radius:0 8px 8px 0; margin-left:-1px; }
+.lay .btn[aria-pressed="true"]{ background:var(--ink); color:var(--card); border-color:var(--ink); }
+body.nomap main{ grid-template-columns:minmax(0,1fr); } body.nomap #map{ display:none; } body.nomap #panel{ border-left:0; }
+body.nolist main{ grid-template-columns:minmax(0,1fr); } body.nolist #panel{ display:none; }
+.prow{ display:flex; align-items:center; gap:8px; align-self:stretch; min-width:0; text-align:left; font:inherit; color:var(--ink); background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:8px 10px; cursor:pointer; }
+.prow:hover{ border-color:var(--muted); }
+.prow.hl{ border-color:var(--ink); box-shadow:0 0 0 3px rgba(31,95,153,.35); }
+.prow .pname{ font-weight:700; font-size:17px; line-height:1.2; }
+.prow .small{ margin-left:auto; font-weight:700; }
+.prow .small + .rvtag{ margin-left:6px; }
+.prow .pname + .rvtag{ margin-left:auto; }
+.place{ background:var(--bg); }
+.place h3{ margin:0; line-height:1.15; }
+.place p{ margin:6px 0 0; font-size:16px; }
+.place img{ display:block; width:100%; max-height:62vh; object-fit:cover; border-radius:8px; background:var(--soft); }
+.place .ph{ margin-top:4px; }
+.place .hd{ position:sticky; top:-14px; z-index:20; background:var(--bg); margin:-14px -16px 0; padding:14px 16px 0; border-bottom:1px solid var(--line); }
+.place .back{ font:inherit; font-size:14px; background:none; border:0; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; gap:4px; padding:2px 0; }
+.place .back:hover{ color:var(--ink); }
+.place .top{ display:flex; align-items:center; gap:8px; margin-top:4px; }
+.place .top .namelink{ margin-right:auto; }
+.place h3{ font-size:22px; font-family:var(--serif); }
+.place .tabs{ border-bottom:0; margin-top:6px; flex-wrap:wrap; overflow:visible; }
+#panel{ min-width:0; }
+.place .facts{ margin:8px 0 2px; }
+.place .car .slide img{ max-height:62vh; }
+.place .tp{ padding-top:8px; scroll-margin-top:120px; }
+@media (max-width:900px){ .place .hd{ top:0; margin:0 -16px; } }
 .editbar{ margin-top:12px; padding-top:8px; border-top:1px dashed var(--line); }
 .edf{ display:block; margin-top:12px; }
 .edf .small{ display:block; margin-bottom:4px; }
@@ -221,7 +254,12 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 .leaflet-popup-content img{ width:200px; max-height:130px; object-fit:cover; border-radius:6px; display:block; margin-bottom:6px; }
 .leaflet-popup-content .pbtn{ margin-top:6px; }
 @media (prefers-reduced-motion:reduce){ .card{ transition:none; } }
-@media (max-width:900px){ .search input{ width:160px; } .sf button{ font-size:13px; padding:4px 7px; }  main{ grid-template-columns:1fr; } #map{ height:55vh; } #panel{ border-left:0; border-top:1px solid var(--line); overflow:visible; } body{ display:block; } }
+@media (max-width:900px){ .search input{ width:150px; } main{ grid-template-columns:minmax(0,1fr); } #map{ height:calc(100dvh - 170px); min-height:320px; } #panel{ border-left:0; overflow:visible; padding-bottom:90px; } body{ display:block; padding-bottom:64px; }
+  .lay{ display:none !important; } footer{ display:none; }
+  .mnav{ display:flex; position:fixed; left:0; right:0; bottom:0; z-index:3000; gap:8px; background:var(--card); border-top:1px solid var(--line); padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px)); }
+  .mnav button{ flex:1; font:inherit; font-size:15px; display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:9px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink); }
+  .mnav button[aria-pressed="true"]{ background:var(--ink); color:var(--card); border-color:var(--ink); }
+  body.m-map #panel{ display:none; } body.m-list #map{ display:none; } }
 </style>
 </head>
 <body>
@@ -254,6 +292,9 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
   <symbol id="i-filter" viewBox="0 0 24 24"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"/></symbol>
+  <symbol id="i-binoculars" viewBox="0 0 24 24"><path d="M10 10h4"/><path d="M19 7V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/><path d="M20 21a2 2 0 0 0 2-2v-3.851c0-1.39-2-2.962-2-4.829V8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v11a2 2 0 0 0 2 2z"/><path d="M22 16H2"/><path d="M4 21a2 2 0 0 1-2-2v-3.851c0-1.39 2-2.962 2-4.829V8a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v11a2 2 0 0 1-2 2z"/><path d="M9 7V4a1 1 0 0 0-1-1H6a1 1 0 0 0-1 1v3"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></symbol>
+  <symbol id="i-arrowl" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></symbol>
   <symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
 </svg>
 <dialog id="help"><div class="help">
@@ -271,7 +312,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 
   <details class="hs"><summary>Modifier une fiche (photos, liens, textes)</summary>
   <dl>
-    <dt>1. Ouvrir</dt><dd>Toucher <b>Modifier</b> (le crayon) en haut de la fiche.</dd>
+    <dt>1. Ouvrir</dt><dd>Ouvrir la fiche du lieu, puis toucher le <b>crayon</b> en haut.</dd>
     <dt>2. Code</dt><dd>La première fois, entrer le code d'accès (le demander à David). La page s'en souvient ensuite sur cet appareil.</dd>
     <dt>3. Coller</dt><dd>Photos : une adresse d'image par ligne (clic droit sur l'image, « Copier l'adresse de l'image »). Pour en savoir plus : une courte description puis le lien, un par ligne. Trucs et astuces : un conseil par ligne. Icônes : la barre d'icônes en haut de l'écran les insère là où se trouve le curseur ; une ligne qui commence par « Distance : », « Durée : », « Difficulté : » ou « Pourquoi : » reçoit son icône toute seule. Dans les autres textes : une ligne vide = nouveau paragraphe, « - » au début d'une ligne = puce, **texte** entre deux paires d'étoiles = gras.</dd>
     <dt>Fiche revue</dt><dd>Cocher <b>Fiche revue</b> en bas quand la fiche est vraiment à nous. Ajouter une photo ou un lien ne suffit pas pour la cocher.</dd>
@@ -281,9 +322,10 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <details class="hs"><summary>Lire une fiche</summary>
   <dl>
     <dt>Nom souligné</dt><dd>Toucher le nom pour voir le lieu sur la carte. Toucher un point sur la carte met sa fiche en évidence.</dd>
-    <dt>Détails</dt><dd>Chaque fiche est fermée au départ. <b>Détails</b> l'ouvre. Son en-tête (nom, Modifier, Fermer, onglets) reste en haut pendant qu'on la lit.</dd>
-    <dt>Photos</dt><dd>En ouvrant une fiche, les photos et vidéos choisies pour ce lieu défilent avec les flèches (ou en glissant le doigt sur un téléphone).</dd>
-    <dt>Boutons</dt><dd><b>YouTube</b> cherche le nom du lieu. <b>Google Maps</b> ouvre l'endroit exact. Le bouton <b>Photos</b> (recherche Google) n'apparaît que si le lieu n'a pas encore ses propres photos.</dd>
+    <dt>Ouvrir un lieu</dt><dd>Toucher un lieu dans la liste ouvre sa fiche. La flèche ← en haut de la fiche ramène à la liste. L'en-tête de la fiche (nom, épingle, crayon, onglets) reste en haut pendant qu'on la lit.</dd>
+    <dt>Carte et liste</dt><dd>Sur un ordinateur, les boutons carte et liste en haut affichent ou cachent chacun des deux côtés. Sur un téléphone, les boutons <b>Carte</b> et <b>Lieux</b> en bas passent de l'un à l'autre.</dd>
+    <dt>Photos</dt><dd>L'onglet <b>Photos</b> montre les photos et vidéos choisies pour ce lieu, en grand ; elles défilent avec les flèches (ou en glissant le doigt sur un téléphone).</dd>
+    <dt>Boutons</dt><dd>Dans une fiche : l'<b>épingle</b> ouvre le lieu dans Google Maps, le <b>crayon</b> permet de modifier la fiche. En haut de la page : <b>entonnoir</b> = filtres, <b>flèche circulaire</b> = recharger, <b>jumelles</b> = recherche, <b>?</b> = aide. Garder le doigt ou la souris sur un bouton affiche son nom.</dd>
     <dt>Couleur</dt><dd>Celle du port d'attache. <b>Gris</b> = Hors trajet : à plus de 40 km de tous les ports d'attache.</dd>
     <dt>Numéro (ex. 3.4)</dt><dd>Port d'attache n° 3, 4<sup>e</sup> lieu. <b>A</b> = Hors trajet.</dd>
     <dt>Distance</dt><dd>À vol d'oiseau, depuis le port d'attache le plus proche.</dd>
@@ -369,17 +411,19 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <div class="search"><svg class="ic"><use href="#i-search"/></svg><input id="q" type="search" placeholder="Chercher un lieu" autocomplete="off" aria-label="Chercher un lieu"><div class="results" id="results"></div></div>
     <div class="sf" id="sf" role="group" aria-label="Filtrer par statut"></div>
     <input type="checkbox" id="showOther" checked hidden>
-    <button class="btn" id="reload" title="Relire le Google Sheet"><svg class="ic"><use href="#i-refresh"/></svg>Recharger</button>
-    <button class="btn" id="toolsBtn" title="Research (David)"><svg class="ic"><use href="#i-wrench"/></svg>Research</button>
-    <button class="btn" id="helpBtn" title="Comment lire une fiche"><svg class="ic"><use href="#i-help"/></svg>Aide</button>
+    <span class="lay" role="group" aria-label="Affichage"><button class="btn ibtn" id="layMap" aria-pressed="true" title="Carte (afficher ou cacher)" aria-label="Carte"><svg class="ic"><use href="#i-map"/></svg></button><button class="btn ibtn" id="layList" aria-pressed="true" title="Liste des lieux (afficher ou cacher)" aria-label="Liste des lieux"><svg class="ic"><use href="#i-list"/></svg></button></span>
+    <button class="btn ibtn" id="reload" title="Recharger" aria-label="Recharger"><svg class="ic"><use href="#i-refresh"/></svg></button>
+    <button class="btn ibtn" id="toolsBtn" title="Research" aria-label="Research"><svg class="ic"><use href="#i-binoculars"/></svg></button>
+    <button class="btn ibtn" id="helpBtn" title="Aide" aria-label="Aide"><svg class="ic"><use href="#i-help"/></svg></button>
   </div>
 </header>
 <main>
   <div id="map" role="region" aria-label="Carte"></div>
   <section id="panel" aria-live="polite"><div class="msg">Lecture du Google Sheet…</div></section>
 </main>
+<nav class="mnav" aria-label="Affichage"><button data-mv="map" aria-pressed="true"><svg class="ic"><use href="#i-map"/></svg>Carte</button><button data-mv="list" aria-pressed="false"><svg class="ic"><use href="#i-list"/></svg>Lieux</button></nav>
 <footer>
-  <span>Version 0.11.5 · 7 octobre 2026</span>
+  <span>Version 0.12.0 · 7 octobre 2026</span>
   <span id="stamp"></span>
   <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
   <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -744,16 +788,15 @@ function render() {
     html += `<details class="group" id="g${g.other ? 'o' : g.index}" ${g.other ? 'data-other="1"' : ''}>
       <summary><span class="badge" style="background:${colorOf(g)}">${g.other ? 'A' : esc(g.label)}</span><div><h2>${esc(g.name)}</h2><div class="meta">${meta}</div></div><span class="count">${g.places.length} lieux</span></summary>
       ${g.other ? '' : zoneHtml(g)}
-      <div class="cards">${g.places.map((p) => cardHtml(p)).join('')}</div></details>`;
+      <div class="cards">${g.places.map((p) => rowHtml(p)).join('')}</div></details>`;
   }
-  $('panel').innerHTML = html;
+  $('panel').innerHTML = `<div id="listView">${html}</div><div id="placeView" hidden></div>`; curPlace = null;
   const fc = $('findCoords'); if (fc) fc.addEventListener('click', findCoords);
   $('fltReset').addEventListener('click', showAllFilters);
   const groups = () => [...document.querySelectorAll('.group')].filter((d) => d.style.display !== 'none');
   const syncToggle = () => { $('toggleAll').textContent = groups().some((d) => d.open) ? 'Tout fermer' : 'Tout ouvrir'; };
   $('toggleAll').addEventListener('click', () => { const anyOpen = groups().some((d) => d.open); groups().forEach((d) => { d.open = !anyOpen; }); syncToggle(); });
   document.querySelectorAll('.group').forEach((d) => d.addEventListener('toggle', syncToggle));
-  $('panel').querySelectorAll('[data-go]').forEach((el) => el.addEventListener('click', () => { const p = m.places[+el.dataset.go]; highlight(p, true); }));
   $('panel').querySelectorAll('.group > summary').forEach((el) => el.addEventListener('click', () => {
     const d = el.parentElement; if (!d.open) setTimeout(() => fitGroup(d.dataset.other ? m.other : m.hubs[+d.id.slice(1)]), 0); }));
   toggleOther();
@@ -772,8 +815,16 @@ function linkKind(u) {
   return 'globe';
 }
 const ico = (id) => `<svg class="ic"><use href="#i-${id}"/></svg>`;
-function cardHtml(p) {
-  const i = model.places.indexOf(p), rev = p.st === 'explore';
+// ---- list rows and the single place view ----
+let curPlace = null;
+const isMobile = () => matchMedia('(max-width:900px)').matches;
+function rowHtml(p) {
+  const i = model.places.indexOf(p);
+  const st = p.st === 'conf' || p.st === 'cand' ? `<span class="small st-${p.st}">${esc(p.stLabel)}</span>` : '';
+  return `<button class="prow" id="r${i}" data-row="${i}" data-st="${p.st}" data-rv="${p.rvk}" ${p.disputed ? 'data-disc="1"' : ''}><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span><span class="pname">${esc(p.name)}</span>${st}${p.rvk !== 'done' ? `<span class="rvtag rv-${p.rvk}">${RV_LABEL[p.rvk]}</span>` : ''}</button>`;
+}
+function placeHtml(p, want) {
+  const i = model.places.indexOf(p);
   const facts = [`Statut : <b class="st-${p.st}">${esc(p.stLabel)}</b>${p.byVotes ? ' <span class="small">(selon les votes)</span>' : ''}`, p.type ? `Type : <b>${esc(p.type)}</b>` : '',
     p.dist < 1 ? '<b>Port d\'attache</b>' : `À <b>${p.dist} km</b> de ${esc(p.near)}`].filter(Boolean).join(' · ');
   const q = encodeURIComponent(p.name);
@@ -781,46 +832,76 @@ function cardHtml(p) {
   const hasLinks = p.plus.length || p.sources.length || p.links.length, hasVotes = p.votes && p.votes.size;
   const linksPane = `${p.plus.length ? `<div class="sub">Pour en savoir plus</div>${labeledHtml(p.plus)}` : ''}${p.sources.length ? `<div class="sub">Sources</div>${sourcesHtml(p.sources)}` : ''}${p.links.length ? `<div class="sub">Liens du groupe</div><div class="links">${p.links.map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${ico(linkKind(l.url))}<span style="color:var(--ink);font-size:15px">${esc(l.desc || l.url)} <span>· ${linkLabel(l.url)}</span></span></a>`).join('')}</div>` : ''}`;
   const avisPane = hasVotes ? `<div class="sub">Votes${p.disputed ? '<span class="vtag d">À discuter</span>' : p.agreed ? '<span class="vtag a">D\'accord</span>' : ''}</div><div class="votes">${[...p.votes].map(([who, v]) => `<div><b>${esc(who)}</b> : ${esc(v.vote)}${v.comment ? ` <span class="c">« ${esc(v.comment)} »</span>` : ''}</div>`).join('')}${p.waiting.length ? `<div class="c">En attente : ${p.waiting.map(esc).join(', ')}</div>` : ''}</div>` : '';
-  // one tab per section; empty sections get no tab
-  const panes = (isNew ? [
+  const photosPane = `<div class="ph">${carouselHtml(p)}</div>${p.media.length ? '' : `<p class="small">Pas encore de photos à nous. <a href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">Chercher des photos sur Google ↗</a> · Le crayon permet d’en ajouter.</p>`}`;
+  const panes = [['ph', 'Photos', photosPane]].concat(isNew ? [
     p.apercu ? ['ap', 'Aperçu', richText(p.apercu)] : null,
     p.acces ? ['go', 'Y aller', richText(p.acces)] : null,
     p.faire ? ['do', 'À faire', richText(p.faire)] : null,
     p.trucs.length ? ['tip', 'Astuces', tipsHtml(p.trucs, '')] : null,
   ] : [['res', 'Résumé', `${p.note ? `<p>${esc(p.note)}</p>` : `<div class="wk"><p class="small">Pas encore de résumé.</p></div>`}${tipsHtml(p.tips)}`]])
     .concat([hasLinks ? ['lnk', 'Liens', linksPane] : null, hasVotes ? ['avis', 'Avis', avisPane] : null]).filter(Boolean);
-  const tabbar = panes.length > 1 ? `<div class="tabs" role="tablist">${panes.map(([k, t], j) => `<button role="tab" data-tab="${k}" aria-selected="${j === 0}">${t}</button>`).join('')}<button class="allbtn" aria-pressed="false" title="Voir toutes les sections d'un coup">Tout voir</button></div>` : '';
-  return `<article class="card${rev ? ' isrev' : ''}${p.st === 'aside' ? ' isaside' : ''}" id="c${i}" data-i="${i}" data-st="${p.st}" data-rv="${p.rvk}" ${p.disputed ? 'data-disc="1"' : ''}>
+  // open on the requested tab, else the first text tab (not Photos)
+  let sel = panes.findIndex(([k]) => k === want); if (sel < 0) sel = panes.length > 1 ? 1 : 0;
+  const zone = p.hub.other ? 'Hors trajet' : p.hub.name;
+  return `<article class="place" data-i="${i}">
     <div class="hd">
-      <div class="top"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span><button class="namelink" data-go="${i}" title="Voir sur la carte">${ico('pin')}<h3>${esc(p.name)}</h3></button><button class="btn more edit" data-edit="${i}" title="Modifier cette fiche">${ico('pencil')}<span>Modifier</span></button><button class="btn more" data-open aria-expanded="false" aria-controls="b${i}">Détails</button></div>
-      <div class="tabwrap" hidden>${tabbar}</div>
+      <button class="back" data-back title="Retour à la liste">${ico('arrowl')}${esc(zone)}</button>
+      <div class="top"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span><button class="namelink" data-go="${i}" title="Voir sur la carte"><h3>${esc(p.name)}</h3></button>
+        <a class="btn ibtn" href="https://www.google.com/maps/search/?api=1&query=${p.at[0]},${p.at[1]}" target="_blank" rel="noopener" title="Ouvrir dans Google Maps" aria-label="Ouvrir dans Google Maps">${ico('pin')}</a>
+        <button class="btn ibtn" data-edit="${i}" title="Modifier cette fiche" aria-label="Modifier cette fiche">${ico('pencil')}</button></div>
+      <div class="tabs" role="tablist">${panes.map(([k, t], j) => `<button role="tab" data-tab="${k}" aria-selected="${j === sel}">${t}</button>`).join('')}<button class="allbtn" aria-pressed="false" title="Voir toutes les sections d'un coup">Tout voir</button></div>
     </div>
     <div class="facts">${p.rvk !== 'done' ? `<span class="rvtag rv-${p.rvk}">${RV_LABEL[p.rvk]}</span> ` : ''}${facts}</div>
-    <div class="acts">${p.media.length ? '' : `<a class="btn" href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">${ico('camera')}Photos</a>`}
-      <a class="btn" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">${ico('play')}YouTube</a>
-      <a class="btn" href="https://www.google.com/maps/search/?api=1&query=${p.at[0]},${p.at[1]}" target="_blank" rel="noopener">${ico('map')}Google Maps</a></div>
-    <div class="body" id="b${i}" hidden>
-      <div class="ph">${carouselHtml(p)}</div>
-      ${panes.map(([k, t, h], j) => `<section class="tp" data-tab="${k}" role="tabpanel" ${j ? 'hidden' : ''}><div class="sub ph2">${t}</div>${h}</section>`).join('')}
-    </div>
+    ${panes.map(([k, t, h], j) => `<section class="tp" data-tab="${k}" role="tabpanel" ${j === sel ? '' : 'hidden'}><div class="sub ph2">${t}</div>${h}</section>`).join('')}
   </article>`;
 }
-function openCard(c, on) {
-  c.classList.toggle('open', on);
-  c.querySelector('.body').hidden = !on;
-  c.querySelector('.tabwrap').hidden = !on;
-  const b = c.querySelector('[data-open]'); b.setAttribute('aria-expanded', on); b.textContent = on ? 'Fermer' : 'Détails';
+function openPlace(i, want) {
+  const p = model.places[i]; if (!p) return;
+  curPlace = i;
+  $('listView').hidden = true;
+  const pv = $('placeView'); pv.hidden = false; pv.innerHTML = placeHtml(p, want);
+  $('panel').scrollTop = 0; if (isMobile()) { setView('list'); window.scrollTo(0, $('panel').offsetTop); }
+  fillWiki(pv.querySelector('.place'));
 }
+function closePlace(scroll = true) {
+  const i = curPlace; curPlace = null;
+  $('placeView').hidden = true; $('placeView').innerHTML = ''; $('listView').hidden = false;
+  if (i == null) return;
+  const p = model.places[i], d = $('g' + (p.hub.other ? 'o' : p.hub.index)); if (d) d.open = true;
+  const r = $('r' + i); if (r && scroll) { r.scrollIntoView({ block: 'center' }); r.classList.add('hl'); setTimeout(() => r.classList.remove('hl'), 1500); }
+}
+// ---- map / list layout: two buttons, both on by default; on a phone, one at a time ----
+const lay = { map: true, list: true }; let mview = 'map';
+function applyLayout() {
+  const m = isMobile(), b = document.body.classList;
+  b.toggle('nomap', !m && !lay.map); b.toggle('nolist', !m && !lay.list);
+  b.toggle('m-map', m && mview === 'map'); b.toggle('m-list', m && mview === 'list');
+  $('layMap').setAttribute('aria-pressed', lay.map); $('layList').setAttribute('aria-pressed', lay.list);
+  document.querySelectorAll('.mnav button').forEach((x) => x.setAttribute('aria-pressed', x.dataset.mv === mview));
+  setTimeout(() => { map.invalidateSize(); if (mapShown() && !map._fitted && model) { map._fitted = true; fitAll(); } }, 60);
+}
+function setView(v) {
+  if (isMobile()) mview = v; else if (!lay[v]) lay[v] = true;
+  applyLayout();
+}
+$('layMap').addEventListener('click', () => { if (lay.map && !lay.list) return; lay.map = !lay.map; applyLayout(); });
+$('layList').addEventListener('click', () => { if (lay.list && !lay.map) return; lay.list = !lay.list; applyLayout(); });
+document.querySelectorAll('.mnav button').forEach((x) => x.addEventListener('click', () => { mview = x.dataset.mv; applyLayout(); }));
+window.addEventListener('resize', applyLayout);
+applyLayout();
 $('panel').addEventListener('click', (e) => {
   const ed = e.target.closest('[data-edit]');
   if (ed) { openEditor(model.places[+ed.dataset.edit]); return; }
   const nv = e.target.closest('.car .nav');
   if (nv) { carGo(nv.closest('.car'), nv.classList.contains('next') ? 1 : -1); return; }
-  const ob = e.target.closest('[data-open]');
-  if (ob) { const c = ob.closest('.card'); openCard(c, !c.classList.contains('open')); return; }
+  const go = e.target.closest('[data-go]');
+  if (go) { const p = model.places[+go.dataset.go]; if (isMobile()) setView('map'); else if (!lay.map) setView('map'); flyTo(p); return; }
+  const rw = e.target.closest('[data-row]');
+  if (rw) { openPlace(+rw.dataset.row); return; }
+  if (e.target.closest('[data-back]')) { closePlace(); return; }
   const ab = e.target.closest('.allbtn');
   if (ab) {
-    const c = ab.closest('.card'), all = !c.classList.contains('all');
+    const c = ab.closest('.place'), all = !c.classList.contains('all');
     c.classList.toggle('all', all); ab.setAttribute('aria-pressed', all); ab.textContent = all ? 'Par onglet' : 'Tout voir';
     const sel = c.querySelector('.tabs button[aria-selected="true"]') || c.querySelector('.tabs button[data-tab]');
     c.querySelectorAll('.tp').forEach((t) => { t.hidden = !all && t.dataset.tab !== sel.dataset.tab; });
@@ -828,12 +909,12 @@ $('panel').addEventListener('click', (e) => {
   }
   const tb = e.target.closest('.tabs button[data-tab]');
   if (tb) {
-    const c = tb.closest('.card');
+    const c = tb.closest('.place');
     c.querySelectorAll('.tabs button[data-tab]').forEach((b) => b.setAttribute('aria-selected', b === tb));
     const pane = c.querySelector(`.tp[data-tab="${tb.dataset.tab}"]`);
     if (c.classList.contains('all')) { pane.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     c.querySelectorAll('.tp').forEach((t) => { t.hidden = t !== pane; });
-    if (c.querySelector('.hd').getBoundingClientRect().top <= 1) c.scrollIntoView({ block: 'start' });
+    if (c.querySelector('.hd').getBoundingClientRect().top <= 1) $('panel').scrollTop = 0;
   }
 });
 // ---- Modifier une fiche : écrit dans le Google Sheet par le pont Apps Script ----
@@ -900,8 +981,10 @@ async function saveEditor() {
     try { localStorage.setItem(KEYSTORE, cle); } catch {}
     Object.assign(p.raw, champs); if (j.ligne) p.row = j.ligne; applyRaw(p);
     // show the change right away (the published Google Sheet takes about 5 minutes to catch up)
-    const i = model.places.indexOf(p), old = $('c' + i);
-    if (old) { old.outerHTML = cardHtml(p); const c = $('c' + i); openCard(c, true); fillWiki(c); applyFilter(); }
+    const i = model.places.indexOf(p);
+    const rowEl = $('r' + i); if (rowEl) rowEl.outerHTML = rowHtml(p);
+    if (curPlace === i) { const t = document.querySelector('#placeView .tabs button[aria-selected="true"]'); openPlace(i, t && t.dataset.tab); }
+    applyFilter();
     $('edit').close();
   } catch (err) {
     $('edMsg').className = 'small err'; $('edMsg').textContent = 'Pas enregistré : ' + err.message;
@@ -1131,27 +1214,31 @@ function popupHtml(p) {
   return `${img ? `<img src="${esc(img)}" alt="" onerror="this.remove()">` : ''}<b>${esc(p.num)} · ${esc(p.name)}</b>${lead}<button class="btn pbtn fiche" onclick="showCard(${i})">Voir la fiche</button>`;
 }
 function openGroup(idx, fit) {
+  if (curPlace != null) closePlace(false);
+  setView('list');
   const d = $('g' + idx); if (!d) return;
   d.open = true; d.scrollIntoView({ behavior: 'smooth', block: 'start' });
   if (fit) fitGroup(model.hubs[idx]);
 }
-function showCard(i) {
-  const p = model.places[i], d = $('g' + (p.hub.other ? 'o' : p.hub.index)); d.open = true;
-  const c = $('c' + i); document.querySelectorAll('.card.hl').forEach((x) => x.classList.remove('hl'));
-  c.classList.add('hl'); openCard(c, true); c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+function showCard(i) { openPlace(i); }
+function flyTo(p) {
+  const mk = markerOf.get(p);
+  if (p.hub.other && !$('showOther').checked) { $('showOther').checked = true; toggleOther(); }
+  setTimeout(() => { if (!mapShown()) return; map.invalidateSize(); map.flyTo(p.at, Math.max(map.getZoom(), 11), { duration: .8 }); setTimeout(() => mk && mk.openPopup(), 850); }, 90);
 }
 window.showCard = showCard;
 function highlight(p, fly) {
-  showCard(model.places.indexOf(p));
-  const mk = markerOf.get(p);
-  if (p.hub.other && !$('showOther').checked) { $('showOther').checked = true; toggleOther(); }
-  if (fly) { map.flyTo(p.at, Math.max(map.getZoom(), 11), { duration: .8 }); setTimeout(() => mk.openPopup(), 850); }
+  if (!isMobile() || !fly) openPlace(model.places.indexOf(p));
+  if (fly) { if (isMobile()) setView('map'); flyTo(p); }
 }
+const mapShown = () => $('map').offsetWidth > 0 && $('map').offsetHeight > 0;
 function fitGroup(g) {
+  if (!mapShown()) return;
   const pts = g.places.map((p) => p.at).concat(g.at ? [g.at] : []);
   if (pts.length) map.flyToBounds(L.latLngBounds(pts).pad(0.15), { duration: .8, maxZoom: 12 });
 }
 function fitAll() {
+  if (!mapShown()) return;
   const pts = model.stops.map((s) => s.at);
   if (pts.length) map.fitBounds(L.latLngBounds(pts).pad(0.12));
 }
@@ -1166,7 +1253,7 @@ function renderFilter() {
   const cnt = (test, skip) => model.places.filter((p) => test(p) && passes(p, skip)).length;
   const shown = model.places.filter((p) => passes(p)).length, active = filtersActive();
   const row = (attr, on, label, n) => `<label><input type="checkbox" ${attr} ${on ? 'checked' : ''}>${label} <span class="small">${n}</span></label>`;
-  $('sf').innerHTML = `<button class="btn${active ? ' fltactive' : ''}" id="fltBtn" aria-expanded="${fltOpen}">${ico('filter')}${active ? 'Filtres actifs' : 'Filtres'} <span class="small">· ${shown} lieu${shown > 1 ? 'x' : ''} affiché${shown > 1 ? 's' : ''}</span></button>
+  $('sf').innerHTML = `<button class="btn ibtn${active ? ' fltactive' : ''}" id="fltBtn" aria-expanded="${fltOpen}" title="Filtres${active ? ' actifs' : ''} · ${shown} lieu${shown > 1 ? 'x' : ''} affiché${shown > 1 ? 's' : ''}" aria-label="Filtres">${ico('filter')}<span class="fcount">${shown}</span></button>
     <div class="fltpanel" ${fltOpen ? '' : 'hidden'}>
       <div class="small">Statut</div>
       ${STS.map(([k, t]) => row(`data-k="${k}"`, stOn[k], t, cnt((p) => p.st === k, 'st'))).join('')}
@@ -1199,9 +1286,9 @@ function applyFilter() {
   renderFilter();
   const vis = (st, disc, rv) => stOn[st] && rvOn[rv] && (!onlyDisc || disc);
   for (const [p, mk] of markerOf) { const el = mk.getElement && mk.getElement(); if (el) el.style.display = vis(mk._st, p.disputed, p.rvk) ? '' : 'none'; }
-  document.querySelectorAll('.card').forEach((c) => { c.style.display = vis(c.dataset.st, !!c.dataset.disc, c.dataset.rv) ? '' : 'none'; });
+  document.querySelectorAll('.prow').forEach((c) => { c.style.display = vis(c.dataset.st, !!c.dataset.disc, c.dataset.rv) ? '' : 'none'; });
   document.querySelectorAll('.group').forEach((g) => {
-    const cards = [...g.querySelectorAll('.card')], total = cards.length;
+    const cards = [...g.querySelectorAll('.prow')], total = cards.length;
     const n = cards.filter((c) => vis(c.dataset.st, !!c.dataset.disc, c.dataset.rv)).length;
     g.querySelector('.count').textContent = n === total ? `${total} ${total > 1 ? 'lieux' : 'lieu'}` : `${n} sur ${total}`;
   });
@@ -1253,12 +1340,7 @@ async function fillWiki(card) {
   if (wk && !p.note && !p.apercu) wk.innerHTML = `<p>${esc(w.text)}</p><a href="${esc(w.url)}" target="_blank" rel="noopener">Résumé tiré de Wikipédia${w.lang === 'en' ? ' (anglais)' : ''}</a>`;
 }
 let wikiObs = null;
-function watchWiki() {
-  if (wikiObs) wikiObs.disconnect();
-  if (!('IntersectionObserver' in window)) { document.querySelectorAll('.card').forEach(fillWiki); return; }
-  wikiObs = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { wikiObs.unobserve(e.target); fillWiki(e.target); } }), { rootMargin: '300px' });
-  document.querySelectorAll('.card').forEach((c) => wikiObs.observe(c));
-}
+function watchWiki() {}
 let hits = [], sel = 0;
 function showResults() {
   const q = norm($('q').value), box = $('results');
