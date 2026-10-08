@@ -200,6 +200,58 @@ button.rbname{ cursor:pointer; } button.rbname:hover{ text-decoration:underline;
 #vwBody .slide.vid iframe{ width:min(100%, calc((94vh - 80px) * 16 / 9)); height:auto; aspect-ratio:16/9; }
 #vwBody .slide.lnk{ background:none; }
 #vwBody .nav{ width:44px; height:44px; font-size:30px; }
+/* formatted text: titles, indents, bullet styles, tan frame (same in the card and in the editor) */
+h4.rt,.rte h4{ font-size:16px; font-weight:700; margin:12px 0 4px; line-height:1.25; }
+ol.rt,.rte ol{ margin:0 0 8px; padding-left:22px; }
+.rte p{ margin:0 0 6px; } .rte ul{ margin:0 0 8px; padding-left:20px; } .rte li{ margin:2px 0; }
+.in1{ margin-left:1.6em !important; } .in2{ margin-left:3.2em !important; } .in3{ margin-left:4.8em !important; } .in4{ margin-left:6.4em !important; }
+ul[data-b]{ list-style:none; padding-left:26px !important; }
+ul[data-b] > li{ position:relative; }
+ul[data-b] > li::before{ position:absolute; left:-18px; top:0; color:var(--muted); font-weight:700; }
+ul[data-b="dash"] > li::before{ content:'–'; } ul[data-b="arrow"] > li::before{ content:'→'; left:-21px; } ul[data-b="check"] > li::before{ content:'✓'; color:#2e7d4f; }
+ul[data-b] > li.hasic{ margin-left:0; }
+.callout{ background:var(--soft); border-left:4px solid var(--tip); border-radius:0 8px 8px 0; padding:7px 10px 4px; margin:8px 0; }
+.tips .callout{ background:rgba(0,0,0,.04); }
+.tips p.rt,.tips h4.rt,.tips ol.rt{ font-size:15px; }
+a.tl{ color:var(--ink); text-decoration:underline; text-decoration-color:var(--muted); text-underline-offset:2px; }
+a.tl:hover{ text-decoration-color:var(--ink); }
+/* the editor */
+#edit{ width:min(920px,96vw); }
+#edit .dhead{ flex-wrap:wrap; row-gap:6px; }
+.rtbar{ flex-basis:100%; display:flex; flex-wrap:wrap; gap:3px; align-items:center; }
+.rtbar .btn{ padding:5px 7px; }
+.rtbar .ic.dn{ width:11px; height:11px; margin-left:-3px; }
+.rtsep{ width:1px; align-self:stretch; background:var(--line); margin:2px 4px; }
+.rtmenu{ position:absolute; z-index:10; width:300px; display:flex; flex-wrap:wrap; gap:4px; padding:8px; background:var(--card); border:1px solid var(--line); border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.18); }
+.rtmenu .small{ flex-basis:100%; }
+.rtmenu .btn{ min-width:36px; justify-content:center; padding:5px 7px; }
+.rtmenu .btn .ch{ font-weight:700; font-size:16px; line-height:1; }
+.rtmenu .btn.wide{ flex-basis:100%; }
+.rte{ font-size:16px; line-height:1.45; min-height:calc(var(--rows,3) * 1.5em + 18px); max-height:60vh; overflow-y:auto; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); }
+.rte:focus{ outline:3px solid #1f5f99; outline-offset:1px; }
+.rte[data-kind="links"] p{ margin:0 0 4px; }
+.rte[data-kind="tips"]{ background:var(--soft); border-left:4px solid var(--tip); }
+.rte a{ color:#1f5f99; text-decoration:underline; }
+.rte .ico .ti{ margin-right:2px; }
+.btn.danger{ background:#b3261e; color:#fff; border-color:#b3261e; }
+.btn.danger:disabled{ opacity:.45; }
+.cfcode{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:12px 0; }
+.cfcode b{ font-size:22px; letter-spacing:4px; font-family:ui-monospace,monospace; background:var(--soft); padding:2px 10px; border-radius:6px; }
+.cfcode input{ width:90px; font-size:20px; letter-spacing:4px; text-align:center; padding:4px 6px; }
+.cfact{ display:flex; justify-content:flex-end; gap:8px; }
+.cflist{ max-height:40vh; overflow-y:auto; border:1px solid var(--line); border-radius:8px; padding:4px 8px; margin:6px 0; }
+.cfrow{ display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid var(--line); }
+.cfrow:last-child{ border-bottom:0; } .cfrow span{ flex:1; }
+.okbox{ margin:6px 0; padding:8px 12px; border-radius:8px; background:#e5f3ea; color:#1e6b3c; font-size:15px; }
+.offrow{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:8px 10px; margin:6px 0; border:1px dashed var(--line); border-radius:10px; background:var(--card); }
+.offrow .ofname{ font-weight:700; margin-right:auto; }
+#placeBar{ position:absolute; z-index:800; left:50%; top:10px; transform:translateX(-50%); max-width:92%; display:flex; gap:10px; align-items:center; padding:8px 12px; background:#1f5f99; color:#fff; border-radius:10px; box-shadow:0 6px 18px rgba(0,0,0,.25); font-size:15px; }
+#map.placing, #map.placing .leaflet-interactive{ cursor:crosshair; }
+.ptsearch{ display:flex; gap:6px; margin-top:4px; } .ptsearch input{ flex:1; }
+#ptRes{ display:flex; flex-direction:column; gap:4px; margin-top:6px; }
+.ptopt{ justify-content:flex-start; text-align:left; } .ptopt.on{ outline:3px solid #1f5f99; }
+#toast{ position:fixed; z-index:3000; left:50%; bottom:22px; transform:translate(-50%, 30px); opacity:0; pointer-events:none; padding:10px 16px; border-radius:10px; background:#1e6b3c; color:#fff; font-size:16px; box-shadow:0 8px 24px rgba(0,0,0,.25); transition:opacity .25s, transform .25s; }
+#toast.on{ opacity:1; transform:translate(-50%, 0); }
 .btn.busy .ic{ display:none; }
 .btn.busy::after{ content:''; width:16px; height:16px; border:2.5px solid currentColor; border-right-color:transparent; border-radius:50%; animation:spin .8s linear infinite; }
 @keyframes spin{ to{ transform:rotate(360deg); } }
@@ -287,7 +339,7 @@ button.rbname{ cursor:pointer; } button.rbname:hover{ text-decoration:underline;
 .vtag{ display:inline-block; font-size:12px; font-weight:700; padding:1px 7px; border-radius:10px; margin-left:6px; vertical-align:2px; }
 .vtag.d{ background:#fde7d9; color:#8a3b12; }
 .vtag.a{ background:#e3f1e8; color:#2e7d4f; }
-.wk p{ margin:6px 0 0; font-size:15px; color:var(--muted); display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; }
+.wk p{ margin:6px 0 0; font-size:15px; color:var(--muted); display:-webkit-box; -webkit-line-clamp:5; line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; }
 .wk a{ font-size:14px; color:var(--ink); }
 .cap{ font-size:12px; color:var(--muted); margin-top:2px; }
 .search{ position:relative; }
@@ -372,8 +424,37 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
   <symbol id="i-save" viewBox="0 0 24 24"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></symbol>
   <symbol id="i-expand" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="i-mappin" viewBox="0 0 24 24"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/><path d="M12 2v2"/></symbol>
+  <symbol id="i-bold" viewBox="0 0 24 24"><path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8"/></symbol>
+  <symbol id="i-italic" viewBox="0 0 24 24"><line x1="19" x2="10" y1="4" y2="4"/><line x1="14" x2="5" y1="20" y2="20"/><line x1="15" x2="9" y1="4" y2="20"/></symbol>
+  <symbol id="i-heading" viewBox="0 0 24 24"><path d="M6 12h12"/><path d="M6 20V4"/><path d="M18 20V4"/></symbol>
+  <symbol id="i-olist" viewBox="0 0 24 24"><path d="M10 12h11"/><path d="M10 18h11"/><path d="M10 6h11"/><path d="M4 10h2"/><path d="M4 6h1v4"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></symbol>
+  <symbol id="i-indent" viewBox="0 0 24 24"><path d="M21 12H11"/><path d="M21 18H11"/><path d="M21 6H11"/><path d="m3 8 4 4-4 4"/></symbol>
+  <symbol id="i-outdent" viewBox="0 0 24 24"><path d="M21 12H11"/><path d="M21 18H11"/><path d="M21 6H11"/><path d="m7 8-4 4 4 4"/></symbol>
+  <symbol id="i-callout" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 3v18" stroke-width="4"/><path d="M9 9h8"/><path d="M9 14h6"/></symbol>
+  <symbol id="i-eraser" viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></symbol>
+  <symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
   <symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
 </svg>
+<dialog id="confirm" class="help"><div class="dhead"><button class="btn ibtn" id="cfClose" title="Annuler" aria-label="Annuler"><svg class="ic"><use href="#i-x"/></svg></button><h2 id="cfTitle">Supprimer</h2></div>
+  <div id="cfBody"></div>
+  <div class="cfcode"><span class="small">Pour confirmer, tapez ce code :</span> <b id="cfCode"></b> <input id="cfIn" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="Code de confirmation"></div>
+  <label class="edkey" id="cfKeyRow" hidden>Code d’accès <input id="cfKey" autocomplete="off"></label>
+  <div class="cfact"><button class="btn" id="cfCancel">Annuler</button><button class="btn danger" id="cfOk" disabled>Supprimer</button></div>
+  <p class="small" id="cfMsg"></p>
+</dialog>
+<dialog id="port" class="help"><div class="dhead"><button class="btn ibtn" id="ptClose" title="Annuler" aria-label="Annuler"><svg class="ic"><use href="#i-x"/></svg></button><h2>Changer le port d’attache</h2><button class="btn primary ibtn" id="ptSave" title="Enregistrer" aria-label="Enregistrer"><svg class="ic"><use href="#i-save"/></svg></button></div>
+  <p class="small">L’endroit où l’on dort pour cette région. Les lieux à moins de 40 km s’y rattachent tout seuls, et ceux de la région passent « À revoir » : leur « Y aller » dépend du port d’attache.</p>
+  <div class="edf"><span class="sub">Nom</span><input id="ptName" aria-label="Nom du port d’attache"></div>
+  <div class="edf"><span class="sub">Emplacement</span><span class="small" id="ptWhere"></span>
+    <div class="ptsearch"><input id="ptQ" placeholder="Chercher une ville ou un village…" aria-label="Chercher l’emplacement"><button class="btn" id="ptFind">Chercher</button></div><div id="ptRes"></div></div>
+  <div class="edf" id="ptNightsRow"><span class="sub">Nuits</span><input id="ptNights" type="number" min="0" max="60" aria-label="Nuits"></div>
+  <label class="edkey" id="ptKeyRow" hidden>Code d’accès <input id="ptKey" autocomplete="off"></label>
+  <p class="small" id="ptMsg"></p>
+</dialog>
 <dialog id="viewer"><div class="vwin">
   <div class="vhead"><button class="btn ibtn" id="vwClose" title="Fermer" aria-label="Fermer"><svg class="ic"><use href="#i-x"/></svg></button><b id="vwTitle"></b></div>
   <div id="vwBody"></div>
@@ -394,7 +475,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <dl>
     <dt>1. Ouvrir</dt><dd>Ouvrir la fiche du lieu (ou de la région), puis toucher le <b>crayon</b> en haut. Pour une région, le crayon est dans la bande de couleur.</dd>
     <dt>2. Code</dt><dd>La première fois, entrer le code d'accès (le demander à David). La page s'en souvient ensuite sur cet appareil.</dd>
-    <dt>3. Coller</dt><dd>Photos : une adresse d'image par ligne (clic droit sur l'image, « Copier l'adresse de l'image »). Pour en savoir plus : une courte description puis le lien, un par ligne. Trucs et astuces : un conseil par ligne. Icônes : la barre d'icônes en haut de l'écran les insère là où se trouve le curseur ; une ligne qui commence par « Distance : », « Durée : », « Difficulté : » ou « Pourquoi : » reçoit son icône toute seule. Dans les autres textes : une ligne vide = nouveau paragraphe, « - » au début d'une ligne = puce, **texte** entre deux paires d'étoiles = gras.</dd>
+    <dt>3. Coller</dt><dd>Photos : une adresse d'image par ligne (clic droit sur l'image, « Copier l'adresse de l'image »). Pour en savoir plus : une courte description puis le lien, un par ligne. Les textes se mettent en forme comme dans un traitement de texte, avec la barre en haut : gras, italique, lien, titre, puces (le petit menu choisit le style : rond, tiret, flèche, crochet ou une icône), liste numérotée, retrait (aussi avec Tab et Maj+Tab : tout le paragraphe se décale), encadré beige, icône dans le texte, et la gomme pour enlever la mise en forme. On peut aussi coller un texte déjà mis en forme (ChatGPT, Word, une page Web) : les titres, le gras, les listes et les liens sont gardés. Trucs et astuces : une puce par conseil.</dd>
     <dt>Fiche revue</dt><dd>Cocher <b>Fiche revue</b> en bas quand la fiche est vraiment à nous. Ajouter une photo ou un lien ne suffit pas pour la cocher.</dd>
     <dt>4. Enregistrer</dt><dd>Toucher la <b>disquette</b> en haut à droite. La fiche change tout de suite sur votre écran. Les autres la verront d'ici environ 5 minutes.</dd>
   </dl></details>
@@ -439,7 +520,9 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <dt>Votes</dt><dd>Onglet <b>Votes</b> : Lieu, Qui, Vote, Commentaire. Le dernier vote de chacun compte.</dd>
     <dt>Région</dt><dd>Onglet <b>Régions</b> : Région, Aperçu (ou Résumé), Trucs et astuces (ou Astuces), Pour en savoir plus (ou Sources). Le nom doit être exactement le même que le port d'attache dans <b>Trajet</b>.</dd>
     <dt>Ajouter un lieu</dt><dd>Chercher le lieu, puis <b>Ajouter à la liste de recherche</b> dans la bulle de l'épingle : la ligne est créée avec le nom, les coordonnées, À explorer et la région. Le bouton <b>Research</b> sert ensuite à faire sa fiche.</dd>
-    <dt>Sans coordonnées</dt><dd>Les lieux sans coordonnées sont listés dans l'encadré jaune. <b>Trouver les coordonnées</b> les cherche autour de leur région, puis donne un bouton <b>Copier</b> par bloc de lignes qui se suivent, avec la case exacte où coller (ex. A8). Pour un lieu pas trouvé : dans Google Maps, clic droit <b>sur le lieu lui-même</b> (le lac, le sommet, l'église, pas le départ du sentier), cliquer sur les coordonnées pour les copier, les coller dans sa case Coordonnées. Le nombre de décimales n'a pas d'importance.</dd>
+    <dt>Sans coordonnées</dt><dd>Un lieu pas encore sur la carte apparaît dans la liste de sa région, avec <b>Placer sur la carte</b> : la recherche s'ouvre avec son nom ; choisir le bon résultat, ou cliquer sur la carte à l'endroit exact (le lac, le sommet, l'église), puis <b>Placer ici</b>.</dd>
+    <dt>Supprimer</dt><dd>La corbeille d'une fiche supprime le lieu ; celle de la bande de couleur d'une région la retire du trajet (pour chacun de ses lieux : le garder hors trajet ou le supprimer). Pour éviter les erreurs, il faut taper le code à 4 chiffres affiché. L'historique des versions du Google Sheet permet de tout retrouver.</dd>
+    <dt>Changer le port d'attache</dt><dd>La maison dans la bande de couleur d'une région : nom, emplacement et nuits. Les lieux à moins de 40 km s'y rattachent tout seuls et ceux de la région passent « À revoir ».</dd>
     <dt>Mise à jour</dt><dd>La page lit le Google Sheet chaque fois qu'on l'ouvre. Après une modification, attendre environ 5 minutes, puis cliquer sur <b>Recharger</b>.</dd>
   </dl>
   <a class="btn" href="https://docs.google.com/spreadsheets/d/1mnxZiexvV5cnWcc1inZzZCftosAQsTyMMMLsrFbjyuY/edit" target="_blank" rel="noopener"><svg class="ic"><use href="#i-note"/></svg>Ouvrir le Google Sheet</a>
@@ -475,11 +558,11 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   </div>
 </div></dialog>
 <dialog id="edit"><div class="help">
-  <div class="dhead"><button class="btn ibtn" id="edCancel" title="Fermer sans enregistrer" aria-label="Fermer"><svg class="ic"><use href="#i-x"/></svg></button><h2 id="edTitle">Modifier</h2><button class="btn primary ibtn" id="edSave" title="Enregistrer" aria-label="Enregistrer"><svg class="ic"><use href="#i-save"/></svg></button></div>
+  <div class="dhead"><button class="btn ibtn" id="edCancel" title="Fermer sans enregistrer" aria-label="Fermer"><svg class="ic"><use href="#i-x"/></svg></button><h2 id="edTitle">Modifier</h2><button class="btn primary ibtn" id="edSave" title="Enregistrer" aria-label="Enregistrer"><svg class="ic"><use href="#i-save"/></svg></button>
+    <div class="rtbar" id="edIcons" role="toolbar" aria-label="Mise en forme"></div><div class="rtmenu" id="rtMenu" hidden></div></div>
   <div class="small" id="edMsg" role="status"></div>
   <p class="small" style="margin:0">Les changements vont directement dans le Google Sheet. Les autres les verront d'ici environ 5 minutes.</p>
   <label class="edf" id="edKeyRow"><span class="sub">Code d'accès</span><span class="small">Demander le code à David. La page s'en souvient ensuite sur cet appareil.</span><input id="edKey" type="password" autocomplete="current-password"></label>
-  <div class="icobar" id="edIcons" aria-label="Icônes à insérer"></div>
   <div id="edFields"></div>
   <label class="edrev"><input type="checkbox" id="edRev"> <b>Fiche revue</b> <span class="small">Cocher quand la fiche est vraiment à nous (comme Resciesa). Elle sort alors de la liste « À revoir ». On peut toujours l’enrichir ensuite.</span></label>
   <div class="edbtns"><a href="#" class="small" id="edForget">Oublier le code sur cet appareil</a></div>
@@ -500,7 +583,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   </header>
   <div id="map" role="region" aria-label="Carte"></div>
   <footer>
-    <span>Version 0.19.3 · 7 octobre 2026</span>
+    <span>Version 0.22.0 · 8 octobre 2026</span>
     <span id="stamp"></span>
     <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
     <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -559,6 +642,7 @@ function splitSources(s) {
 function splitTips(s) {
   const t = String(s || '').trim();
   if (!t || norm(t).startsWith('aucune astuce')) return [];
+  if (isHtml(t)) return [t]; // formatted with the editor: shown as is
   // saved from the editor: one tip per line (new way); older text: one tip per sentence
   if (/\n/.test(t)) return t.split(/\n+/).map((x) => x.replace(/^[-•]\s+/, '').trim()).filter(Boolean);
   return t.split(/(?<=[.!?])\s+(?=[A-ZÀ-ÖØ-Þ«"])/).map((x) => x.trim()).filter(Boolean);
@@ -726,6 +810,51 @@ async function getCSV(gid) {
   if (!r.ok) throw new Error('HTTP ' + r.status);
   return parseCSV(await r.text());
 }
+// ---- the tabs as read, plus the changes made here in the last minutes ----
+// The published Google Sheet takes about 5 minutes to show a change, so each change is also kept on this device
+// for 15 minutes and re-applied after every reading: the page shows it right away and it doesn't "come back".
+let RAW = null;
+const OPS_KEY = 'ops2027', OPS_TTL = 15 * 60 * 1000;
+function loadOps() { try { return JSON.parse(localStorage.getItem(OPS_KEY) || '[]').filter((o) => Date.now() - o.at < OPS_TTL); } catch { return []; } }
+function applyOp(R, o) {
+  const same = (a, b) => norm(a) === norm(b), has = (list, n) => (list || []).some((x) => same(x, n));
+  if (o.t === 'del') R.l = R.l.filter((r) => !has(o.names, r['Lieu']));
+  else if (o.t === 'rmreg') {
+    R.l = R.l.filter((r) => !has(o.del, r['Lieu']));
+    R.l.forEach((r) => { if (has(o.keep, r['Lieu'])) r['Région'] = ''; });
+    R.t = R.t.filter((r) => !same(r["Port d'attache"], o.region));
+    R.rg = R.rg.filter((r) => !same(r['Région'], o.region));
+  } else if (o.t === 'port') {
+    const stops = R.t.filter((r) => same(r["Port d'attache"], o.region));
+    stops.forEach((r) => { if (o.nom) r["Port d'attache"] = o.nom; if (o.coords) r['Coordonnées'] = o.coords; });
+    if (o.nuits !== '' && o.nuits != null && stops.length === 1) stops[0]['Nuits'] = String(o.nuits);
+    if (o.nom) {
+      R.rg.forEach((r) => { if (same(r['Région'], o.region)) r['Région'] = o.nom; });
+      R.l.forEach((r) => { if (same(r['Région'], o.region)) { r['Région'] = o.nom; r['Révision'] = 'À revoir'; } });
+    }
+  } else if (o.t === 'set') { // a place: change some columns, or create it
+    let r = R.l.find((x) => same(x['Lieu'], o.lieu));
+    if (!r) { if (!o.create) return; r = { 'Lieu': o.lieu }; R.l.push(r); }
+    Object.assign(r, o.fields);
+  } else if (o.t === 'rset') { // a region card
+    let r = R.rg.find((x) => same(x['Région'], o.region));
+    if (!r) { r = { 'Région': o.region }; R.rg.push(r); }
+    for (const [k, v] of Object.entries(o.fields)) {
+      const alt = { 'Aperçu': 'Résumé', 'Trucs et astuces': 'Astuces', 'Pour en savoir plus': 'Sources' }[k];
+      r[alt && !(k in r) && (alt in r) ? alt : k] = v;
+    }
+  }
+}
+// record a change; rebuild = redraw everything (needed when places or regions move)
+function pushOp(o, rebuild = true) {
+  o.at = Date.now();
+  const ops = loadOps(); ops.push(o); try { localStorage.setItem(OPS_KEY, JSON.stringify(ops)); } catch {}
+  if (!RAW) return;
+  applyOp(RAW, o);
+  if (rebuild) { model = buildModel(RAW.l, RAW.t, RAW.k, RAW.vo, RAW.vy, RAW.rg); render(); }
+}
+const placeIndex = (name) => model.places.findIndex((p) => norm(p.name) === norm(name));
+const hubByName = (name) => model.hubs.find((h) => norm(h.name) === norm(name)) || null;
 async function load() {
   $('sum').textContent = 'Chargement…';
   try {
@@ -739,7 +868,9 @@ async function load() {
     const vo = pick((h) => h.includes('Qui') && h.includes('Vote'));
     const vy = pick((h) => h.includes('Voyageur') || h.includes('Voyageurs'));
     const rg = pick((h) => h.includes('Région') && (h.includes('Résumé') || h.includes('Aperçu')) && !h.includes('Lieu'));
-    model = buildModel(l, t, k, vo, vy, rg);
+    RAW = { l, t, k, vo, vy, rg };
+    loadOps().forEach((o) => applyOp(RAW, o));
+    model = buildModel(RAW.l, RAW.t, RAW.k, RAW.vo, RAW.vy, RAW.rg);
     render();
     $('stamp').textContent = 'Google Sheet lu à ' + new Date().toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' }) + ' (un changement peut prendre environ 5 minutes à apparaître)';
   } catch (e) {
@@ -748,6 +879,110 @@ async function load() {
   }
 }
 
+// ---- formatted text (from the editor): a small, safe set of tags ----
+// p, h4 (title), strong, em, a, br, ul (data-b = bullet style), ol, li, div.callout (tan frame); class in1–in4 = indent
+// remove tracking tags from addresses (utm_source=chatgpt.com…)
+function stripUtm(u) {
+  try { const x = new URL(u); [...x.searchParams.keys()].forEach((k) => { if (/^(utm_|fbclid$|gclid$)/i.test(k)) x.searchParams.delete(k); }); return x.toString(); } catch { return u; }
+}
+function isHtml(t) { return /^\s*<(p|h4|ul|ol|div)[\s>]/i.test(String(t || '')); }
+const BLOCK_RE = /^(P|DIV|H[1-6]|UL|OL|LI|BLOCKQUOTE|TABLE|THEAD|TBODY|TR|TD|TH|SECTION|ARTICLE|HEADER|FOOTER|PRE|DL|DT|DD|FIGURE)$/;
+const CHAR_BULLETS = { dash: '–', arrow: '→', check: '✓' };
+const okBullet = (b) => !!(b && (CHAR_BULLETS[b] || ICON_OF[b]));
+const htTrim = (h) => h.replace(/^(?:\s|<br>)+|(?:\s|<br>)+$/g, '');
+const lvCls = (n) => (n ? ` class="in${n}"` : '');
+function indentOf(el) {
+  const m = String(el.className || '').match(/\bin([1-4])\b/); if (m) return +m[1];
+  const ml = parseFloat((el.style && (el.style.marginLeft || el.style.paddingLeft)) || '') || 0;
+  return ml >= 18 ? Math.min(4, Math.round(ml / 36) || 1) : 0;
+}
+function htInline(n) {
+  if (n.nodeType === 3) return esc(n.nodeValue.replace(/[\s\u00a0]+/g, ' '));
+  if (n.nodeType !== 1) return '';
+  const t = n.tagName;
+  if (t === 'BR') return '<br>';
+  if (n.classList.contains('ico') && n.dataset.ic) return `[${n.dataset.ic}]`;
+  if (/^(SCRIPT|STYLE|SVG|IMG|META|LINK|TITLE|BUTTON|INPUT|SELECT|TEXTAREA|IFRAME|OBJECT)$/.test(t)) return '';
+  const kids = [...n.childNodes].map(htInline).join('');
+  const st = n.style || {};
+  if ((t === 'B' || t === 'STRONG') && !/normal|[1-5]00/.test(st.fontWeight || '')) return kids.trim() ? `<strong>${kids}</strong>` : kids;
+  if (t === 'I' || t === 'EM') return kids.trim() ? `<em>${kids}</em>` : kids;
+  if (t === 'A') { const h = stripUtm(n.getAttribute('href') || ''); return /^https?:\/\//i.test(h) ? `<a href="${esc(h)}">${kids.trim() ? kids : esc(linkLabel(h))}</a>` : kids; }
+  let k = kids;
+  if (/bold|[6-9]00/.test(st.fontWeight || '') && k.trim()) k = `<strong>${k}</strong>`;
+  if (st.fontStyle === 'italic' && k.trim()) k = `<em>${k}</em>`;
+  return k;
+}
+function htBlocks(box, lv, out) {
+  let run = [];
+  const flush = () => { const h = htTrim(run.join('')); if (h) out.push(`<p${lvCls(lv)}>${h}</p>`); run = []; };
+  for (const n of box.childNodes) {
+    if (n.nodeType === 1 && BLOCK_RE.test(n.tagName)) { flush(); htBlock(n, lv, out); } else run.push(htInline(n));
+  }
+  flush();
+}
+function htBlock(el, lv, out) {
+  const t = el.tagName, L = Math.min(4, lv + indentOf(el));
+  if (/^H[1-6]$/.test(t)) { const h = htTrim(htInline(el)); if (h) out.push(`<h4${lvCls(L)}>${h}</h4>`); return; }
+  if (t === 'UL' || t === 'OL') {
+    const items = []; htItems(el, L, items); if (!items.length) return;
+    const b = t === 'UL' && okBullet(el.dataset && el.dataset.b) ? ` data-b="${el.dataset.b}"` : '';
+    out.push(`<${t.toLowerCase()}${b}>${items.join('')}</${t.toLowerCase()}>`); return;
+  }
+  if (t === 'LI') { const items = []; htItem(el, lv, items); if (items.length) out.push(`<ul>${items.join('')}</ul>`); return; }
+  if (t === 'DIV' && el.classList.contains('callout')) { const inner = []; htBlocks(el, 0, inner); if (inner.length) out.push(`<div class="callout${L ? ' in' + L : ''}">${inner.join('')}</div>`); return; }
+  if ([...el.children].some((c) => BLOCK_RE.test(c.tagName))) { htBlocks(el, L, out); return; }
+  const h = htTrim(htInline(el)); if (h) out.push(`<p${lvCls(L)}>${h}</p>`);
+}
+function htItems(list, base, items) { for (const c of list.children) { if (c.tagName === 'LI') htItem(c, base, items); else if (c.tagName === 'UL' || c.tagName === 'OL') htItems(c, base + 1, items); } }
+function htItem(li, base, items) {
+  const lv = Math.min(4, base + indentOf(li)); const run = [], nested = [];
+  for (const n of li.childNodes) {
+    if (n.nodeType === 1 && (n.tagName === 'UL' || n.tagName === 'OL')) nested.push(n);
+    else if (n.nodeType === 1 && BLOCK_RE.test(n.tagName)) { const h = htTrim(htInline(n)); if (h) run.push((run.length ? '<br>' : '') + h); }
+    else run.push(htInline(n));
+  }
+  const h = htTrim(run.join('')); if (h) items.push(`<li${lvCls(lv)}>${h}</li>`);
+  nested.forEach((nl) => htItems(nl, lv + 1, items));
+}
+// any HTML (editor, ChatGPT, Word, a web page) -> our small safe set
+function cleanHtml(html) {
+  const doc = new DOMParser().parseFromString(String(html || ''), 'text/html');
+  const out = []; htBlocks(doc.body, 0, out); return out.join('');
+}
+// older plain text (new line, "- ", **bold**, URLs) -> formatted text, for the editor and for pasted plain text
+function legacyInline(t) {
+  let h = esc(t).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  return h.replace(/https?:\/\/[^\s<>"]+/gi, (u) => { const trail = (u.match(/[.,;:)\]]+$/) || [''])[0]; const url = trail ? u.slice(0, -trail.length) : u; return `<a href="${url}">${esc(linkLabel(url.replace(/&amp;/g, '&')))}</a>${trail}`; });
+}
+function autoIcon(x) { if (/^\[[a-z]+\]/.test(x)) return x; const a = AUTO_ICON.find(([re]) => re.test(x)); return a ? `[${a[1]}] ${x}` : x; }
+function legacyToHtml(v, kind) {
+  v = String(v || '').replace(/\r/g, '');
+  if (!v.trim()) return '';
+  if (isHtml(v)) return cleanHtml(v);
+  if (kind === 'tips') { const t = splitTips(v); return t.length ? `<ul>${t.map((x) => `<li>${legacyInline(x)}</li>`).join('')}</ul>` : ''; }
+  const out = []; let list = null, ltag = '';
+  const close = () => { if (list) { out.push(`<${ltag}>${list.join('')}</${ltag}>`); list = null; } };
+  for (const raw of v.split('\n')) {
+    const l = raw.trim(); if (!l) { close(); continue; }
+    let m;
+    if ((m = l.match(/^[-•*]\s+(.*)$/))) { if (ltag !== 'ul') close(); ltag = 'ul'; (list = list || []).push(`<li>${legacyInline(autoIcon(m[1]))}</li>`); }
+    else if ((m = l.match(/^\d+[.)]\s+(.*)$/))) { if (ltag !== 'ol') close(); ltag = 'ol'; (list = list || []).push(`<li>${legacyInline(m[1])}</li>`); }
+    else if ((m = l.match(/^#{1,6}\s+(.*)$/))) { close(); out.push(`<h4>${legacyInline(m[1])}</h4>`); }
+    else { close(); out.push(`<p>${legacyInline(l)}</p>`); }
+  }
+  close();
+  return out.join('');
+}
+// formatted text -> what the card shows (icons, links that open in a new tab)
+function renderHtml(t) {
+  const tpl = document.createElement('template');
+  tpl.innerHTML = iconize(cleanHtml(t));
+  tpl.content.querySelectorAll('p,ul,ol,h4').forEach((e) => e.classList.add('rt'));
+  tpl.content.querySelectorAll('a').forEach((a) => { a.target = '_blank'; a.rel = 'noopener'; a.className = 'tl'; });
+  tpl.content.querySelectorAll('li').forEach((li) => { const f = li.firstChild; if (f && f.nodeType === 1 && f.matches('svg.ti')) li.classList.add('hasic'); });
+  return tpl.innerHTML;
+}
 // text with web addresses -> text with small "↗ site" links
 function linkify(t) {
   const out = []; let last = 0; const re = /https?:\/\/[^\s<>"]+/gi; let m;
@@ -768,15 +1003,26 @@ const ICONS = [['rando', 'footprints', 'Randonnée'], ['remontee', 'cablecar', '
 const ICON_OF = Object.fromEntries(ICONS.map(([c, id]) => [c, id]));
 const EMOJI_OF = { '🥾': 'rando', '🚠': 'remontee', '🚡': 'remontee', '🚌': 'bus', '🍽️': 'repas', '🍽': 'repas', '⛰️': 'vue', '🏔️': 'vue', '🎟️': 'billet', '⏱️': 'duree', '⚠️': 'attention' };
 // bullets that start with these words get their icon automatically
-const AUTO_ICON = [[/^distance\b/i, 'distance'], [/^dur[ée]e\b/i, 'duree'], [/^difficult[ée]\b/i, 'difficulte'], [/^pourquoi\b/i, 'aime'], [/^d[ée]nivel[ée]\b/i, 'vue'], [/^prix\b/i, 'billet'], [/^stationnement\b/i, 'parking']];
+const AUTO_ICON = [[/^distance(?=[\s:]|$)/i, 'distance'], [/^dur[ée]e(?=[\s:]|$)/i, 'duree'], [/^difficult[ée](?=[\s:]|$)/i, 'difficulte'], [/^pourquoi(?=[\s:]|$)/i, 'aime'], [/^d[ée]nivel[ée](?=[\s:]|$)/i, 'vue'], [/^prix(?=[\s:]|$)/i, 'billet'], [/^stationnement(?=[\s:]|$)/i, 'parking']];
 const tico = (code) => `<svg class="ic ti" aria-hidden="true"><use href="#i-${ICON_OF[code]}"/></svg>`;
 function iconize(h) {
   for (const [e, c] of Object.entries(EMOJI_OF)) h = h.split(e).join(`[${c}]`);
   return h.replace(/\[([a-z]+)\]\s?/g, (m, c) => (ICON_OF[c] ? tico(c) : m));
 }
+// icon bullets: built once from the same icons as the page
+(() => {
+  const css = ICONS.map(([c, id]) => {
+    const sym = document.getElementById('i-' + id); if (!sym) return '';
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${sym.innerHTML}</svg>`;
+    const u = `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+    return `ul[data-b="${c}"]>li::before{content:'';width:17px;height:17px;top:.2em;left:-24px;background:var(--muted);-webkit-mask:${u} center/contain no-repeat;mask:${u} center/contain no-repeat;}`;
+  }).join('\n');
+  const st = document.createElement('style'); st.textContent = css; document.head.append(st);
+})();
 // light formatting typed in the editor: new line = new paragraph, "- " = bullet, **text** = bold
 function inlineFmt(t) { return iconize(linkify(t).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')); }
 function richText(t) {
+  if (isHtml(t)) return renderHtml(t);
   const lines = String(t || '').replace(/\r/g, '').split('\n');
   let html = '', list = [];
   const li = (x) => {
@@ -797,6 +1043,7 @@ function richText(t) {
   return html;
 }
 function tipsHtml(tips, title = 'Astuces') {
+  if (tips.length === 1 && isHtml(tips[0])) return `<div class="tips">${title ? `<b>${title}</b>` : ''}${renderHtml(tips[0])}</div>`;
   return tips.length ? `<div class="tips">${title ? `<b>${title}</b>` : ''}<ul>${tips.map((t) => `<li>${inlineFmt(t)}</li>`).join('')}</ul></div>` : '';
 }
 function labeledHtml(list) {
@@ -882,15 +1129,14 @@ function render() {
     mk.addTo(g.other ? layers.other : layers.places); markerOf.set(p, mk); mk._st = p.st;
   }
   // panel: a row of regions, then the places of the selected region
-  const groupsAll = [...m.hubs, m.other].filter((g) => !g.other || g.places.length);
+  const hubSet = new Set(m.hubs.map((h) => norm(h.name)));
+  const groupsAll = [...m.hubs, m.other].filter((g) => !g.other || g.places.length || m.skipped.some((x) => !hubSet.has(norm(x.region))));
   const rbar = `<div class="rbar"><button class="rnav" data-rnav="-1" aria-label="Régions précédentes">‹</button><div class="rchips" id="rchips">${groupsAll.map((g) => `<button class="rchip" data-gr="${g.other ? 'o' : g.index}" aria-pressed="false"><span class="badge" style="background:${colorOf(g)}">${g.other ? 'A' : esc(g.label)}</span><span class="rcname">${esc(g.name)}</span><span class="small cnt"></span></button>`).join('')}</div><button class="rnav" data-rnav="1" aria-label="Régions suivantes">›</button></div>`;
   let html = `<div class="warn" id="fltEmpty" hidden>Aucun lieu ne correspond aux filtres. <button class="btn" id="fltReset">Tout afficher</button></div>`;
-  if (m.skipped.length) html += `<div class="warn">Sans coordonnées (pas sur la carte) : ${m.skipped.map((x) => esc(x.name)).join(', ')}<div style="margin-top:8px"><button class="btn" id="findCoords">${ico('search')}Trouver les coordonnées</button></div><div id="coordOut"></div></div>`;
   if (m.voteUnmatched && m.voteUnmatched.length) html += `<div class="warn">Dans l'onglet Votes, nom introuvable dans Lieux : ${[...new Set(m.voteUnmatched)].map(esc).join(', ')}</div>`;
   if (m.unmatched.length) html += `<div class="warn">Dans l'onglet Liens, nom introuvable dans Lieux : ${[...new Set(m.unmatched)].map(esc).join(', ')}</div>`;
   html += `<div id="rplaces"></div>`;
   $('panel').innerHTML = `${rbar}<div id="placeView" hidden></div><div id="vsplit" title="Glisser pour changer la hauteur de la fiche (double-clic : taille de départ)"></div><div id="listView">${html}</div>`; curPlace = null; curRegion = null;
-  const fc = $('findCoords'); if (fc) fc.addEventListener('click', findCoords);
   $('fltReset').addEventListener('click', showAllFilters);
   const keep = curG != null && groupOf(curG) && (curG !== 'o' || m.other.places.length) ? groupOf(curG) : groupsAll[0];
   selectRegion(keep, false);
@@ -955,7 +1201,7 @@ function placeHtml(p, want) {
       ${bandHtml(p.hub, true)}
       <div class="top psub"><span class="badge" style="background:${colorOf(p.hub)}">${esc(p.num)}</span><button class="namelink" data-go="${i}" title="Voir sur la carte"><h3>${esc(p.name)}</h3></button>
         <a class="btn ibtn" href="https://www.google.com/maps/search/?api=1&query=${p.at[0]},${p.at[1]}" target="_blank" rel="noopener" title="Ouvrir dans Google Maps" aria-label="Ouvrir dans Google Maps">${ico('pin')}</a>
-        <button class="btn ibtn" data-edit="${i}" title="Modifier cette fiche" aria-label="Modifier cette fiche">${ico('pencil')}</button><button class="btn ibtn" data-region="${p.hub.other ? 'o' : p.hub.index}" title="Fermer le lieu et revenir à la région" aria-label="Fermer le lieu">${ico('x')}</button></div>
+        <button class="btn ibtn" data-edit="${i}" title="Modifier cette fiche" aria-label="Modifier cette fiche">${ico('pencil')}</button><button class="btn ibtn" data-del="${i}" title="Supprimer ce lieu" aria-label="Supprimer ce lieu">${ico('trash')}</button><button class="btn ibtn" data-region="${p.hub.other ? 'o' : p.hub.index}" title="Fermer le lieu et revenir à la région" aria-label="Fermer le lieu">${ico('x')}</button></div>
       <div class="tabs" role="tablist">${panes.map(([k, t], j) => `<button role="tab" data-tab="${k}" aria-selected="false">${t}</button>`).join('')}<button class="allbtn" aria-pressed="true" title="Voir une section à la fois">Par onglet</button></div>
     </div>
     <div class="facts">${p.rvk !== 'done' ? `<span class="rvtag rv-${p.rvk}">${RV_LABEL[p.rvk]}</span> ` : ''}${facts}</div>
@@ -966,7 +1212,7 @@ function placeHtml(p, want) {
 function bandHtml(g, link) {
   const key = g.other ? 'o' : g.index;
   const label = `${g.other ? 'A' : esc(g.label)} · ${esc(g.name)}`;
-  const pen = !link && !g.other ? `<button class="btn ibtn rbbtn" data-redit="${key}" title="Modifier la région" aria-label="Modifier la région">${ico('pencil')}</button>` : '';
+  const pen = !link && !g.other ? `<button class="btn ibtn rbbtn" data-redit="${key}" title="Modifier la région" aria-label="Modifier la région">${ico('pencil')}</button><button class="btn ibtn rbbtn" data-port="${key}" title="Changer le port d’attache (nom, emplacement, nuits)" aria-label="Changer le port d’attache">${ico('home')}</button><button class="btn ibtn rbbtn" data-rdel="${key}" title="Retirer la région du trajet" aria-label="Retirer la région du trajet">${ico('trash')}</button>` : '';
   return `<div class="rband" style="background:${colorOf(g)}">${link ? `<button class="rbname" data-region="${key}" title="Voir la fiche de la région">${label} ›</button>` : `<span class="rbname">${label}</span>`}${pen}</div>`;
 }
 function regionHtml(g, want) {
@@ -996,7 +1242,10 @@ function selectRegion(g, scroll = true) {
   const chip = document.querySelector(`.rchip[data-gr="${curG}"]`);
   if (chip && scroll) chip.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   const meta = g.other ? 'À plus de 40 km de tous les ports d’attache. Si on ajoute un port d’attache tout près, ces lieux s’y rattachent tout seuls.' : `${g.nights.join(' + ')} n. · ${esc(g.how.filter(Boolean).join(' / '))}`;
-  $('rplaces').innerHTML = `${g.other ? `<p class="small">${meta}</p>` : zoneHtml(g)}<div class="cards">${g.places.length ? g.places.map((p) => rowHtml(p)).join('') : '<p class="small">Pas encore de lieux dans cette région.</p>'}</div>`;
+  const hubNames = new Set(model.hubs.map((h) => norm(h.name)));
+  const off = model.skipped.filter((x) => (g.other ? !hubNames.has(norm(x.region)) : norm(x.region) === norm(g.name)));
+  const offHtml = off.map((x) => `<div class="offrow"><span class="ofname">${esc(x.name)}</span><span class="small">pas encore sur la carte</span><button class="btn" data-place="${esc(x.name)}" title="Placer ce lieu sur la carte">${ico('mappin')}Placer sur la carte</button><button class="btn ibtn" data-delname="${esc(x.name)}" title="Supprimer ce lieu" aria-label="Supprimer ce lieu">${ico('trash')}</button></div>`).join('');
+  $('rplaces').innerHTML = `${g.other ? `<p class="small">${meta}</p>` : zoneHtml(g)}<div class="cards">${g.places.length ? g.places.map((p) => rowHtml(p)).join('') : (off.length ? '' : '<p class="small">Pas encore de lieux dans cette région.</p>')}${offHtml}</div>`;
   if (curPlace != null) { const r = $('r' + curPlace); if (r) r.classList.add('sel'); }
   $('listView').scrollTop = 0;
   if (model) applyFilter();
@@ -1131,6 +1380,16 @@ $('panel').addEventListener('click', (e) => {
   if (im) { openViewer(im.closest('.car')); return; }
   const nv = e.target.closest('.car .nav');
   if (nv) { carGo(nv.closest('.car'), nv.classList.contains('next') ? 1 : -1); return; }
+  const dl = e.target.closest('[data-del]');
+  if (dl) { deletePlace(model.places[+dl.dataset.del].name); return; }
+  const dn = e.target.closest('[data-delname]');
+  if (dn) { deletePlace(dn.dataset.delname); return; }
+  const pl = e.target.closest('[data-place]');
+  if (pl) { startPlacing(pl.dataset.place); return; }
+  const po = e.target.closest('[data-port]');
+  if (po) { openPort(groupOf(po.dataset.port)); return; }
+  const rd = e.target.closest('[data-rdel]');
+  if (rd) { removeRegion(groupOf(rd.dataset.rdel)); return; }
   const re = e.target.closest('[data-redit]');
   if (re) { openRegionEditor(groupOf(re.dataset.redit)); return; }
   const rb = e.target.closest('[data-region]');
@@ -1173,22 +1432,40 @@ const KEYSTORE = 'cle2027';
 const EDIT_UI = [
   ['Photo', 'Photos et vidéos', 'Une adresse par ligne. Pour une image : clic droit sur l’image, « Copier l’adresse de l’image ». YouTube et Vimeo jouent dans la fiche.', 'lines', 3],
   ['Aperçu', 'Aperçu', 'Pourquoi y aller, en une ou deux phrases.', 'text', 3],
-  ["Comment s'y rendre", 'Comment s’y rendre', 'Depuis le port d’attache : autobus, remontée, à pied, temps de trajet. Un lien à la fin d’une phrase devient un petit lien ↗. Même mise en forme que Quoi faire.', 'text', 4],
-  ['Quoi faire', 'Quoi faire', 'La balade ou la visite, étape par étape. Mise en forme : une ligne vide = nouveau paragraphe ; « - » au début d’une ligne = puce ; **texte** entre deux paires d’étoiles = gras.', 'text', 8],
-  ['Trucs et astuces', 'Trucs et astuces', 'Un conseil par ligne.', 'tips', 4],
-  ['Pour en savoir plus', 'Pour en savoir plus', 'Un lien par ligne : une courte description, puis l’adresse (ex. « Récit de la randonnée https://… »).', 'lines', 4],
+  ["Comment s'y rendre", 'Comment s’y rendre', 'Depuis le port d’attache : autobus, remontée, à pied, temps de trajet.', 'text', 4],
+  ['Quoi faire', 'Quoi faire', 'La balade ou la visite, étape par étape.', 'text', 8],
+  ['Trucs et astuces', 'Trucs et astuces', 'Une puce par conseil. Un conseil peut avoir plusieurs phrases et plusieurs lignes.', 'tips', 4],
+  ['Pour en savoir plus', 'Pour en savoir plus', 'Un lien par ligne : écrire la description, la sélectionner, puis le bouton lien. On peut aussi coller des liens cliquables, ou des lignes « description » puis « adresse ».', 'links', 5],
   ['Type', 'Type', 'Village, Sommet, Lac, Randonnée…', 'short', 1],
-  ['Note', 'Ancien résumé (Note)', 'Seulement pour les fiches pas encore refaites.', 'text', 3],
+  ['Note', 'Ancien résumé (Note)', 'Seulement pour les fiches pas encore refaites.', 'plain', 3],
 ];
 function toEditor(kind, v) {
   v = String(v || '');
-  if (kind === 'lines') return v.split(/\s*;\s*/).map((x) => x.trim()).filter(Boolean).join('\n');
+  if (kind === 'lines' || kind === 'links') return v.split(/\s*;\s*/).map((x) => x.trim()).filter(Boolean).join('\n');
   if (kind === 'tips') return splitTips(v).join('\n');
   return v;
+}
+// links box: a description line followed by an address line becomes one link "description address"
+function pairLinks(lines) {
+  const out = []; let label = '';
+  for (const l of lines) {
+    const m = l.match(/https?:\/\/\S+/i);
+    if (!m) { label = label ? label + ' ' + l : l; continue; }
+    const before = l.slice(0, m.index).trim();
+    out.push(before ? l : (label ? `${label.replace(/[\s:—–-]+$/, '')} — ${l}` : l)); label = '';
+  }
+  if (label) out.push(label); // a description with no address yet stays, so nothing is lost
+  return out;
+}
+// clickable links pasted (ChatGPT, web page) -> one line each: "description — address"
+function linksFromHtml(html) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return [...doc.querySelectorAll('a[href^="http"]')].map((a) => { const t = a.textContent.replace(/\s+/g, ' ').trim(), u = a.getAttribute('href'); return t && t !== u && !/^https?:\/\//i.test(t) ? `${t} — ${u}` : u; });
 }
 function fromEditor(kind, v) {
   const lines = String(v || '').split(/\n+/).map((x) => x.trim()).filter(Boolean);
   if (kind === 'lines') return lines.join(' ; ');
+  if (kind === 'links') return pairLinks(lines).join(' ; ');
   if (kind === 'tips') return lines.join('\n');
   return String(v || '').replace(/\r/g, '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
 }
@@ -1196,15 +1473,50 @@ let editing = null, edUI = [];
 const EDIT_UI_REGION = [
   ['Photo', 'Photos et vidéos', 'Une adresse par ligne : vidéos YouTube (« 9 randonnées dans les Dolomites »), images. Elles s’affichent en haut de la fiche de la région.', 'lines', 3],
   ['Aperçu', 'Aperçu', 'Quel genre de voyage cette région offre (montagne et randonnée, vignobles et culture, mer…), comment on s’y déplace, à quoi s’attendre en septembre.', 'text', 5],
-  ['Trucs et astuces', 'Trucs et astuces', 'Un conseil par ligne : cartes de transport, fermetures de fin de saison, réservations.', 'tips', 4],
-  ['Pour en savoir plus', 'Pour en savoir plus', 'Un lien par ligne : une courte description, puis l’adresse.', 'lines', 4],
+  ['Trucs et astuces', 'Trucs et astuces', 'Une puce par conseil : cartes de transport, fermetures de fin de saison, réservations.', 'tips', 4],
+  ['Pour en savoir plus', 'Pour en savoir plus', 'Un lien par ligne : écrire la description, la sélectionner, puis le bouton lien. On peut aussi coller des liens cliquables, ou des lignes « description » puis « adresse ».', 'links', 5],
 ];
+const isRich = (kind) => kind === 'text' || kind === 'tips' || kind === 'links';
+// links box: list of "description — address" <-> one clickable line each
+function linksToRte(lines) {
+  return pairLinks(lines).map((l) => { const m = l.match(/https?:\/\/\S+/i); if (!m) return `<p>${esc(l)}</p>`;
+    const url = stripUtm(m[0].replace(/[.,;:)\]]+$/, '')), label = l.slice(0, m.index).replace(/[\s:—–-]+$/, '').trim();
+    return `<p><a href="${esc(url)}">${esc(label || url)}</a></p>`; }).join('');
+}
+// any formatted text -> one line per link, "description — address" (a description on the line above an address is joined to it)
+function linkLines(html) {
+  const doc = new DOMParser().parseFromString(cleanHtml(html), 'text/html');
+  doc.querySelectorAll('a[href]').forEach((a) => {
+    const u = stripUtm(a.getAttribute('href')), t = a.textContent.replace(/\s+/g, ' ').trim();
+    const own = t && !/^https?:\/\//i.test(t) && t !== linkLabel(u);
+    a.replaceWith(doc.createTextNode(own ? `${t} — ${u}` : ` ${u} `));
+  });
+  doc.querySelectorAll('br').forEach((x) => x.replaceWith(doc.createTextNode('\n')));
+  const lines = [];
+  doc.body.querySelectorAll('p,li,h4').forEach((x) => x.textContent.split('\n').forEach((l) => { l = l.replace(/\s+/g, ' ').trim(); if (l) lines.push(l); }));
+  return pairLinks(lines);
+}
+const linksValue = (el) => linkLines(el.innerHTML).join(' ; ');
 function fieldsHtml(ui, raw) {
   return ui.map(([f, label, hint, kind, rows], j) =>
-    `<label class="edf"><span class="sub">${label}</span><span class="small">${hint}</span>${kind === 'short'
-      ? `<input data-f="${j}" value="${esc(toEditor(kind, raw[f]))}">`
-      : `<textarea data-f="${j}" rows="${rows}">${esc(toEditor(kind, raw[f]))}</textarea>`}</label>`).join('');
+    `<div class="edf"><span class="sub">${label}</span><span class="small">${hint}</span>${kind === 'short'
+      ? `<input data-f="${j}" value="${esc(toEditor(kind, raw[f]))}" aria-label="${esc(label)}">`
+      : isRich(kind) ? `<div class="rte" contenteditable="true" data-f="${j}" data-kind="${kind}" style="--rows:${rows}" role="textbox" aria-multiline="true" aria-label="${esc(label)}"></div>`
+      : `<textarea data-f="${j}" data-kind="${kind}" rows="${rows}" aria-label="${esc(label)}">${esc(toEditor(kind, raw[f]))}</textarea>`}</div>`).join('');
 }
+// fill the formatted boxes (icons shown as icons) and remember where each one started
+function loadRich(ui, raw) {
+  $('edFields').querySelectorAll('.rte').forEach((el) => {
+    const [f, , , kind] = ui[+el.dataset.f];
+    if (kind === 'links') { el.innerHTML = linksToRte(toEditor('links', raw[f]).split('\n').filter(Boolean)); el._init = linksValue(el); return; }
+    el.innerHTML = toRte(legacyToHtml(raw[f], kind));
+    el._init = rteValue(el);
+  });
+}
+const icoSpan = (c) => `<span class="ico" data-ic="${c}" contenteditable="false">${tico(c)}</span>`;
+function toRte(h) { return h.replace(/\[([a-z]+)\]\s?/g, (m, c) => (ICON_OF[c] ? icoSpan(c) + ' ' : m)); }
+const rteValue = (el) => cleanHtml(el.innerHTML);
+const fieldValue = (el) => (el.classList.contains('rte') ? rteValue(el) : el.value);
 function openRegionEditor(g) {
   if (!g || g.other) return;
   if (!g.region) { g.region = { raw: { 'Photo': '', 'Aperçu': '', 'Trucs et astuces': '', 'Pour en savoir plus': '' } }; applyRegionRaw(g.region); }
@@ -1213,7 +1525,7 @@ function openRegionEditor(g) {
   $('edMsg').textContent = ''; $('edMsg').className = 'small';
   let k = ''; try { k = localStorage.getItem(KEYSTORE) || ''; } catch {}
   $('edKey').value = k; $('edKeyRow').hidden = !!k;
-  $('edFields').innerHTML = fieldsHtml(edUI, g.region.raw);
+  $('edFields').innerHTML = fieldsHtml(edUI, g.region.raw); loadRich(edUI, g.region.raw);
   $('edRev').checked = false; $('edRev').closest('.edrev').hidden = true;
   edSnap = edState();
   $('edit').showModal();
@@ -1225,7 +1537,7 @@ function openEditor(p) {
   $('edMsg').textContent = ''; $('edMsg').className = 'small';
   let k = ''; try { k = localStorage.getItem(KEYSTORE) || ''; } catch {}
   $('edKey').value = k; $('edKeyRow').hidden = !!k;
-  $('edFields').innerHTML = fieldsHtml(edUI, p.raw);
+  $('edFields').innerHTML = fieldsHtml(edUI, p.raw); loadRich(edUI, p.raw);
   $('edRev').checked = p.rvk === 'done';
   edSnap = edState();
   $('edit').showModal();
@@ -1238,6 +1550,7 @@ async function saveEditor() {
   const champs = {};
   $('edFields').querySelectorAll('[data-f]').forEach((el) => {
     const [f, , , kind] = edUI[+el.dataset.f];
+    if (el.classList.contains('rte')) { const val = kind === 'links' ? linksValue(el) : rteValue(el); if (val !== el._init) champs[f] = val; return; }
     const val = fromEditor(kind, el.value);
     if (val !== String(p.raw[f] || '').trim()) champs[f] = val;
   });
@@ -1254,6 +1567,7 @@ async function saveEditor() {
     }
     try { localStorage.setItem(KEYSTORE, cle); } catch {}
     Object.assign(p.raw, champs); if (j.ligne) p.row = j.ligne; applyRaw(p);
+    pushOp({ t: 'set', lieu: p.name, fields: champs }, false);
     // show the change right away (the published Google Sheet takes about 5 minutes to catch up)
     const i = model.places.indexOf(p);
     const rowEl = $('r' + i); if (rowEl) rowEl.outerHTML = rowHtml(p);
@@ -1264,6 +1578,139 @@ async function saveEditor() {
     $('edMsg').className = 'small err'; $('edMsg').textContent = 'Pas enregistré : ' + err.message;
   } finally { edBusy(false); }
 }
+// ---- delete: a window that asks to type a random 4-digit code ----
+let cfRun = null;
+function askDelete(title, bodyHtml, okLabel, run) {
+  const code = String(Math.floor(1000 + Math.random() * 9000));
+  $('cfTitle').textContent = title; $('cfBody').innerHTML = bodyHtml; $('cfCode').textContent = code;
+  $('cfIn').value = ''; $('cfOk').disabled = true; $('cfOk').textContent = okLabel; $('cfMsg').textContent = ''; $('cfMsg').className = 'small';
+  let k = ''; try { k = localStorage.getItem(KEYSTORE) || ''; } catch {}
+  $('cfKey').value = k; $('cfKeyRow').hidden = !!k;
+  $('cfIn').oninput = () => { $('cfOk').disabled = $('cfIn').value.trim() !== code; };
+  cfRun = run; $('confirm').showModal(); setTimeout(() => $('cfIn').focus(), 50);
+}
+async function bridgePost(body, keyEl, keyRow) {
+  const cle = keyEl.value.trim();
+  if (!cle) { keyRow.hidden = false; keyEl.focus(); throw new Error('entrer le code d’accès'); }
+  const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify(Object.assign({ cle }, body)) });
+  const j = await r.json();
+  if (!j.ok) { if (/code/i.test(j.erreur || '')) { try { localStorage.removeItem(KEYSTORE); } catch {} keyRow.hidden = false; } throw new Error(j.erreur || 'Erreur'); }
+  try { localStorage.setItem(KEYSTORE, cle); } catch {}
+  return j;
+}
+$('cfOk').addEventListener('click', async () => {
+  if (!cfRun) return;
+  $('cfOk').disabled = true; $('cfOk').classList.add('busy'); $('cfCancel').disabled = true;
+  $('cfMsg').className = 'edbusy'; $('cfMsg').textContent = 'Suppression en cours… (quelques secondes)';
+  try { await cfRun(); $('confirm').close(); }
+  catch (err) { $('cfMsg').className = 'small err'; $('cfMsg').textContent = 'Pas supprimé : ' + err.message; $('cfOk').disabled = false; }
+  finally { $('cfOk').classList.remove('busy'); $('cfCancel').disabled = false; }
+});
+$('cfCancel').addEventListener('click', () => $('confirm').close());
+$('cfClose').addEventListener('click', () => $('confirm').close());
+$('confirm').addEventListener('cancel', (e) => { if ($('cfOk').classList.contains('busy')) e.preventDefault(); });
+$('confirm').addEventListener('close', () => { cfRun = null; });
+function deletePlace(name) {
+  askDelete('Supprimer ce lieu', `<p>Supprimer <b>${esc(name)}</b> et sa fiche ? Le lieu disparaît de la carte et du Google Sheet.</p><p class="small">En cas d’erreur, l’historique des versions du Google Sheet permet de le retrouver.</p>`, 'Supprimer', async () => {
+    const regionKey = curG;
+    await bridgePost({ action: 'supprimer', lieux: [name] }, $('cfKey'), $('cfKeyRow'));
+    pushOp({ t: 'del', names: [name] });
+    const g = groupOf(regionKey); if (g) openRegion(g);
+    toast(`${name} supprimé.`);
+  });
+}
+function removeRegion(g) {
+  const names = [...g.places.map((p) => p.name), ...model.skipped.filter((x) => norm(x.region) === norm(g.name)).map((x) => x.name)];
+  const rows = names.map((n, j) => `<div class="cfrow"><span>${esc(n)}</span><select data-n="${j}" aria-label="${esc(n)}"><option value="keep">Garder (hors trajet)</option><option value="del">Supprimer</option></select></div>`).join('');
+  askDelete('Retirer la région du trajet', `<p>Retirer <b>${esc(g.name)}</b> du trajet : son étape, ses nuits et sa fiche de région sont supprimées.</p>${names.length ? `<p class="small">Ses lieux : garder un lieu le met « Hors trajet » avec sa fiche ; supprimer l’efface.</p><div class="cflist">${rows}</div>` : '<p class="small">Cette région n’a pas de lieux.</p>'}`, 'Retirer', async () => {
+    const keep = [], del = [];
+    document.querySelectorAll('#cfBody select[data-n]').forEach((sel) => (sel.value === 'del' ? del : keep).push(names[+sel.dataset.n]));
+    await bridgePost({ action: 'retirerRegion', region: g.name, garder: keep, supprimer: del }, $('cfKey'), $('cfKeyRow'));
+    pushOp({ t: 'rmreg', region: g.name, keep, del });
+    toast(`${g.name} retiré du trajet${del.length ? ` · ${del.length} lieu${del.length > 1 ? 'x' : ''} supprimé${del.length > 1 ? 's' : ''}` : ''}.`);
+  });
+}
+// ---- change a hub: name, location, nights ----
+let ptHub = null, ptAt = null;
+function openPort(g) {
+  ptHub = g; ptAt = null;
+  $('ptName').value = g.name; $('ptQ').value = ''; $('ptRes').innerHTML = ''; $('ptMsg').textContent = ''; $('ptMsg').className = 'small';
+  $('ptWhere').textContent = `Actuellement : ${g.at[0].toFixed(4)}, ${g.at[1].toFixed(4)}`;
+  const single = g.seqs.length === 1; $('ptNightsRow').hidden = !single; $('ptNights').value = single ? (g.nights[0] || 0) : '';
+  let k = ''; try { k = localStorage.getItem(KEYSTORE) || ''; } catch {}
+  $('ptKey').value = k; $('ptKeyRow').hidden = !!k;
+  $('port').showModal();
+}
+async function ptFind() {
+  const q = $('ptQ').value.trim() || $('ptName').value.trim(); if (!q) return;
+  $('ptRes').innerHTML = '<p class="small">Recherche…</p>';
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&accept-language=fr&q=${encodeURIComponent(q)}`);
+    const list = r.ok ? await r.json() : [];
+    if (!list.length) { $('ptRes').innerHTML = '<p class="small">Rien trouvé. Essayez avec le nom de la ville et du pays.</p>'; return; }
+    $('ptRes').innerHTML = list.map((g, j) => `<button class="btn ptopt" data-j="${j}">${ico('pin')}<span>${esc(g.name || g.display_name.split(',')[0])} <span class="small">${esc(g.display_name.split(',').slice(1, 4).join(',').trim())}</span></span></button>`).join('');
+    $('ptRes').querySelectorAll('[data-j]').forEach((b) => b.addEventListener('click', () => {
+      const g = list[+b.dataset.j]; ptAt = [(+g.lat).toFixed(4), (+g.lon).toFixed(4)];
+      if ($('ptName').value.trim() === ptHub.name) $('ptName').value = g.name || g.display_name.split(',')[0];
+      $('ptRes').querySelectorAll('[data-j]').forEach((x) => x.classList.toggle('on', x === b));
+      $('ptWhere').textContent = `Nouvel emplacement : ${ptAt[0]}, ${ptAt[1]}`;
+    }));
+  } catch { $('ptRes').innerHTML = '<p class="small">Recherche impossible pour le moment.</p>'; }
+}
+async function ptSave() {
+  const g = ptHub; if (!g) return;
+  const nom = $('ptName').value.trim(), coords = ptAt ? `${ptAt[0]}, ${ptAt[1]}` : '', nuits = $('ptNightsRow').hidden ? '' : $('ptNights').value;
+  const changed = (nom && nom !== g.name) || coords || (nuits !== '' && +nuits !== +(g.nights[0] || 0));
+  if (!changed) { $('port').close(); return; }
+  $('ptSave').disabled = true; $('ptSave').classList.add('busy'); $('ptMsg').className = 'edbusy'; $('ptMsg').textContent = 'Enregistrement en cours… (quelques secondes)';
+  try {
+    const j = await bridgePost({ action: 'changerPort', region: g.name, nom, coords, nuits }, $('ptKey'), $('ptKeyRow'));
+    pushOp({ t: 'port', region: g.name, nom: nom !== g.name ? nom : '', coords, nuits });
+    $('port').close();
+    const h = hubByName(nom || g.name); if (h) { openRegion(h); fitGroup(h); }
+    toast(`Port d’attache enregistré${j.lieux ? ` · ${j.lieux} lieu${j.lieux > 1 ? 'x' : ''} à revoir (leur « Y aller »)` : ''}.`);
+  } catch (err) { $('ptMsg').className = 'small err'; $('ptMsg').textContent = 'Pas enregistré : ' + err.message; }
+  finally { $('ptSave').disabled = false; $('ptSave').classList.remove('busy'); }
+}
+$('ptFind').addEventListener('click', ptFind);
+$('ptQ').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); ptFind(); } });
+$('ptSave').addEventListener('click', ptSave);
+$('ptClose').addEventListener('click', () => $('port').close());
+// a short green message at the bottom of the screen
+function toast(text) {
+  let t = $('toast'); if (!t) { t = document.createElement('div'); t.id = 'toast'; t.setAttribute('role', 'status'); document.body.append(t); }
+  t.textContent = '✓ ' + text; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 5000);
+}
+// ---- places without coordinates: put them on the map ----
+let placing = null;
+function startPlacing(name) {
+  placing = name;
+  let b = $('placeBar'); if (!b) { b = document.createElement('div'); b.id = 'placeBar'; $('map').append(b); }
+  b.innerHTML = `<span>Placer <b>${esc(name)}</b> : choisissez un résultat de la recherche, ou cliquez sur la carte à l’endroit exact.</span><button class="btn" id="placeCancel">Annuler</button>`;
+  b.hidden = false; $('placeCancel').onclick = stopPlacing;
+  $('map').classList.add('placing');
+  $('q').value = name; geoSearch(name);
+}
+function stopPlacing() { placing = null; const b = $('placeBar'); if (b) b.hidden = true; $('map').classList.remove('placing'); if (geoPin) { map.removeLayer(geoPin); geoPin = null; } }
+async function placeAt(name, lat, lon) {
+  const msg = $('copyMsg'); if (msg) msg.textContent = 'Enregistrement…';
+  let cle = ''; try { cle = localStorage.getItem(KEYSTORE) || ''; } catch {}
+  if (!cle) cle = (prompt('Code d’accès (le demander à David) :') || '').trim();
+  if (!cle) { if (msg) msg.textContent = ''; return; }
+  try {
+    const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'coordonnees', items: [{ lieu: name, coords: `${lat}, ${lon}` }] }) });
+    const j = await r.json(); if (!j.ok) throw new Error(j.erreur || 'Erreur');
+    try { localStorage.setItem(KEYSTORE, cle); } catch {}
+    stopPlacing();
+    pushOp({ t: 'set', lieu: name, fields: { 'Coordonnées': `${lat}, ${lon}` } });
+    const i = placeIndex(name); if (i >= 0) { openPlace(i); highlight(model.places[i], true); }
+    toast(`${name} est sur la carte.`);
+  } catch (err) { if (msg) msg.textContent = 'Pas enregistré : ' + err.message; }
+}
+map.on('click', (e) => {
+  if (!placing) return;
+  showGeo({ lat: e.latlng.lat, lon: e.latlng.lng, name: placing, display_name: placing + ', point choisi sur la carte' });
+});
 // while saving: spinning disk, everything locked, clear message (saving takes a few seconds)
 function edBusy(on) {
   $('edSave').disabled = on; $('edCancel').disabled = on;
@@ -1272,14 +1719,186 @@ function edBusy(on) {
   else if ($('edMsg').className === 'edbusy') { $('edMsg').className = 'small'; $('edMsg').textContent = ''; }
 }
 let lastBox = null;
-$('edFields').addEventListener('focusin', (e) => { if (e.target.matches('textarea')) lastBox = e.target; });
-$('edIcons').innerHTML = `<span class="small">Icônes : toucher pour insérer dans le texte</span>` + ICONS.map(([c, id, label]) => `<button type="button" class="btn" data-ic="${c}" title="${label}"><svg class="ic"><use href="#i-${id}"/></svg></button>`).join('');
-$('edIcons').addEventListener('mousedown', (e) => { if (e.target.closest('[data-ic]')) e.preventDefault(); }); // keep the cursor in the text box
+document.execCommand('defaultParagraphSeparator', false, 'p');
+$('edFields').addEventListener('focusin', (e) => { const b = e.target.closest('.rte'); if (b) lastBox = b; });
+const TB = [['bold', 'bold', 'Gras'], ['italic', 'italic', 'Italique'], ['link', 'link', 'Lien'], ['|'], ['title', 'heading', 'Titre'],
+  ['bullets', 'list', 'Puces (choisir le style)', true], ['olist', 'olist', 'Liste numérotée'], ['|'], ['outdent', 'outdent', 'Moins de retrait'], ['indent', 'indent', 'Plus de retrait'],
+  ['|'], ['callout', 'callout', 'Encadré (fond beige)'], ['icon', 'smile', 'Insérer une icône', true], ['clear', 'eraser', 'Enlever la mise en forme']];
+$('edIcons').innerHTML = TB.map(([c, id, label, menu]) => c === '|' ? '<span class="rtsep"></span>'
+  : `<button type="button" class="btn ibtn" data-rt="${c}" title="${label}" aria-label="${label}">${ico(id)}${menu ? `<svg class="ic dn"><use href="#i-down"/></svg>` : ''}</button>`).join('');
+const rtBox = () => { const b = lastBox && document.contains(lastBox) ? lastBox : $('edFields').querySelector('.rte'); return b; };
+function rtRange(box) { const s = getSelection(); if (!s.rangeCount) return null; const r = s.getRangeAt(0); return box.contains(r.commonAncestorContainer) ? r : null; }
+function rtFocus(box) { if (!rtRange(box)) { box.focus(); const r = document.createRange(); r.selectNodeContents(box); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } }
+// the paragraphs, titles and list items the selection touches
+function rtBlocks(box, again) {
+  const r = rtRange(box); if (!r) return [];
+  let res = [...box.querySelectorAll('p,h4,li,div:not(.callout)')].filter((el) => r.intersectsNode(el));
+  res = res.filter((el) => !res.some((o) => o !== el && el.contains(o)));
+  if (!res.length && !again) { document.execCommand('formatBlock', false, 'p'); return rtBlocks(box, true); }
+  return res;
+}
+const topOf = (box, el) => { while (el.parentNode && el.parentNode !== box && !el.parentNode.classList?.contains('callout')) el = el.parentNode; return el; };
+function rtLists(box, tag) {
+  const r = rtRange(box); if (!r) return []; const set = new Set();
+  box.querySelectorAll(tag).forEach((l) => { if (r.intersectsNode(l)) set.add(l); });
+  for (let n = r.startContainer; n && n !== box; n = n.parentNode) if (n.nodeName === tag) set.add(n);
+  return [...set];
+}
+function rtIndent(box, d) {
+  rtBlocks(box).forEach((el) => {
+    const m = String(el.className).match(/\bin([1-4])\b/); const n = Math.max(0, Math.min(4, (m ? +m[1] : 0) + d));
+    el.classList.remove('in1', 'in2', 'in3', 'in4'); if (n) el.classList.add('in' + n); if (!el.className) el.removeAttribute('class');
+  });
+}
+// run a change and put the cursor back where it was
+function keepSel(box, fn) {
+  const r = rtRange(box), sv = r && [r.startContainer, r.startOffset, r.endContainer, r.endOffset];
+  const fb = fn(); const s = getSelection();
+  if (sv && box.contains(sv[0]) && box.contains(sv[2])) { try { s.setBaseAndExtent(sv[0], sv[1], sv[2], sv[3]); return; } catch {} }
+  if (fb && box.contains(fb)) { const rr = document.createRange(); rr.selectNodeContents(fb); rr.collapse(false); s.removeAllRanges(); s.addRange(rr); }
+}
+const moveKids = (from, to) => { while (from.firstChild) to.append(from.firstChild); };
+const setB = (u, style) => { if (!style || style === 'dot') u.removeAttribute('data-b'); else u.dataset.b = style; };
+function retag(el, tag) { const n = document.createElement(tag); if (el.className) n.className = el.className; moveKids(el, n); if (!n.firstChild) n.innerHTML = '<br>'; el.replaceWith(n); return n; }
+// a list item back to a paragraph (the list is split around it)
+function liToP(li) {
+  const list = li.parentNode, p = document.createElement('p'); if (li.className) p.className = li.className;
+  moveKids(li, p); if (!p.firstChild) p.innerHTML = '<br>';
+  const rest = []; for (let n = li.nextElementSibling; n; n = n.nextElementSibling) rest.push(n);
+  list.after(p); if (rest.length) { const l2 = list.cloneNode(false); rest.forEach((x) => l2.append(x)); p.after(l2); }
+  li.remove(); if (!list.children.length) list.remove();
+  return p;
+}
+// bullets / numbers on the selected paragraphs (tag null = remove the list)
+function rtSetList(box, tag, style) {
+  keepSel(box, () => {
+    let blocks = rtBlocks(box); if (!blocks.length) return null;
+    if (tag && blocks.every((x) => x.tagName === 'LI' && x.parentNode.tagName === tag)) {
+      if (tag === 'UL') { new Set(blocks.map((x) => x.parentNode)).forEach((u) => setB(u, style)); return null; }
+      tag = null; // numbered list clicked again = remove it
+    }
+    blocks = blocks.map((x) => (x.tagName === 'LI' ? liToP(x) : x));
+    if (!tag) return blocks[blocks.length - 1];
+    const list = document.createElement(tag); if (tag === 'UL') setB(list, style);
+    blocks[0].before(list);
+    let last = null;
+    blocks.forEach((x) => { const li = document.createElement('li'); if (x.className) li.className = x.className; moveKids(x, li); if (!li.firstChild) li.innerHTML = '<br>'; x.remove(); list.append(li); last = li; });
+    // join with a list of the same kind right before or after
+    const prev = list.previousElementSibling, next = list.nextElementSibling;
+    if (next && next.tagName === tag && next.getAttribute('data-b') === list.getAttribute('data-b')) { moveKids(next, list); next.remove(); }
+    if (prev && prev.tagName === tag && prev.getAttribute('data-b') === list.getAttribute('data-b')) { moveKids(list, prev); list.remove(); }
+    return last;
+  });
+}
+function rtBullet(box, style) { rtSetList(box, style === 'none' ? null : 'UL', style); }
+function rtTitle(box) {
+  keepSel(box, () => {
+    const bl = rtBlocks(box).filter((x) => x.tagName !== 'LI'); if (!bl.length) return null;
+    const to = bl.every((x) => x.tagName === 'H4') ? 'p' : 'h4'; let last = null;
+    bl.forEach((x) => { last = retag(x, to); }); return last;
+  });
+}
+function rtCallout(box) {
+  keepSel(box, () => {
+    const blocks = rtBlocks(box); if (!blocks.length) return null;
+    const inC = blocks.map((b) => b.closest('.callout')).find((c) => c && box.contains(c));
+    if (inC) { // take the selected part out of its frame
+      const kids = [...inC.children], sel = kids.filter((k) => blocks.some((b) => k.contains(b)));
+      const last = kids.indexOf(sel[sel.length - 1]), after = kids.slice(last + 1);
+      let at = inC; sel.forEach((k) => { at.after(k); at = k; });
+      if (after.length) { const c2 = document.createElement('div'); c2.className = 'callout'; at.after(c2); after.forEach((k) => c2.append(k)); }
+      if (!inC.children.length) inC.remove();
+      return at;
+    }
+    const tops = [...new Set(blocks.map((b) => topOf(box, b)))];
+    const c = document.createElement('div'); c.className = 'callout'; tops[0].before(c); tops.forEach((t) => c.append(t));
+    if (!c.nextElementSibling) c.after(Object.assign(document.createElement('p'), { innerHTML: '<br>' })); // room to keep writing after the frame
+    return tops[tops.length - 1];
+  });
+}
+function rtLink(box) {
+  const r = rtRange(box), a = r && (r.startContainer.parentElement || r.startContainer).closest('a');
+  const url = prompt('Adresse du lien (https://…). Laisser vide pour enlever le lien.', a ? a.getAttribute('href') : 'https://');
+  if (url === null) return;
+  if (!url.trim() || url.trim() === 'https://') { if (a) { const s = getSelection(); const rr = document.createRange(); rr.selectNodeContents(a); s.removeAllRanges(); s.addRange(rr); } document.execCommand('unlink'); return; }
+  const u = /^https?:\/\//i.test(url.trim()) ? url.trim() : 'https://' + url.trim();
+  if (r && !r.collapsed) document.execCommand('createLink', false, u);
+  else document.execCommand('insertHTML', false, `<a href="${esc(u)}">${esc(linkLabel(u))}</a>&nbsp;`);
+}
+// put an icon at the cursor (done by hand: the browser misplaces non-editable pieces)
+function insertIcon(box, code) {
+  const r = rtRange(box); if (!r) return;
+  r.deleteContents();
+  const t = document.createElement('template'); t.innerHTML = icoSpan(code); const sp = t.content.firstChild, gap = document.createTextNode('\u00a0');
+  r.insertNode(gap); r.insertNode(sp);
+  const s = getSelection(), rr = document.createRange(); rr.setStart(gap, 1); rr.collapse(true); s.removeAllRanges(); s.addRange(rr);
+  box.dispatchEvent(new Event('input', { bubbles: true }));
+}
+function rtMenu(btn, kind) {
+  const m = $('rtMenu');
+  if (!m.hidden && m.dataset.kind === kind) { m.hidden = true; return; }
+  const opts = kind === 'bullets'
+    ? [['dot', '•', 'Puce ronde'], ['dash', '–', 'Tiret'], ['arrow', '→', 'Flèche'], ['check', '✓', 'Crochet']].map(([v, ch, l]) => `<button type="button" class="btn" data-b="${v}" title="${l}"><span class="ch">${ch}</span></button>`).join('')
+      + ICONS.map(([c, id, l]) => `<button type="button" class="btn" data-b="${c}" title="${l}">${ico(id)}</button>`).join('')
+      + `<button type="button" class="btn wide" data-b="none">Sans puce</button>`
+    : ICONS.map(([c, id, l]) => `<button type="button" class="btn" data-i="${c}" title="${l}">${ico(id)}</button>`).join('');
+  m.innerHTML = `<div class="small">${kind === 'bullets' ? 'Style de puce' : 'Insérer une icône dans le texte'}</div>${opts}`;
+  m.dataset.kind = kind; m.hidden = false;
+  const hb = btn.closest('.dhead').getBoundingClientRect(), bb = btn.getBoundingClientRect();
+  m.style.left = Math.max(8, Math.min(bb.left - hb.left, hb.width - 300)) + 'px'; m.style.top = (bb.bottom - hb.top + 4) + 'px';
+}
+$('edIcons').addEventListener('mousedown', (e) => { if (e.target.closest('[data-rt]')) e.preventDefault(); }); // keep the cursor in the text box
+$('rtMenu').addEventListener('mousedown', (e) => e.preventDefault());
 $('edIcons').addEventListener('click', (e) => {
-  const b = e.target.closest('[data-ic]'); if (!b) return;
-  const box = lastBox || $('edFields').querySelector('textarea'); if (!box) return;
-  box.focus(); box.setRangeText(`[${b.dataset.ic}] `, box.selectionStart, box.selectionEnd, 'end');
+  const b = e.target.closest('[data-rt]'); if (!b) return;
+  const box = rtBox(); if (!box) return; rtFocus(box);
+  const c = b.dataset.rt;
+  if (c !== 'bullets' && c !== 'icon') $('rtMenu').hidden = true;
+  if (c === 'bold' || c === 'italic') document.execCommand(c);
+  else if (c === 'link') rtLink(box);
+  else if (c === 'title') rtTitle(box);
+  else if (c === 'olist') rtSetList(box, 'OL');
+  else if (c === 'indent' || c === 'outdent') rtIndent(box, c === 'indent' ? 1 : -1);
+  else if (c === 'callout') rtCallout(box);
+  else if (c === 'clear') { document.execCommand('removeFormat'); document.execCommand('unlink'); }
+  else if (c === 'bullets' || c === 'icon') rtMenu(b, c);
 });
+$('rtMenu').addEventListener('click', (e) => {
+  const box = rtBox(); if (!box) return; rtFocus(box);
+  const bt = e.target.closest('[data-b]'), it = e.target.closest('[data-i]');
+  if (bt) rtBullet(box, bt.dataset.b);
+  if (it) insertIcon(box, it.dataset.i);
+  $('rtMenu').hidden = true;
+});
+// paste: keep bold, italic, titles, lists and real links; drop colours, fonts and sizes
+$('edFields').addEventListener('paste', (e) => {
+  const box = e.target.closest('.rte'); if (!box) return;
+  e.preventDefault();
+  const d = e.clipboardData, h = d.getData('text/html'), t = d.getData('text/plain');
+  if (box.dataset.kind === 'links') { // one clickable line per link
+    const fromH = h ? linkLines(h) : [];
+    const lh = linksToRte(fromH.length ? fromH : t.split(/\r?\n/).map((x) => x.trim()).filter(Boolean));
+    if (!lh) return;
+    // added as new lines after the current one (never glued to it)
+    const r = rtRange(box); let cur = r && (r.startContainer.nodeType === 1 ? r.startContainer : r.startContainer.parentElement);
+    while (cur && cur !== box && cur.parentNode !== box) cur = cur.parentNode;
+    const t2 = document.createElement('template'); t2.innerHTML = lh; const nodes = [...t2.content.childNodes];
+    if (!cur || cur === box) box.append(...nodes);
+    else if (!cur.textContent.trim()) cur.replaceWith(...nodes);
+    else cur.after(...nodes);
+    const last = nodes[nodes.length - 1], rr = document.createRange(); rr.selectNodeContents(last); rr.collapse(false);
+    getSelection().removeAllRanges(); getSelection().addRange(rr);
+    return;
+  }
+  const clean = h ? cleanHtml(h) : legacyToHtml(t, 'text');
+  if (clean) document.execCommand('insertHTML', false, toRte(clean));
+});
+// Tab / Shift+Tab = indent / outdent inside a formatted box
+$('edFields').addEventListener('keydown', (e) => {
+  const box = e.target.closest('.rte'); if (!box || e.key !== 'Tab') return;
+  e.preventDefault(); rtIndent(box, e.shiftKey ? -1 : 1);
+});
+$('edit').addEventListener('click', (e) => { if (!e.target.closest('#rtMenu,[data-rt="bullets"],[data-rt="icon"]')) $('rtMenu').hidden = true; });
 async function saveRegionEditor() {
   const g = editing.region, reg = g.region;
   const cle = $('edKey').value.trim();
@@ -1287,6 +1906,7 @@ async function saveRegionEditor() {
   const champs = {};
   $('edFields').querySelectorAll('[data-f]').forEach((el) => {
     const [f, , , kind] = edUI[+el.dataset.f];
+    if (el.classList.contains('rte')) { const val = kind === 'links' ? linksValue(el) : rteValue(el); if (val !== el._init) champs[f] = val; return; }
     const val = fromEditor(kind, el.value);
     if (val !== String(reg.raw[f] || '').trim()) champs[f] = val;
   });
@@ -1301,6 +1921,7 @@ async function saveRegionEditor() {
     }
     try { localStorage.setItem(KEYSTORE, cle); } catch {}
     Object.assign(reg.raw, champs); applyRegionRaw(reg);
+    pushOp({ t: 'rset', region: g.name, fields: champs }, false);
     if (curRegion === g) openRegion(g, null, false);
     $('edit').close();
   } catch (err) {
@@ -1308,7 +1929,7 @@ async function saveRegionEditor() {
   } finally { edBusy(false); }
 }
 $('edSave').addEventListener('click', saveEditor);
-const edState = () => [...$('edFields').querySelectorAll('[data-f]')].map((el) => el.value).join('\u0001') + ($('edRev').checked ? '1' : '0');
+const edState = () => [...$('edFields').querySelectorAll('[data-f]')].map(fieldValue).join('\u0001') + ($('edRev').checked ? '1' : '0');
 let edSnap = '';
 const edDirty = () => edState() !== edSnap;
 $('edCancel').addEventListener('click', () => { if (!edDirty() || confirm('Quitter sans enregistrer ?')) $('edit').close(); });
@@ -1325,6 +1946,42 @@ const NOT_DECIDED = 'pas encore décidé';
 const tl = { path: 'pl', region: null, list: [], cards: [], queue: [], items: [], checked: new Set(), baseTouched: false };
 const tsvRows = (t) => String(t || '').replace(/\r/g, '').split('\n').filter((l) => l.trim() && !/^```/.test(l.trim())).map((l) => l.split('\t').map((x) => x.trim()));
 const para = (s) => String(s || '').replace(/\s*¶\s*/g, '\n').trim();
+// ChatGPT's simple marks -> the card formatting
+//   ## Titre  -> title, and the lines under it are indented
+//   - Distance : … (Dénivelé, Durée, Difficulté, Prix, Pourquoi) -> fact line with its icon
+//   - texte -> bullet ;  **gras** ;  [mots](https://…) -> linked words
+function rInline(t) {
+  const links = [];
+  let h = esc(t).replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (m, txt, u) => { links.push(`<a href="${esc(stripUtm(u.replace(/&amp;/g, '&')))}">${txt}</a>`); return `\u0000${links.length - 1}\u0000`; });
+  h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  h = h.replace(/https?:\/\/[^\s<>"]+/gi, (u) => { const trail = (u.match(/[.,;:)\]]+$/) || [''])[0]; const url = stripUtm((trail ? u.slice(0, -trail.length) : u).replace(/&amp;/g, '&')); return `<a href="${esc(url)}">${esc(linkLabel(url))}</a>${trail}`; });
+  return h.replace(/\u0000(\d+)\u0000/g, (m, i) => links[+i]);
+}
+const FACT_RE = /^(?:\*\*)?\s*(distance|d[ée]nivel[ée]|dur[ée]e|difficult[ée]|prix|pourquoi|stationnement)\s*(?:\*\*)?\s*:\s*(?:\*\*)?\s*(.*)$/i;
+function researchToHtml(t, kind) {
+  t = String(t || '').replace(/\r/g, ''); if (!t.trim()) return '';
+  if (isHtml(t)) return cleanHtml(t);
+  // tips written as one run of sentences (older prompts): one bullet per sentence, as before
+  if (kind === 'tips' && !/\n/.test(t) && !/^\s*[-•*]\s/.test(t)) return legacyToHtml(t, 'tips');
+  const out = []; let ul = null, under = 0;
+  const close = () => { if (ul) { out.push(`<ul>${ul.join('')}</ul>`); ul = null; } };
+  for (const raw of t.split('\n')) {
+    const l = raw.trim(); if (!l) { close(); continue; }
+    let m;
+    if ((m = l.match(/^#{1,6}\s*(.+)$/))) { close(); out.push(`<h4>${rInline(m[1])}</h4>`); under = 1; continue; }
+    if ((m = l.match(/^[-•*]\s+(.*)$/))) {
+      const f = m[1].match(FACT_RE);
+      if (f) { close(); const code = AUTO_ICON.find(([re]) => re.test(f[1]))[1]; const lab = f[1].charAt(0).toUpperCase() + f[1].slice(1).toLowerCase();
+        out.push(`<p${lvCls(under)}><strong>[${code}] ${esc(lab)} :</strong> ${rInline(f[2])}</p>`); continue; }
+      (ul = ul || []).push(`<li${lvCls(under)}>${rInline(m[1])}</li>`); continue;
+    }
+    close(); out.push(`<p${lvCls(under)}>${rInline(l)}</p>`);
+  }
+  close();
+  return out.join('');
+}
+const cleanLinkList = (s) => para(s).replace(/https?:\/\/[^\s;]+/gi, (u) => stripUtm(u));
+const plainOf = (h) => String(h || '').replace(/<[^>]+>/g, ' ').replace(/\[[a-z]+\]/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
 const baseOptions = () => model.hubs.map((h) => `<option value="${esc(h.name)}">${esc(h.name)}</option>`).join('') + `<option value="${NOT_DECIDED}">Not decided yet</option>`;
 const tlRegionName = () => ($('tlRegion').value === '__new' ? $('tlNew').value.trim() : $('tlRegion').value);
 const tlKey = () => $('tlKey').value.trim() || (() => { try { return localStorage.getItem(KEYSTORE) || ''; } catch { return ''; } })();
@@ -1374,12 +2031,12 @@ function tlAutoBase() {
 }
 function tlSummary() {
   const rows = tsvRows($('tlPaste2').value);
-  tl.cards = rows.filter((r) => r.length >= 6).map((r) => ({ 'Lieu': r[0], 'Aperçu': para(r[1]), "Comment s'y rendre": para(r[2]), 'Quoi faire': para(r[3]), 'Trucs et astuces': para(r[4]), 'Pour en savoir plus': para(r[5]) }));
+  tl.cards = rows.filter((r) => r.length >= 6).map((r) => ({ 'Lieu': r[0], 'Aperçu': researchToHtml(para(r[1])), "Comment s'y rendre": researchToHtml(para(r[2])), 'Quoi faire': researchToHtml(para(r[3])), 'Trucs et astuces': researchToHtml(para(r[4]), 'tips'), 'Pour en savoir plus': cleanLinkList(r[5]) }));
   const bad = rows.filter((r) => r.length > 1 && r.length < 6).length;
   const known = new Set(model.places.map((p) => norm(p.name)).concat(model.skipped.map((x) => norm(x.name))));
   const out = [];
   const fresh = tl.cards.filter((c) => !known.has(norm(c['Lieu']))), old = tl.cards.filter((c) => known.has(norm(c['Lieu'])));
-  for (const c of tl.cards) out.push(`<div class="okline"><b>${esc(c['Lieu'])}</b>${known.has(norm(c['Lieu'])) ? ' (update)' : ' (new)'} : « ${esc(c['Aperçu'].slice(0, 110))}${c['Aperçu'].length > 110 ? '…' : ''} »</div>`);
+  for (const c of tl.cards) out.push(`<div class="okline"><b>${esc(c['Lieu'])}</b>${known.has(norm(c['Lieu'])) ? ' (update)' : ' (new)'} : « ${esc(plainOf(c['Aperçu']).slice(0, 110))}${plainOf(c['Aperçu']).length > 110 ? '…' : ''} »</div>`);
   if (tl.cards.length) out.push(`<div>${fresh.length} new, ${old.length} updated.</div>`);
   if (bad) out.push(`<div class="err">${bad} line${bad > 1 ? 's' : ''} could not be read (each place needs 6 columns separated by tabs).</div>`);
   $('tlSummary').innerHTML = out.join('');
@@ -1408,7 +2065,7 @@ async function tlSave() {
   if (!cle) return tlNeedKey(res);
   if (!tl.cards.length) { res.textContent = 'Nothing to save yet: paste Claude’s reviewed version in step 5.'; return; }
   const base = $('tlBaseP').value, hub = model.hubs.find((h) => norm(h.name) === norm(base)) || null;
-  $('tlSave').disabled = true; res.className = 'small'; res.textContent = 'Saving…';
+  $('tlSave').disabled = true; $('tlSave').classList.add('busy'); res.className = 'edbusy'; res.textContent = 'Saving… (a few seconds)';
   try {
     const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'enregistrer', lieux: tl.cards.map((c) => Object.assign({}, c, hub ? { 'Région': hub.name } : {})) }) });
     const j = await r.json();
@@ -1423,14 +2080,20 @@ async function tlSave() {
       lines.push(`Found on the map: ${f.found} of ${need.length}.`);
       if (f.missed.length) lines.push(`<b>Not found, add the coordinates by hand (Google Maps, right-click on the place):</b> ${f.missed.map(esc).join(', ')}.`);
     }
-    lines.push('Done. The map shows the changes in about 5 minutes: then press Recharger.');
-    res.innerHTML = lines.join(' ');
+    res.className = 'okbox'; res.innerHTML = '✓ ' + lines.join(' ') + ` <br>Saved: <b>${j.lieux.map((l) => esc(l.lieu)).join(', ')}</b>. The cards are already updated on the page.`;
+    for (const c of tl.cards) {
+      const lieu = j.lieux.find((l) => norm(l.lieu) === norm(c['Lieu'])); if (!lieu) continue;
+      const fields = Object.assign({}, c, hub ? { 'Région': hub.name } : {}, { 'Révision': 'À revoir' });
+      if (lieu.action === 'ajouté') Object.assign(fields, { 'Statut': 'À explorer', 'Ajouté par': c['Ajouté par'] || 'Claude' });
+      pushOp({ t: 'set', lieu: c['Lieu'], create: lieu.action === 'ajouté', fields }, false);
+    }
+    model = buildModel(RAW.l, RAW.t, RAW.k, RAW.vo, RAW.vy, RAW.rg); render();
     const savedNames = new Set(j.lieux.map((l) => norm(l.lieu)));
     tl.queue = tl.queue.filter((q) => !savedNames.has(norm(q.name)));
     savedNames.forEach((n) => tl.checked.delete(n));
   } catch (err) {
     res.className = 'small err'; res.textContent = 'Not saved: ' + err.message;
-  } finally { $('tlSave').disabled = false; }
+  } finally { $('tlSave').disabled = false; $('tlSave').classList.remove('busy'); }
 }
 // ---------- A region ----------
 function tlSyncRegion() {
@@ -1442,10 +2105,10 @@ const tlRegionBase = () => tlRegionName() || NOT_DECIDED;
 function tlReadAnswer() {
   const rows = tsvRows($('tlPaste1').value), name = tlRegionName();
   const reg = rows.find((r) => r.length >= 4 && norm(r[0]) === norm(name)) || rows.find((r) => r.length >= 4);
-  tl.region = reg ? { 'Région': name || reg[0], 'Aperçu': para(reg[1]), 'Trucs et astuces': para(reg[2]), 'Pour en savoir plus': para(reg[3]) } : null;
+  tl.region = reg ? { 'Région': name || reg[0], 'Aperçu': researchToHtml(para(reg[1])), 'Trucs et astuces': researchToHtml(para(reg[2]), 'tips'), 'Pour en savoir plus': cleanLinkList(reg[3]) } : null;
   tl.list = rows.filter((r) => r !== reg && r.length >= 2 && r.length < 4).map((r) => ({ name: r[0], why: r[1] || '' }));
   const out = [];
-  if (tl.region) out.push(`<div class="okline">Region card: « ${esc(tl.region['Aperçu'].slice(0, 160))}${tl.region['Aperçu'].length > 160 ? '…' : ''} »</div>`);
+  if (tl.region) out.push(`<div class="okline">Region card: « ${esc(plainOf(tl.region['Aperçu']).slice(0, 160))}${plainOf(tl.region['Aperçu']).length > 160 ? '…' : ''} »</div>`);
   else if (rows.length) out.push('<div class="err">No region line found. It should be one line with 4 columns separated by tabs.</div>');
   if (tl.list.length) out.push(`<div class="small" style="margin-top:6px">Tick the places to research:</div><div class="picks">${tl.list.map((p, j) => `<label><input type="checkbox" data-pk="${j}" checked> <b>${esc(p.name)}</b> <span class="small">${esc(p.why)}</span></label>`).join('')}</div>`);
   else if (rows.length) out.push('<div class="err">No places found. Each place should be one line with 3 columns separated by tabs.</div>');
@@ -1503,13 +2166,16 @@ async function addPinPlace(name, lat, lon, regionName) {
   if (!who) who = (prompt('Votre prénom :') || '').trim();
   if (msg) msg.textContent = 'Ajout…';
   try {
-    const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'enregistrer', lieux: [Object.assign({ 'Lieu': name, 'Ajouté par': who || '—' }, regionName ? { 'Région': regionName } : {})] }) });
+    const row = Object.assign({ 'Lieu': name, 'Ajouté par': who || '—', 'Coordonnées': `${lat}, ${lon}` }, regionName ? { 'Région': regionName } : {});
+    const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'enregistrer', lieux: [row] }) });
     const j = await r.json();
     if (!j.ok) { if (/code/i.test(j.erreur || '')) { try { localStorage.removeItem(KEYSTORE); } catch {} } throw new Error(j.erreur || 'Erreur'); }
     try { localStorage.setItem(KEYSTORE, cle); if (who) localStorage.setItem('qui2027', who); } catch {}
-    await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'coordonnees', items: [{ lieu: name, coords: `${lat}, ${lon}` }] }) });
     tl.queue.push({ name, at: [+lat, +lon], by: who }); tl.checked.add(norm(name));
-    if (msg) msg.textContent = 'Ajouté ! Il apparaîtra sur la carte d’ici environ 5 minutes.';
+    if (geoPin) { map.removeLayer(geoPin); geoPin = null; }
+    pushOp({ t: 'set', lieu: name, create: true, fields: Object.assign({ 'Statut': 'À explorer', 'Révision': 'Nouveau' }, row) });
+    const i = placeIndex(name); if (i >= 0) { openPlace(i); highlight(model.places[i], true); }
+    toast(`${name} ajouté à la liste de recherche.`);
   } catch (err) { if (msg) msg.textContent = 'Pas ajouté : ' + err.message; }
 }
 let swipeX = null;
@@ -1696,9 +2362,10 @@ function showGeo(g) {
   const pin = `<svg width="30" height="42" viewBox="0 0 30 42"><path d="M15 1C7.3 1 1 7.2 1 14.8 1 25.5 15 41 15 41s14-15.5 14-26.2C29 7.2 22.7 1 15 1z" fill="${col}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="15" r="5.5" fill="#fff"/></svg>`;
   geoPin = L.marker([+g.lat, +g.lon], { icon: L.divIcon({ className: '', html: pin, iconSize: [30, 42], iconAnchor: [15, 41], popupAnchor: [0, -36] }), zIndexOffset: 2000 })
     .addTo(map).bindPopup(`<b>${esc(name)}</b>${type ? ` <span class="small">(${esc(type)})</span>` : ''}<br><span class="small">${esc(g.display_name.split(',').slice(1, 4).join(',').trim())}</span><br>${where}<br>${lat}, ${lon}
-    <br><button class="btn pbtn" id="copyGeo">Ajouter à la liste de recherche</button><div class="small" id="copyMsg">Ce lieu attendra dans la liste de recherche, avec un point sur la carte. On fera sa fiche plus tard.</div>`, { maxWidth: 260 });
+    <br>${placing ? `<button class="btn pbtn" id="copyGeo">Placer « ${esc(placing)} » ici</button><div class="small" id="copyMsg">Ses coordonnées seront enregistrées.</div>` : `<button class="btn pbtn" id="copyGeo">Ajouter à la liste de recherche</button><div class="small" id="copyMsg">Ce lieu attendra dans la liste de recherche, avec un point sur la carte. On fera sa fiche plus tard.</div>`}`, { maxWidth: 260 });
   map.flyTo([+g.lat, +g.lon], 11, { duration: .8 });
-  setTimeout(() => { geoPin.openPopup(); const b = $('copyGeo'); if (b) b.onclick = () => addPinPlace(name, lat, lon, inHub ? best.name : ''); }, 850);
+  const target = placing;
+  setTimeout(() => { geoPin.openPopup(); const b = $('copyGeo'); if (b) b.onclick = () => (target ? placeAt(target, lat, lon) : addPinPlace(name, lat, lon, inHub ? best.name : '')); }, 850);
 }
 async function copyText(t, msgId = 'copyMsg', done = 'Copié ! Coller dans la colonne Lieu d’une nouvelle ligne.') {
   try { await navigator.clipboard.writeText(t); }
