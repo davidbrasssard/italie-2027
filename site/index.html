@@ -252,10 +252,12 @@ a.tl:hover{ text-decoration-color:var(--ink); }
 .ptopt{ justify-content:flex-start; text-align:left; } .ptopt.on{ outline:3px solid #1f5f99; }
 #toast{ position:fixed; z-index:3000; left:50%; bottom:22px; transform:translate(-50%, 30px); opacity:0; pointer-events:none; padding:10px 16px; border-radius:10px; background:#1e6b3c; color:#fff; font-size:16px; box-shadow:0 8px 24px rgba(0,0,0,.25); transition:opacity .25s, transform .25s; }
 #toast.on{ opacity:1; transform:translate(-50%, 0); }
+#toast.busy{ background:#1f5f99; }
 .btn.busy .ic{ display:none; }
 .btn.busy::after{ content:''; width:16px; height:16px; border:2.5px solid currentColor; border-right-color:transparent; border-radius:50%; animation:spin .8s linear infinite; }
 @keyframes spin{ to{ transform:rotate(360deg); } }
 #edit.saving #edFields,#edit.saving .icobar,#edit.saving .edrev{ opacity:.55; pointer-events:none; }
+.ederr{ margin:0 0 10px; padding:10px 12px; border-radius:8px; background:#b3261e; color:#fff; font-weight:700; font-size:15px; }
 .edbusy{ margin:0 0 10px; padding:8px 12px; border-radius:8px; background:#e3eefa; color:#1f5f99; font-weight:700; font-size:15px; }
 .place .tp{ padding-top:8px; scroll-margin-top:120px; }
 @media (max-width:900px){ .place .hd{ top:0; margin:0 -16px; } }
@@ -477,7 +479,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <dt>2. Code</dt><dd>La première fois, entrer le code d'accès (le demander à David). La page s'en souvient ensuite sur cet appareil.</dd>
     <dt>3. Coller</dt><dd>Photos : une adresse d'image par ligne (clic droit sur l'image, « Copier l'adresse de l'image »). Pour en savoir plus : une courte description puis le lien, un par ligne. Les textes se mettent en forme comme dans un traitement de texte, avec la barre en haut : gras, italique, lien, titre, puces (le petit menu choisit le style : rond, tiret, flèche, crochet ou une icône), liste numérotée, retrait (aussi avec Tab et Maj+Tab : tout le paragraphe se décale), encadré beige, icône dans le texte, et la gomme pour enlever la mise en forme. On peut aussi coller un texte déjà mis en forme (ChatGPT, Word, une page Web) : les titres, le gras, les listes et les liens sont gardés. Trucs et astuces : une puce par conseil.</dd>
     <dt>Fiche revue</dt><dd>Cocher <b>Fiche revue</b> en bas quand la fiche est vraiment à nous. Ajouter une photo ou un lien ne suffit pas pour la cocher.</dd>
-    <dt>4. Enregistrer</dt><dd>Toucher la <b>disquette</b> en haut à droite. La fiche change tout de suite sur votre écran. Les autres la verront d'ici environ 5 minutes.</dd>
+    <dt>4. Enregistrer</dt><dd>Toucher la <b>disquette</b> en haut à droite. La fenêtre se ferme tout de suite et la fiche change ; l'enregistrement continue en arrière-plan (« ✓ Enregistré » en bas de l'écran). En cas de problème, la page revient à la fiche et rouvre la fenêtre avec ce que vous aviez écrit : toucher la disquette pour réessayer. Les autres verront la fiche d'ici environ 5 minutes.</dd>
   </dl></details>
 
   <details class="hs"><summary>Lire une fiche</summary>
@@ -583,7 +585,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   </header>
   <div id="map" role="region" aria-label="Carte"></div>
   <footer>
-    <span>Version 0.22.0 · 8 octobre 2026</span>
+    <span>Version 0.23.3 · 8 octobre 2026</span>
     <span id="stamp"></span>
     <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
     <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -667,11 +669,19 @@ function splitLabeled(s) {
 const EDIT_FIELDS = ['Photo', 'Type', 'Aperçu', "Comment s'y rendre", 'Quoi faire', 'Trucs et astuces', 'Pour en savoir plus', 'Note', 'Révision'];
 // card review state: new (added from the map), todo (researched, not yet made our own), done (reviewed)
 const RV_LABEL = { new: 'Nouveau', todo: 'À revoir', done: 'Revu' };
+// a field that starts with its own column name ("Aperçu :", "**Quoi faire :**") — ChatGPT sometimes echoes it
+const LABEL_RE = /^\s*(?:\*\*)?\s*(?:aper[çc]u|comment s['’]y rendre|y aller|quoi faire|[àa] faire|trucs et astuces|astuces|pour en savoir plus)\s*(?:\*\*)?\s*:\s*(?:\*\*)?\s*/i;
+const LABEL_HTML_RE = /^(\s*(?:<(?:p|div|h4)[^>]*>\s*)*)(?:<(?:strong|b)>\s*)?(?:aper[çc]u|comment s['’]y rendre|y aller|quoi faire|[àa] faire|trucs et astuces|astuces|pour en savoir plus)\s*:?\s*(?:<\/(?:strong|b)>)?\s*:?\s*(?=\S)/i;
+function stripLabel(t) {
+  t = String(t || '');
+  if (/^\s*</.test(t)) { const m = t.match(LABEL_HTML_RE); return m && /:/.test(t.slice(m[1].length, m[0].length)) ? m[1] + t.slice(m[0].length) : t; }
+  return t.replace(LABEL_RE, '');
+}
 function applyRaw(p) {
   const v = p.raw;
   p.photo = v['Photo']; p.type = v['Type']; p.note = v['Note'];
   p.media = String(v['Photo'] || '').split(/\s*;\s*/).map((x) => x.trim()).filter((x) => /^https?:\/\//i.test(x) || /^photos\//i.test(x));
-  p.apercu = v['Aperçu']; p.acces = v["Comment s'y rendre"]; p.faire = v['Quoi faire'];
+  p.apercu = stripLabel(v['Aperçu']); p.acces = stripLabel(v["Comment s'y rendre"]); p.faire = stripLabel(v['Quoi faire']);
   p.trucs = splitTips(v['Trucs et astuces']); p.plus = splitLabeled(v['Pour en savoir plus']);
   const rv = norm(v['Révision']);
   p.rvk = rv === 'revu' ? 'done' : rv === 'nouveau' ? 'new' : rv === 'a revoir' ? 'todo' : (p.apercu || p.acces || p.faire || p.trucs.length || p.note ? 'todo' : 'new');
@@ -680,7 +690,7 @@ function applyRaw(p) {
 function applyRegionRaw(reg) {
   const v = reg.raw, more = String(v['Pour en savoir plus'] || '');
   reg.media = String(v['Photo'] || '').split(/\s*;\s*/).map((x) => x.trim()).filter((x) => /^https?:\/\//i.test(x));
-  reg.resume = v['Aperçu'] || ''; reg.tips = splitTips(v['Trucs et astuces']);
+  reg.resume = stripLabel(v['Aperçu'] || ''); reg.tips = splitTips(v['Trucs et astuces']);
   reg.links = /;/.test(more) || !/\|/.test(more) ? splitLabeled(more) : splitSources(more).map((url) => ({ url, label: '' }));
 }
 // statuses (old words still understood)
@@ -849,10 +859,13 @@ function applyOp(R, o) {
 function pushOp(o, rebuild = true) {
   o.at = Date.now();
   const ops = loadOps(); ops.push(o); try { localStorage.setItem(OPS_KEY, JSON.stringify(ops)); } catch {}
-  if (!RAW) return;
+  if (!RAW) return o;
   applyOp(RAW, o);
   if (rebuild) { model = buildModel(RAW.l, RAW.t, RAW.k, RAW.vo, RAW.vy, RAW.rg); render(); }
+  return o;
 }
+// undo a change that could not be saved (it is dropped from this device, then the page is read again)
+function dropOp(at) { try { localStorage.setItem(OPS_KEY, JSON.stringify(loadOps().filter((o) => o.at !== at))); } catch {} }
 const placeIndex = (name) => model.places.findIndex((p) => norm(p.name) === norm(name));
 const hubByName = (name) => model.hubs.find((h) => norm(h.name) === norm(name)) || null;
 async function load() {
@@ -1428,6 +1441,59 @@ $('panel').addEventListener('click', (e) => {
 // ---- Modifier une fiche : écrit dans le Google Sheet par le pont Apps Script ----
 const BRIDGE = 'https://script.google.com/macros/s/AKfycbyCotxDUUTRLehfNSRBgFTfOD6vL8Al0S69w7j0mFk0k2JPUnExCZLYOlT1Nw4OucxcIw/exec';
 const KEYSTORE = 'cle2027';
+// ---- talking to the bridge: up to 2 automatic retries when Google's relay sends back an error page instead of the answer ----
+async function bridgeFetch(body, tries = 3) {
+  let last = null;
+  for (let k = 0; k < tries; k++) {
+    if (k) await new Promise((r) => setTimeout(r, 1500 * k));
+    try {
+      const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify(body) });
+      const txt = await r.text();
+      try { return JSON.parse(txt); } catch { last = new Error('Google a répondu par une page d’erreur'); }
+    } catch { last = new Error('pas de connexion avec Google'); }
+  }
+  throw last;
+}
+// ---- background save: the editor closes at once, the card is already updated, the save continues behind ----
+// If it fails, the page goes back to that card and reopens its editor with everything that was typed.
+let bgChain = Promise.resolve(), bgPending = 0;
+const bgFails = [];
+function bgBusy() { if (bgPending) toast(bgPending > 1 ? `Enregistrement en cours… (${bgPending})` : 'Enregistrement en cours…', true); }
+function bgSave(meta, body, opAt, onOk) {
+  bgPending++; bgBusy();
+  bgChain = bgChain.then(async () => {
+    try {
+      const j = await bridgeFetch(body);
+      if (!j.ok) { const e = new Error(j.erreur || 'erreur'); e.badKey = /code/i.test(j.erreur || ''); throw e; }
+      bgPending--;
+      if (onOk) try { onOk(j); } catch {}
+      if (bgPending) bgBusy(); else toast(`Enregistré · ${meta.name}`);
+    } catch (err) {
+      bgPending--;
+      if (err.badKey) { try { localStorage.removeItem(KEYSTORE); } catch {} }
+      bgFails.push(Object.assign({ champs: body.champs, opAt, badKey: !!err.badKey }, meta));
+      if (bgPending) bgBusy(); else hideToast();
+      nextFail();
+    }
+  });
+}
+const failMsg = (badKey) => (badKey
+  ? 'Pas enregistré : le code d’accès est refusé. Corrigez-le ci-dessous, puis touchez la disquette.'
+  : 'Pas enregistré : Google n’a pas répondu. Vos changements sont gardés ici. Touchez la disquette pour réessayer.');
+// reopen the card and its editor (waits if another window is open)
+function nextFail() {
+  if (!bgFails.length || document.querySelector('dialog[open]')) return;
+  const f = bgFails.shift();
+  if (f.kind === 'region') {
+    const g = hubByName(f.name); if (!g) { dropOp(f.opAt); return nextFail(); }
+    openRegion(g); openRegionEditor(g);
+  } else {
+    const i = placeIndex(f.name); if (i < 0) { dropOp(f.opAt); return nextFail(); }
+    openPlace(i); openEditor(model.places[i]);
+  }
+  edRetry = f.champs; edRetryAt = f.opAt; edError(failMsg(f.badKey));
+}
+window.addEventListener('beforeunload', (e) => { if (bgPending || bgFails.length) { e.preventDefault(); e.returnValue = ''; } });
 // how each field is shown in the editor: some are "one per line", stored with " ; " or as sentences
 const EDIT_UI = [
   ['Photo', 'Photos et vidéos', 'Une adresse par ligne. Pour une image : clic droit sur l’image, « Copier l’adresse de l’image ». YouTube et Vimeo jouent dans la fiche.', 'lines', 3],
@@ -1470,6 +1536,8 @@ function fromEditor(kind, v) {
   return String(v || '').replace(/\r/g, '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
 }
 let editing = null, edUI = [];
+let edRetry = null, edRetryAt = 0; // changes from a save that failed: sent again with the next save
+function edError(msg) { $('edMsg').className = 'ederr'; $('edMsg').textContent = msg; const h = $('edit').querySelector('.help'); if (h) h.scrollTop = 0; }
 const EDIT_UI_REGION = [
   ['Photo', 'Photos et vidéos', 'Une adresse par ligne : vidéos YouTube (« 9 randonnées dans les Dolomites »), images. Elles s’affichent en haut de la fiche de la région.', 'lines', 3],
   ['Aperçu', 'Aperçu', 'Quel genre de voyage cette région offre (montagne et randonnée, vignobles et culture, mer…), comment on s’y déplace, à quoi s’attendre en septembre.', 'text', 5],
@@ -1520,7 +1588,7 @@ const fieldValue = (el) => (el.classList.contains('rte') ? rteValue(el) : el.val
 function openRegionEditor(g) {
   if (!g || g.other) return;
   if (!g.region) { g.region = { raw: { 'Photo': '', 'Aperçu': '', 'Trucs et astuces': '', 'Pour en savoir plus': '' } }; applyRegionRaw(g.region); }
-  editing = { region: g }; lastBox = null; edUI = EDIT_UI_REGION;
+  editing = { region: g }; lastBox = null; edUI = EDIT_UI_REGION; edRetry = null; edRetryAt = 0;
   $('edTitle').textContent = g.name;
   $('edMsg').textContent = ''; $('edMsg').className = 'small';
   let k = ''; try { k = localStorage.getItem(KEYSTORE) || ''; } catch {}
@@ -1531,7 +1599,7 @@ function openRegionEditor(g) {
   $('edit').showModal();
 }
 function openEditor(p) {
-  editing = p; lastBox = null; edUI = EDIT_UI.filter(([f]) => f !== 'Note' || p.raw['Note']);
+  editing = p; lastBox = null; edUI = EDIT_UI.filter(([f]) => f !== 'Note' || p.raw['Note']); edRetry = null; edRetryAt = 0;
   $('edRev').closest('.edrev').hidden = false;
   $('edTitle').textContent = p.name;
   $('edMsg').textContent = ''; $('edMsg').className = 'small';
@@ -1543,40 +1611,52 @@ function openEditor(p) {
   $('edit').showModal();
 }
 async function saveEditor() {
-  if (editing && editing.region) return saveRegionEditor();
-  const p = editing; if (!p) return;
+  const ed = editing; if (!ed) return;
+  const g = ed.region || null, p = g ? null : ed, raw = g ? g.region.raw : p.raw, name = g ? g.name : p.name;
   const cle = $('edKey').value.trim();
-  if (!cle) { $('edKeyRow').hidden = false; $('edKey').focus(); $('edMsg').textContent = 'Entrer le code d’accès.'; return; }
-  const champs = {};
+  if (!cle) { $('edKeyRow').hidden = false; $('edKey').focus(); edError('Entrer le code d’accès (le demander à David).'); return; }
+  const champs = Object.assign({}, edRetry || {});
   $('edFields').querySelectorAll('[data-f]').forEach((el) => {
     const [f, , , kind] = edUI[+el.dataset.f];
     if (el.classList.contains('rte')) { const val = kind === 'links' ? linksValue(el) : rteValue(el); if (val !== el._init) champs[f] = val; return; }
     const val = fromEditor(kind, el.value);
-    if (val !== String(p.raw[f] || '').trim()) champs[f] = val;
+    if (val !== String(raw[f] || '').trim()) champs[f] = val;
   });
-  const rvNow = $('edRev').checked ? 'Revu' : (p.rvk === 'done' ? 'À revoir' : '');
-  if (rvNow && rvNow !== String(p.raw['Révision'] || '')) champs['Révision'] = rvNow;
+  if (p) { const rvNow = $('edRev').checked ? 'Revu' : (p.rvk === 'done' ? 'À revoir' : ''); if (rvNow && rvNow !== String(p.raw['Révision'] || '')) champs['Révision'] = rvNow; }
   if (!Object.keys(champs).length) { $('edit').close(); return; }
-  edBusy(true);
-  try {
-    const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'modifier', ligne: p.row, lieu: p.name, champs }) });
-    const j = await r.json();
-    if (!j.ok) {
-      if (/code/i.test(j.erreur || '')) { try { localStorage.removeItem(KEYSTORE); } catch {} $('edKeyRow').hidden = false; }
-      throw new Error(j.erreur || 'Erreur');
-    }
-    try { localStorage.setItem(KEYSTORE, cle); } catch {}
-    Object.assign(p.raw, champs); if (j.ligne) p.row = j.ligne; applyRaw(p);
-    pushOp({ t: 'set', lieu: p.name, fields: champs }, false);
-    // show the change right away (the published Google Sheet takes about 5 minutes to catch up)
+  const body = g ? { cle, action: 'modifierRegion', region: name, champs } : { cle, action: 'modifier', ligne: p.row, lieu: name, champs };
+  const onOk = (j) => { if (!g && j.ligne) { const q = model.places.find((x) => norm(x.name) === norm(name)); if (q) q.row = j.ligne; } };
+  // show the change on the card (and keep it on this device for 15 minutes)
+  const applyLocal = () => {
+    if (g) { Object.assign(g.region.raw, champs); applyRegionRaw(g.region); if (curRegion === g) openRegion(g, null, false); return pushOp({ t: 'rset', region: name, fields: champs }, false); }
+    Object.assign(p.raw, champs); applyRaw(p);
+    const op = pushOp({ t: 'set', lieu: name, fields: champs }, false);
     const i = model.places.indexOf(p);
     const rowEl = $('r' + i); if (rowEl) rowEl.outerHTML = rowHtml(p);
-    if (curPlace === i) { const t = document.querySelector('#placeView .tabs button[aria-selected="true"]'); openPlace(i, t && t.dataset.tab); }
-    applyFilter();
-    $('edit').close();
-  } catch (err) {
-    $('edMsg').className = 'small err'; $('edMsg').textContent = 'Pas enregistré : ' + err.message;
-  } finally { edBusy(false); }
+    if (curPlace === i) { const t = document.querySelector('#placeView .tabs button[aria-selected="true"]'); openPlace(i, t && t.dataset.tab, false); }
+    applyFilter(); return op;
+  };
+  // a code just typed here: wait for the answer this one time, so a wrong code is fixed right here
+  if (!$('edKeyRow').hidden) {
+    edBusy(true);
+    try {
+      const j = await bridgeFetch(body);
+      if (!j.ok) { const e = new Error(j.erreur || 'erreur'); e.badKey = /code/i.test(j.erreur || ''); throw e; }
+      try { localStorage.setItem(KEYSTORE, cle); } catch {}
+      onOk(j); edRetry = null; applyLocal(); edBusy(false); $('edit').close(); toast(`Enregistré · ${name}`);
+    } catch (err) {
+      edBusy(false);
+      if (err.badKey) { try { localStorage.removeItem(KEYSTORE); } catch {} $('edKeyRow').hidden = false; $('edKey').value = ''; $('edKey').focus(); }
+      edError(failMsg(err.badKey));
+    }
+    return;
+  }
+  // code already known: close at once and save behind (if it fails, nextFail() brings back this card and its editor)
+  if (edRetryAt) dropOp(edRetryAt);
+  edRetry = null; edRetryAt = 0;
+  const op = applyLocal();
+  $('edit').close();
+  bgSave({ kind: g ? 'region' : 'place', name }, body, op.at, onOk);
 }
 // ---- delete: a window that asks to type a random 4-digit code ----
 let cfRun = null;
@@ -1592,8 +1672,7 @@ function askDelete(title, bodyHtml, okLabel, run) {
 async function bridgePost(body, keyEl, keyRow) {
   const cle = keyEl.value.trim();
   if (!cle) { keyRow.hidden = false; keyEl.focus(); throw new Error('entrer le code d’accès'); }
-  const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify(Object.assign({ cle }, body)) });
-  const j = await r.json();
+  const j = await bridgeFetch(Object.assign({ cle }, body));
   if (!j.ok) { if (/code/i.test(j.erreur || '')) { try { localStorage.removeItem(KEYSTORE); } catch {} keyRow.hidden = false; } throw new Error(j.erreur || 'Erreur'); }
   try { localStorage.setItem(KEYSTORE, cle); } catch {}
   return j;
@@ -1677,10 +1756,12 @@ $('ptQ').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.prevent
 $('ptSave').addEventListener('click', ptSave);
 $('ptClose').addEventListener('click', () => $('port').close());
 // a short green message at the bottom of the screen
-function toast(text) {
+function toast(text, busy) {
   let t = $('toast'); if (!t) { t = document.createElement('div'); t.id = 'toast'; t.setAttribute('role', 'status'); document.body.append(t); }
-  t.textContent = '✓ ' + text; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 5000);
+  t.textContent = busy ? text : '✓ ' + text; t.classList.toggle('busy', !!busy); t.classList.add('on'); clearTimeout(t._h);
+  if (!busy) t._h = setTimeout(() => t.classList.remove('on'), 4000);
 }
+function hideToast() { const t = $('toast'); if (t) { clearTimeout(t._h); t.classList.remove('on'); } }
 // ---- places without coordinates: put them on the map ----
 let placing = null;
 function startPlacing(name) {
@@ -1698,8 +1779,7 @@ async function placeAt(name, lat, lon) {
   if (!cle) cle = (prompt('Code d’accès (le demander à David) :') || '').trim();
   if (!cle) { if (msg) msg.textContent = ''; return; }
   try {
-    const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'coordonnees', items: [{ lieu: name, coords: `${lat}, ${lon}` }] }) });
-    const j = await r.json(); if (!j.ok) throw new Error(j.erreur || 'Erreur');
+    const j = await bridgeFetch({ cle, action: 'coordonnees', items: [{ lieu: name, coords: `${lat}, ${lon}` }] }); if (!j.ok) throw new Error(j.erreur || 'Erreur');
     try { localStorage.setItem(KEYSTORE, cle); } catch {}
     stopPlacing();
     pushOp({ t: 'set', lieu: name, fields: { 'Coordonnées': `${lat}, ${lon}` } });
@@ -1899,41 +1979,14 @@ $('edFields').addEventListener('keydown', (e) => {
   e.preventDefault(); rtIndent(box, e.shiftKey ? -1 : 1);
 });
 $('edit').addEventListener('click', (e) => { if (!e.target.closest('#rtMenu,[data-rt="bullets"],[data-rt="icon"]')) $('rtMenu').hidden = true; });
-async function saveRegionEditor() {
-  const g = editing.region, reg = g.region;
-  const cle = $('edKey').value.trim();
-  if (!cle) { $('edKeyRow').hidden = false; $('edKey').focus(); $('edMsg').textContent = 'Entrer le code d’accès.'; return; }
-  const champs = {};
-  $('edFields').querySelectorAll('[data-f]').forEach((el) => {
-    const [f, , , kind] = edUI[+el.dataset.f];
-    if (el.classList.contains('rte')) { const val = kind === 'links' ? linksValue(el) : rteValue(el); if (val !== el._init) champs[f] = val; return; }
-    const val = fromEditor(kind, el.value);
-    if (val !== String(reg.raw[f] || '').trim()) champs[f] = val;
-  });
-  if (!Object.keys(champs).length) { $('edit').close(); return; }
-  edBusy(true);
-  try {
-    const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'modifierRegion', region: g.name, champs }) });
-    const j = await r.json();
-    if (!j.ok) {
-      if (/code/i.test(j.erreur || '')) { try { localStorage.removeItem(KEYSTORE); } catch {} $('edKeyRow').hidden = false; }
-      throw new Error(j.erreur || 'Erreur');
-    }
-    try { localStorage.setItem(KEYSTORE, cle); } catch {}
-    Object.assign(reg.raw, champs); applyRegionRaw(reg);
-    pushOp({ t: 'rset', region: g.name, fields: champs }, false);
-    if (curRegion === g) openRegion(g, null, false);
-    $('edit').close();
-  } catch (err) {
-    $('edMsg').className = 'small err'; $('edMsg').textContent = 'Pas enregistré : ' + err.message;
-  } finally { edBusy(false); }
-}
 $('edSave').addEventListener('click', saveEditor);
 const edState = () => [...$('edFields').querySelectorAll('[data-f]')].map(fieldValue).join('\u0001') + ($('edRev').checked ? '1' : '0');
 let edSnap = '';
-const edDirty = () => edState() !== edSnap;
-$('edCancel').addEventListener('click', () => { if (!edDirty() || confirm('Quitter sans enregistrer ?')) $('edit').close(); });
-$('edit').addEventListener('cancel', (e) => { if ($('edit').classList.contains('saving')) { e.preventDefault(); return; } if (edDirty() && !confirm('Quitter sans enregistrer ?')) e.preventDefault(); });
+const edDirty = () => !!edRetry || edState() !== edSnap;
+function edAbandon() { if (!edRetry) return; dropOp(edRetryAt); edRetry = null; edRetryAt = 0; load(); }
+$('edit').addEventListener('close', () => setTimeout(nextFail, 50));
+$('edCancel').addEventListener('click', () => { if (!edDirty() || confirm('Quitter sans enregistrer ?')) { edAbandon(); $('edit').close(); } });
+$('edit').addEventListener('cancel', (e) => { if ($('edit').classList.contains('saving')) { e.preventDefault(); return; } if (edDirty() && !confirm('Quitter sans enregistrer ?')) e.preventDefault(); else edAbandon(); });
 $('edForget').addEventListener('click', (e) => { e.preventDefault(); try { localStorage.removeItem(KEYSTORE); } catch {} $('edKey').value = ''; $('edKeyRow').hidden = false; });
 // ---- Research (English, for David): places or a region, then save ----
 let PROMPTS = null;
@@ -2031,7 +2084,7 @@ function tlAutoBase() {
 }
 function tlSummary() {
   const rows = tsvRows($('tlPaste2').value);
-  tl.cards = rows.filter((r) => r.length >= 6).map((r) => ({ 'Lieu': r[0], 'Aperçu': researchToHtml(para(r[1])), "Comment s'y rendre": researchToHtml(para(r[2])), 'Quoi faire': researchToHtml(para(r[3])), 'Trucs et astuces': researchToHtml(para(r[4]), 'tips'), 'Pour en savoir plus': cleanLinkList(r[5]) }));
+  tl.cards = rows.filter((r) => r.length >= 6).map((r) => ({ 'Lieu': r[0], 'Aperçu': researchToHtml(para(stripLabel(r[1]))), "Comment s'y rendre": researchToHtml(para(stripLabel(r[2]))), 'Quoi faire': researchToHtml(para(stripLabel(r[3]))), 'Trucs et astuces': researchToHtml(para(stripLabel(r[4])), 'tips'), 'Pour en savoir plus': cleanLinkList(stripLabel(r[5])) }));
   const bad = rows.filter((r) => r.length > 1 && r.length < 6).length;
   const known = new Set(model.places.map((p) => norm(p.name)).concat(model.skipped.map((x) => norm(x.name))));
   const out = [];
@@ -2055,8 +2108,7 @@ async function tlFindCoords(names, hub, cle, res, prefix) {
     if (g) items.push({ lieu: name, coords: `${(+g.lat).toFixed(4)}, ${(+g.lon).toFixed(4)}` }); else missed.push(name);
   }
   if (items.length) {
-    const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'coordonnees', items }) });
-    const j = await r.json(); if (!j.ok) throw new Error(j.erreur || 'coordinates');
+    const j = await bridgeFetch({ cle, action: 'coordonnees', items }); if (!j.ok) throw new Error(j.erreur || 'coordinates');
   }
   return { found: items.length, missed };
 }
@@ -2067,8 +2119,7 @@ async function tlSave() {
   const base = $('tlBaseP').value, hub = model.hubs.find((h) => norm(h.name) === norm(base)) || null;
   $('tlSave').disabled = true; $('tlSave').classList.add('busy'); res.className = 'edbusy'; res.textContent = 'Saving… (a few seconds)';
   try {
-    const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'enregistrer', lieux: tl.cards.map((c) => Object.assign({}, c, hub ? { 'Région': hub.name } : {})) }) });
-    const j = await r.json();
+    const j = await bridgeFetch({ cle, action: 'enregistrer', lieux: tl.cards.map((c) => Object.assign({}, c, hub ? { 'Région': hub.name } : {})) });
     if (!j.ok) { if (/code/i.test(j.erreur || '')) { try { localStorage.removeItem(KEYSTORE); } catch {} $('tlKeyRow').hidden = false; } throw new Error(j.erreur || 'Error'); }
     try { localStorage.setItem(KEYSTORE, cle); } catch {}
     const added = j.lieux.filter((l) => l.action === 'ajouté').length, upd = j.lieux.length - added;
@@ -2105,7 +2156,7 @@ const tlRegionBase = () => tlRegionName() || NOT_DECIDED;
 function tlReadAnswer() {
   const rows = tsvRows($('tlPaste1').value), name = tlRegionName();
   const reg = rows.find((r) => r.length >= 4 && norm(r[0]) === norm(name)) || rows.find((r) => r.length >= 4);
-  tl.region = reg ? { 'Région': name || reg[0], 'Aperçu': researchToHtml(para(reg[1])), 'Trucs et astuces': researchToHtml(para(reg[2]), 'tips'), 'Pour en savoir plus': cleanLinkList(reg[3]) } : null;
+  tl.region = reg ? { 'Région': name || reg[0], 'Aperçu': researchToHtml(para(stripLabel(reg[1]))), 'Trucs et astuces': researchToHtml(para(stripLabel(reg[2])), 'tips'), 'Pour en savoir plus': cleanLinkList(stripLabel(reg[3])) } : null;
   tl.list = rows.filter((r) => r !== reg && r.length >= 2 && r.length < 4).map((r) => ({ name: r[0], why: r[1] || '' }));
   const out = [];
   if (tl.region) out.push(`<div class="okline">Region card: « ${esc(plainOf(tl.region['Aperçu']).slice(0, 160))}${plainOf(tl.region['Aperçu']).length > 160 ? '…' : ''} »</div>`);
@@ -2120,8 +2171,7 @@ async function tlRegSave() {
   if (!tl.region) { res.textContent = 'Paste Claude’s reviewed version in step 5 first.'; return; }
   $('tlRegSave').disabled = true; res.className = 'small'; res.textContent = 'Saving the region…';
   try {
-    const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'enregistrer', region: tl.region }) });
-    const j = await r.json();
+    const j = await bridgeFetch({ cle, action: 'enregistrer', region: tl.region });
     if (!j.ok) { if (/code/i.test(j.erreur || '')) { try { localStorage.removeItem(KEYSTORE); } catch {} $('tlKeyRow').hidden = false; } throw new Error(j.erreur || 'Error'); }
     try { localStorage.setItem(KEYSTORE, cle); } catch {}
     const picks = [...$('tlParsed1').querySelectorAll('[data-pk]:checked')].map((c) => tl.list[+c.dataset.pk].name);
@@ -2167,8 +2217,7 @@ async function addPinPlace(name, lat, lon, regionName) {
   if (msg) msg.textContent = 'Ajout…';
   try {
     const row = Object.assign({ 'Lieu': name, 'Ajouté par': who || '—', 'Coordonnées': `${lat}, ${lon}` }, regionName ? { 'Région': regionName } : {});
-    const r = await fetch(BRIDGE, { method: 'POST', body: JSON.stringify({ cle, action: 'enregistrer', lieux: [row] }) });
-    const j = await r.json();
+    const j = await bridgeFetch({ cle, action: 'enregistrer', lieux: [row] });
     if (!j.ok) { if (/code/i.test(j.erreur || '')) { try { localStorage.removeItem(KEYSTORE); } catch {} } throw new Error(j.erreur || 'Erreur'); }
     try { localStorage.setItem(KEYSTORE, cle); if (who) localStorage.setItem('qui2027', who); } catch {}
     tl.queue.push({ name, at: [+lat, +lon], by: who }); tl.checked.add(norm(name));
