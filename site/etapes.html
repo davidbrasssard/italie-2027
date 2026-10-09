@@ -1,0 +1,389 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Italie 2027, étapes de planification</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700&family=Alegreya+Sans:wght@400;500;700&display=swap">
+<style>
+/* Layout: a single column of step cards; each card pairs plain text with a small index-card picture of that step */
+:root{
+  --bg:#eef2f1; --card:#ffffff; --fg:#1c2422; --muted:#56615d; --line:#d3dbd7; --soft:#f3f6f4;
+  --area:#0f7f80; --area-soft:#dff1ef; --hub:#7a4a9e; --cut:#c2410c; --ok:#2e7d4f; --ex:#1d9e75;
+  --us-bg:#e1f5ee; --us-fg:#085041; --ai-bg:#eeedfe; --ai-fg:#3c3489; --both-bg:#faeeda; --both-fg:#633806;
+  --serif:"Alegreya", Georgia, serif; --sans:"Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+  --bg:#141a19; --card:#1d2523; --fg:#e7ecea; --muted:#a4b0ab; --line:#33403c; --soft:#25302d;
+  --area:#4fc1bb; --area-soft:#183634; --hub:#b998de; --cut:#f08a4b; --ok:#6cc08f; --ex:#4fc1a0;
+  --us-bg:#123a30; --us-fg:#9fe1cb; --ai-bg:#26224a; --ai-fg:#cecbf6; --both-bg:#3a2a10; --both-fg:#fac775; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#141a19; --card:#1d2523; --fg:#e7ecea; --muted:#a4b0ab; --line:#33403c; --soft:#25302d;
+  --area:#4fc1bb; --area-soft:#183634; --hub:#b998de; --cut:#f08a4b; --ok:#6cc08f; --ex:#4fc1a0;
+  --us-bg:#123a30; --us-fg:#9fe1cb; --ai-bg:#26224a; --ai-fg:#cecbf6; --both-bg:#3a2a10; --both-fg:#fac775; color-scheme:dark }
+body{ background:var(--bg); color:var(--fg); font-family:var(--sans); font-size:17px; line-height:1.55; }
+.wrap{ max-width:960px; margin:0 auto; padding-inline:18px; padding-block:28px 60px; display:flex; flex-direction:column; gap:14px; }
+h1{ font-family:var(--serif); font-size:clamp(30px,4.5vw,40px); line-height:1.1; margin:0; text-wrap:balance; }
+.lead{ margin:6px 0 10px; color:var(--muted); max-width:62ch; }
+.step{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 18px; display:flex; flex-wrap:wrap; gap:16px 22px; align-items:flex-start; }
+.txt{ flex:1 1 340px; min-width:0; }
+.hd{ display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; }
+.num{ font-family:var(--serif); font-weight:700; font-size:22px; color:var(--muted); font-variant-numeric:tabular-nums; }
+h2{ font-family:var(--serif); font-size:23px; margin:0; line-height:1.2; text-wrap:balance; }
+.who{ font-size:13px; padding:1px 9px; border-radius:10px; white-space:nowrap; }
+.us{ background:var(--us-bg); color:var(--us-fg); } .ai{ background:var(--ai-bg); color:var(--ai-fg); } .both{ background:var(--both-bg); color:var(--both-fg); }
+.txt p{ margin:6px 0 0; }
+.ex{ margin:10px 0 0; padding:8px 12px; border-left:3px solid var(--ex); background:var(--soft); font-size:15px; color:var(--muted); }
+.ex b{ color:var(--fg); font-weight:700; }
+.loop{ list-style:none; margin:10px 0 0; padding:0; display:flex; flex-direction:column; gap:5px; font-size:15px; }
+.loop li{ display:flex; gap:9px; align-items:flex-start; }
+.loop .ln{ flex:none; width:22px; height:22px; border-radius:50%; display:grid; place-items:center; font-size:12px; font-weight:700; border:1px solid var(--line); background:var(--soft); }
+.again{ font-size:14px; color:var(--cut); margin-top:4px; }
+.pic{ flex:0 1 310px; min-width:0; max-width:100%; background:var(--soft); border:1px solid var(--line); border-radius:12px; padding:12px; box-sizing:border-box; }
+.pic svg{ display:block; width:100%; height:auto; }
+.cap{ font-size:13px; color:var(--muted); margin-top:6px; text-align:center; }
+.t-s{ font-family:var(--sans); font-size:11px; fill:var(--fg); }
+.t-m{ font-family:var(--sans); font-size:11px; fill:var(--muted); }
+.t-b{ font-family:var(--sans); font-size:13px; font-weight:700; fill:var(--fg); }
+.t-cut{ font-family:var(--sans); font-size:11px; fill:var(--cut); }
+.t-area{ font-family:var(--serif); font-size:15px; font-weight:700; fill:var(--area); }
+.t-hub{ font-family:var(--sans); font-size:13px; font-weight:700; fill:var(--hub); }
+/* mini form, day cards, logistics, report */
+.mf{ display:flex; flex-direction:column; gap:7px; font-size:13px; }
+.mf .lbl{ font-weight:700; font-size:12px; color:var(--muted); letter-spacing:.03em; text-transform:uppercase; }
+.mf .box{ background:var(--card); border:1px solid var(--line); border-radius:8px; padding:7px 9px; line-height:1.45; }
+.chips{ display:flex; flex-wrap:wrap; gap:5px; }
+.chip{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:2px 9px; font-size:12px; }
+.days{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; font-size:13px; }
+.day{ background:var(--card); border:1px solid var(--line); border-radius:8px; padding:7px 9px; line-height:1.4; }
+.day b{ display:block; font-size:12px; color:var(--muted); }
+.day .rain{ display:block; margin-top:3px; color:var(--area); font-size:12px; }
+.logi{ display:flex; align-items:center; gap:8px; font-size:13px; }
+.pdf{ flex:none; width:70px; height:88px; background:var(--card); border:1px solid var(--line); border-radius:6px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; font-size:11px; color:var(--muted); text-align:center; }
+.pdf span{ font-weight:700; color:var(--cut); font-size:12px; }
+.arrow{ color:var(--muted); font-size:20px; }
+.form{ flex:1; min-width:0; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:7px 9px; display:flex; flex-direction:column; gap:3px; }
+.form div{ display:flex; justify-content:space-between; gap:6px; border-bottom:1px dashed var(--line); padding-bottom:2px; }
+.form div:last-child{ border-bottom:0; }
+.form i{ font-style:normal; color:var(--muted); font-size:12px; }
+.rep{ display:flex; gap:10px; align-items:flex-end; justify-content:center; }
+.paper{ width:150px; background:var(--card); border:1px solid var(--line); border-radius:4px; padding:9px; font-size:11px; line-height:1.4; display:flex; flex-direction:column; gap:3px; }
+.paper b{ font-family:var(--serif); font-size:14px; }
+.paper .ln{ height:5px; border-radius:3px; background:var(--line); }
+.phone{ width:78px; height:140px; border:3px solid var(--fg); border-radius:14px; background:var(--card); padding:8px 6px; box-sizing:border-box; display:flex; flex-direction:column; gap:4px; font-size:10px; line-height:1.3; }
+.phone .ln{ height:4px; border-radius:2px; background:var(--line); }
+
+/* Slideshow: one section per screen, nav bar fixed at bottom */
+html,body{height:100%;overflow:hidden}
+.deck{position:fixed;inset:0 0 64px 0}
+.deck>section{position:absolute;inset:0;margin:0;border:0!important;border-radius:0;background:var(--bg)!important;padding:clamp(16px,3vw,40px) clamp(16px,4vw,56px);overflow-y:auto;display:none;flex-direction:column;flex-wrap:nowrap}
+.deck>section.on{display:flex}
+.row{margin:auto 0;width:100%;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:20px clamp(20px,4vw,48px)}
+.row>.txt{flex:1 1 380px;max-width:680px}
+.row>.pic,.row>.pics{flex:0 1 460px}
+.pics{min-width:0;max-width:100%;display:flex;flex-direction:column;gap:12px}
+.deck h2{font-size:clamp(24px,3vw,32px)}
+.deck .num{font-size:clamp(24px,3vw,32px)}
+.deck .txt p{font-size:clamp(17px,1.7vw,19px)}
+.deck .ex{font-size:clamp(15px,1.5vw,17px)}
+.cover .txt{max-width:720px;flex:0 1 720px}
+.cover h1{font-size:clamp(34px,5vw,52px);margin-bottom:12px}
+.cover .lead{font-size:clamp(17px,1.8vw,20px);max-width:none}
+.hint{color:var(--muted);font-size:15px;margin-top:18px}
+.bar{position:fixed;left:0;right:0;bottom:0;height:64px;display:flex;align-items:center;justify-content:center;gap:16px;background:var(--card);border-top:1px solid var(--line)}
+.nb{width:48px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--soft);color:var(--fg);font-size:22px;cursor:pointer}
+.nb:disabled{opacity:.35;cursor:default}
+.dots{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;max-width:60vw}
+.dot{width:11px;height:11px;border-radius:50%;border:0;padding:0;background:var(--line);cursor:pointer}
+.dot.on{background:var(--area);width:24px;border-radius:6px}
+.pics .cap{margin-top:3px}
+/* Stage mode (landscape, wide): each slide is a fixed 1120x690 board scaled to fill the screen */
+.stage .deck>section{padding:0;overflow:hidden}
+.stage .row{position:absolute;left:var(--x);top:var(--y);width:1120px;height:690px;margin:0;box-sizing:border-box;padding:28px 44px;transform:scale(var(--s));transform-origin:0 0;overflow-y:auto;align-content:center}
+.stage .row>.txt{max-width:600px}
+.stage .pics .pic svg{max-height:250px}
+.stage .pic>.mf,.stage .pic>.days,.stage .pic>.logi,.stage .pic>.rep,.stage .pic>.cap{zoom:1.3}
+.solo .txt{flex:0 1 720px}
+@media (max-width:700px){ .deck>section{align-content:flex-start} }
+.foot{ color:var(--muted); font-size:15px; margin-top:6px; }
+</style>
+
+<main class="deck" id="deck">
+<section class="step cover" aria-label="Introduction"><div class="txt">
+  <h1>Italie 2027 : les étapes de planification</h1>
+  <p class="lead">Comment passer d’une idée à un voyage en 9 étapes. Un même exemple illustre le processus du début à la fin : les Dolomites. Les lieux, les durées et les solutions présentés servent à raconter l’histoire ; ils n’ont pas encore été vérifiés.</p>
+  <p class="lead">Deux mots reviennent souvent. Une <b>Région</b> regroupe des lieux sous le nom que tout le monde connaît : Dolomites, Toscane, Rome. Une <b>Base</b> est le village où vous dormez dans une Région. Une Base est d’abord <b>Proposée</b>, puis <b>Retenue</b> lorsque vous l’acceptez.</p>
+<p class="hint">Touchez → ou glissez pour commencer</p></div></section>
+
+<section class="step" aria-labelledby="h1s">
+  <div class="txt">
+    <div class="hd"><span class="num">1</span><h2 id="h1s">Décrire le voyage</h2><span class="who us">Lise et David</span></div>
+    <p>Décrivez le voyage que vous souhaitez faire, dans vos propres mots, puis définissez vos paramètres de voyage. Ces paramètres orientent les suggestions de l’IA tout au long de la planification. Vous les définissez une fois, puis vous ne modifiez que ce qui change d’un voyage à l’autre.</p>
+  </div>
+  <div class="pic" aria-label="Image : le formulaire de description du voyage">
+    <div class="mf">
+      <div class="lbl">Notre voyage</div>
+      <div class="box">Trois semaines en septembre prochain. Quelques jours à Rome, un peu de littoral, les vignobles de Toscane, des randonnées dans les Dolomites. Peut-être la Suisse. Terminer à Paris. Des amis pourraient se joindre à nous pour une partie du voyage.</div>
+      <div class="lbl">Paramètres</div>
+      <div class="chips"><span class="chip">Pas de voiture, sauf si nécessaire</span><span class="chip">Maximum 6 h de déplacement par jour</span></div>
+      <div class="lbl">Intérêts</div>
+      <div class="chips"><span class="chip">Musées (quelques-uns)</span><span class="chip">Visites guidées à pied</span><span class="chip">Randonnées faciles à modérées</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="step" aria-labelledby="h2s">
+  <div class="txt">
+    <div class="hd"><span class="num">2</span><h2 id="h2s">Obtenir une première sélection de lieux, une Région à la fois</h2><span class="who ai">ChatGPT</span></div>
+    <p>Sur la fiche de chaque Région, cliquez sur « Trouver des lieux à visiter ». L’app prépare une demande pour ChatGPT à partir de votre description et de vos paramètres. Collez-la dans ChatGPT, qui recherche 4 ou 5 lieux recommandés par les voyageurs et rédige une fiche complète pour chacun. Claude vérifie les faits, puis les fiches apparaissent sur la carte.</p>
+    <div class="ex"><b>Dolomites :</b> Seceda, Alpe di Siusi, Resciesa, Vallunga et Passo Sella apparaissent sur la carte. La Région est définie, mais aucune Base n’a encore été choisie.</div>
+  </div>
+  <div class="pic">
+    <svg viewBox="0 0 300 220" role="img" aria-label="La région des Dolomites et ses cinq lieux">
+      <circle cx="148" cy="118" r="88" stroke-width="1.5" stroke-dasharray="6 5" style="fill:var(--area-soft);stroke:var(--area)"/>
+      <text class="t-area" x="148" y="22" text-anchor="middle">Dolomites</text>
+      <g style="fill:var(--area)">
+        <circle cx="110" cy="78" r="6"/><circle cx="90" cy="128" r="6"/><circle cx="168" cy="168" r="6"/><circle cx="190" cy="82" r="6"/><circle cx="206" cy="128" r="6"/>
+      </g>
+      <text class="t-s" x="110" y="66" text-anchor="middle">Seceda</text>
+      <text class="t-s" x="90" y="146" text-anchor="middle">Resciesa</text>
+      <text class="t-s" x="168" y="186" text-anchor="middle">Alpe di Siusi</text>
+      <text class="t-s" x="190" y="70" text-anchor="middle">Vallunga</text>
+      <text class="t-s" x="206" y="146" text-anchor="middle">Passo Sella</text>
+    </svg>
+    <div class="cap">La Région et ses 5 premiers lieux</div>
+  </div>
+</section>
+
+<section class="step" aria-labelledby="h3s">
+  <div class="txt">
+    <div class="hd"><span class="num">3</span><h2 id="h3s">Explorer et trier les lieux</h2><span class="who us">Lise et David</span></div>
+    <p>Au fil des semaines, avancez à votre rythme en reprenant la même démarche :</p>
+    <ol class="loop">
+      <li><span class="ln">1</span><span>Trouvez des lieux à visiter. Inspirez-vous, par exemple, d’une vidéo Facebook ou de l’itinéraire d’un ami.</span></li>
+      <li><span class="ln">2</span><span>Faites préparer les fiches. L’app crée la demande pour ChatGPT, qui recherche des renseignements et rédige les fiches. Claude vérifie les faits.</span></li>
+      <li><span class="ln">3</span><span>Décidez si chaque lieu vaut la visite. Sinon, supprimez-le.</span></li>
+      <li><span class="ln">4</span><span>Peaufinez les fiches des lieux retenus. Précisez quoi faire, comment s’y rendre et les conseils utiles. Ajoutez des photos et des vidéos.</span></li>
+      <li><span class="ln">5</span><span>Intégrez les lieux retenus à votre voyage.</span></li>
+    </ol>
+    <div class="again">↻ Répétez au besoin.</div>
+    <div class="ex"><b>Dolomites :</b> Passo Sella ne vous convient pas : vous le supprimez. Vous découvrez Lago di Braies dans une vidéo et l’ajoutez. Pour Resciesa, David ajoute ses propres photos et une deuxième randonnée trouvée dans un commentaire Facebook.</div>
+  </div>
+  <div class="pic">
+    <svg viewBox="0 0 300 220" role="img" aria-label="La région avec Passo Sella barré et Lago di Braies ajouté">
+      <circle cx="148" cy="118" r="88" stroke-width="1.5" stroke-dasharray="6 5" style="fill:var(--area-soft);stroke:var(--area)"/>
+      <text class="t-area" x="148" y="22" text-anchor="middle">Dolomites</text>
+      <g style="fill:var(--area)">
+        <circle cx="110" cy="78" r="6"/><circle cx="90" cy="128" r="6"/><circle cx="168" cy="168" r="6"/><circle cx="190" cy="82" r="6"/>
+      </g>
+      <text class="t-s" x="110" y="66" text-anchor="middle">Seceda</text>
+      <text class="t-s" x="90" y="146" text-anchor="middle">Resciesa ★</text>
+      <text class="t-s" x="168" y="186" text-anchor="middle">Alpe di Siusi</text>
+      <text class="t-s" x="190" y="70" text-anchor="middle">Vallunga</text>
+      <g stroke-width="2.5" stroke-linecap="round" style="stroke:var(--cut)"><line x1="200" y1="122" x2="212" y2="134"/><line x1="212" y1="122" x2="200" y2="134"/></g>
+      <text class="t-cut" x="206" y="150" text-anchor="middle" text-decoration="line-through">Passo Sella</text>
+      <circle cx="262" cy="46" r="7" stroke-width="2.5" style="fill:var(--card);stroke:var(--ok)"/>
+      <text x="262" y="50" text-anchor="middle" style="font-family:var(--sans);font-size:12px;font-weight:700;fill:var(--ok)">+</text>
+      <text class="t-s" x="262" y="30" text-anchor="middle">Lago di Braies</text>
+      <text class="t-m" x="262" y="66" text-anchor="middle">vu dans une vidéo</text>
+    </svg>
+    <div class="cap">Un lieu retiré, un ajouté, un autre personnalisé (★)</div>
+  </div>
+</section>
+
+<section class="step" aria-labelledby="h4s">
+  <div class="txt">
+    <div class="hd"><span class="num">4</span><h2 id="h4s">Trouver la Base de chaque Région</h2><span class="who ai">Claude et ChatGPT</span></div>
+    <p>Sur la fiche de la Région, cliquez sur « Trouver une Base ». L’app prépare la demande ; collez-la dans ChatGPT. ChatGPT compare quelques villages en tenant compte des déplacements vers les lieux choisis, des autobus et des remontées mécaniques si vous n’avez pas de voiture, ainsi que des prix habituels des locations. Claude vérifie la réponse. Le village recommandé devient la Base Proposée de la Région.</p>
+    <div class="ex"><b>Dolomites :</b> Ortisei, Santa Cristina et Selva sont comparés. Recommandation : Ortisei, d’où partent les remontées mécaniques vers Seceda, Alpe di Siusi et Resciesa.</div>
+  </div>
+  <div class="pic">
+    <svg viewBox="0 0 300 220" role="img" aria-label="Trois villages parmi les lieux ; deux barrés, Ortisei choisi">
+      <circle cx="148" cy="118" r="88" stroke-width="1" stroke-dasharray="6 5" opacity=".6" style="fill:var(--area-soft);stroke:var(--area)"/>
+      <g opacity=".7" style="fill:var(--area)"><circle cx="110" cy="78" r="5"/><circle cx="90" cy="128" r="5"/><circle cx="168" cy="168" r="5"/><circle cx="190" cy="82" r="5"/></g>
+      <g stroke-width="1.2" opacity=".6" style="stroke:var(--hub)"><line x1="120" y1="112" x2="110" y2="78"/><line x1="120" y1="112" x2="90" y2="128"/><line x1="120" y1="112" x2="168" y2="168"/><line x1="120" y1="112" x2="190" y2="82"/></g>
+      <rect x="111" y="103" width="18" height="18" rx="3" style="fill:var(--hub)"/>
+      <circle cx="120" cy="112" r="17" fill="none" stroke-width="2.5" style="stroke:var(--hub)"/>
+      <text class="t-hub" x="120" y="146" text-anchor="middle">Ortisei</text>
+      <rect x="157" y="117" width="14" height="14" rx="3" opacity=".6" style="fill:var(--muted)"/>
+      <g stroke-width="2.5" stroke-linecap="round" style="stroke:var(--cut)"><line x1="153" y1="113" x2="175" y2="135"/><line x1="175" y1="113" x2="153" y2="135"/></g>
+      <text class="t-cut" x="164" y="152" text-anchor="middle" text-decoration="line-through">S. Cristina</text>
+      <rect x="211" y="95" width="14" height="14" rx="3" opacity=".6" style="fill:var(--muted)"/>
+      <g stroke-width="2.5" stroke-linecap="round" style="stroke:var(--cut)"><line x1="207" y1="91" x2="229" y2="113"/><line x1="229" y1="91" x2="207" y2="113"/></g>
+      <text class="t-cut" x="218" y="130" text-anchor="middle" text-decoration="line-through">Selva</text>
+      <text class="t-b" x="150" y="212" text-anchor="middle">Dolomites → Ortisei</text>
+    </svg>
+    <div class="cap">Trois villages comparés, une Base Proposée</div>
+  </div>
+</section>
+
+<section class="step" aria-labelledby="h5s">
+  <div class="txt">
+    <div class="hd"><span class="num">5</span><h2 id="h5s">Vérifier les Bases et les lieux éloignés</h2><span class="who us">Lise et David</span></div>
+    <p>L’app compare chaque Base proposée aux lieux choisis : déplacements en autobus, accès aux remontées mécaniques et temps de trajet. Elle vous montre les conséquences de chaque choix. Vous décidez ensuite de suivre la recommandation ou de garder votre choix. Une Base acceptée devient Retenue. Si la Base change, l’app recalcule les distances et marque les fiches de la Région « À revoir ».</p>
+    <div class="ex"><b>Dolomites :</b> la recherche a proposé trois Bases en fonction des lieux choisis. Ortisei est Retenue, car les remontées vers Seceda, Resciesa et Alpe di Siusi partent toutes du village. Plus tard, en cherchant un hébergement, vous trouvez un chalet bon marché à St. Peter, plus bas dans la vallée. Vous relancez l’analyse : chaque excursion commencerait par un trajet en autobus pour remonter la vallée. La recommandation reste Ortisei, mais vous choisissez quand même le chalet et acceptez les trajets en autobus. La Base devient St.&nbsp;Peter. L’app recalcule les distances et marque les fiches de la Région « À revoir ».</div>
+  </div>
+  <div class="pics">
+  <div class="pic" style="flex:none">
+    <svg viewBox="0 0 300 230" role="img" aria-label="Le chalet de St. Peter au bas de la vallée ; Ortisei au centre des trois lieux ; un trajet en autobus entre les deux">
+      <defs><marker id="ar5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke-width="1.6" style="stroke:var(--cut)"/></marker></defs>
+      <path d="M5 206 Q150 176 295 108" fill="none" stroke-width="40" stroke-linecap="round" style="stroke:var(--area-soft)"/>
+      <g stroke-width="1" stroke-dasharray="3 3" style="stroke:var(--muted)"><line x1="183" y1="129" x2="143" y2="63"/><line x1="195" y1="131" x2="258" y2="52"/><line x1="199" y1="153" x2="258" y2="192"/></g>
+      <g style="fill:var(--area)"><circle cx="140" cy="58" r="5"/><circle cx="262" cy="48" r="5"/><circle cx="262" cy="196" r="5"/></g>
+      <text class="t-s" x="140" y="46" text-anchor="middle">Resciesa</text>
+      <text class="t-s" x="262" y="36" text-anchor="middle">Seceda</text>
+      <text class="t-s" x="262" y="215" text-anchor="middle">Alpe di Siusi</text>
+      <polygon points="175,140 187,128 199,140 199,155 175,155" style="fill:var(--area)"/>
+      <text class="t-b" x="187" y="172" text-anchor="middle">Ortisei</text>
+      <path d="M62 190 Q120 176 168 152" fill="none" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ar5)" style="stroke:var(--cut)"/>
+      <text class="t-cut" x="76" y="164" text-anchor="middle">autobus à chaque sortie</text>
+      <polygon points="33,190 45,178 57,190 57,205 33,205" stroke-width="2" style="fill:var(--card);stroke:var(--hub)"/>
+      <text class="t-hub" x="48" y="224" text-anchor="middle">St. Peter</text>
+    </svg>
+    <div class="cap">Recommandation : Ortisei · Votre choix : St.&nbsp;Peter</div>
+  </div>
+  <div class="pic" style="flex:none">
+    <svg viewBox="0 0 300 230" role="img" aria-label="Après le changement : St. Peter est la Base, les trois lieux sont reliés à St. Peter ; Ortisei n'est plus la Base">
+      <path d="M5 206 Q150 176 295 108" fill="none" stroke-width="40" stroke-linecap="round" style="stroke:var(--area-soft)"/>
+      <g stroke-width="1" stroke-dasharray="3 3" style="stroke:var(--muted)"><line x1="52" y1="180" x2="137" y2="64"/><line x1="58" y1="186" x2="257" y2="51"/><line x1="58" y1="198" x2="256" y2="196"/></g>
+      <g style="fill:var(--area)"><circle cx="140" cy="58" r="5"/><circle cx="262" cy="48" r="5"/><circle cx="262" cy="196" r="5"/></g>
+      <text class="t-s" x="140" y="46" text-anchor="middle">Resciesa</text>
+      <text class="t-s" x="262" y="36" text-anchor="middle">Seceda</text>
+      <text class="t-s" x="262" y="215" text-anchor="middle">Alpe di Siusi</text>
+      <polygon points="175,140 187,128 199,140 199,155 175,155" stroke-width="1.5" style="fill:var(--card);stroke:var(--muted)"/>
+      <text class="t-m" x="187" y="172" text-anchor="middle">Ortisei</text>
+      <polygon points="33,190 45,178 57,190 57,205 33,205" style="fill:var(--area)"/>
+      <text class="t-b" x="48" y="224" text-anchor="middle">St. Peter</text>
+    </svg>
+    <div class="cap">Après le changement : la Base est St.&nbsp;Peter</div>
+  </div>
+  </div>
+</section>
+
+<section class="step solo" aria-labelledby="hrs">
+  <div class="txt">
+    <div class="hd"><span class="num" aria-hidden="true">↻</span><h2 id="hrs">Recommencer de la même façon pour chaque Région</h2></div>
+    <p>Rome, la Toscane, le littoral, la Suisse et Paris passent chacune par les étapes 2 à 5. Une fois qu’une Base est Retenue dans chaque Région, l’étape 6 permet de relier toutes les Bases dans un même itinéraire. Si quelque chose change en cours de route, retournez à l’étape concernée. L’app indique ce qui doit être revu dans la Région touchée.</p>
+  </div>
+</section>
+
+<section class="step" aria-labelledby="h6s">
+  <div class="txt">
+    <div class="hd"><span class="num">6</span><h2 id="h6s">Définir l’itinéraire et le nombre de nuits</h2><span class="who both">ChatGPT propose, vous choisissez</span></div>
+    <p>Dans la vue Itinéraire, cliquez sur « Proposer un itinéraire ». L’app prépare la demande ; collez-la dans ChatGPT. ChatGPT propose l’ordre des Bases, le nombre de nuits dans chacune et les moyens de transport entre elles. Il présente une option aller-retour et une autre avec arrivée et départ dans des villes différentes. Il signale les journées de déplacement de plus de 6 heures. Vous choisissez une option, puis ajustez le nombre de nuits au besoin. Il n’y a qu’un seul itinéraire, qui évolue au fil de la planification. Sur la carte, une Base Proposée apparaît en pointillé et une Base Retenue, en trait plein.</p>
+    <div class="ex"><b>Dolomites :</b> St.&nbsp;Peter est le 5<sup>e</sup> arrêt, avec 4 nuits. Le trajet depuis le littoral prend environ 8 h 30 : il est signalé. Solution : passer une nuit à Verona en chemin.</div>
+  </div>
+  <div class="pic">
+    <svg viewBox="0 0 300 220" role="img" aria-label="Carte de l’itinéraire avec les arrêts numérotés et une nuit ajoutée à Verona">
+      <line x1="34" y1="24" x2="240" y2="200" stroke-width="1.5" stroke-dasharray="3 5" style="stroke:var(--muted)"/>
+      <g stroke-width="2.2" opacity=".75" fill="none" style="stroke:var(--fg)">
+        <polyline points="240,200 214,174 160,146 204,112 226,76 128,84 34,24"/>
+      </g>
+      <g font-family="Alegreya Sans, sans-serif" font-size="11" font-weight="700" text-anchor="middle">
+        <circle cx="34" cy="24" r="11" fill="#1f5f99"/><text x="34" y="28" fill="#fff">1·7</text>
+        <circle cx="240" cy="200" r="10" fill="#b5541c"/><text x="240" y="204" fill="#fff">2</text>
+        <circle cx="214" cy="174" r="10" fill="#2e7d4f"/><text x="214" y="178" fill="#fff">3</text>
+        <circle cx="160" cy="146" r="10" fill="#7a4a9e"/><text x="160" y="150" fill="#fff">4</text>
+        <circle cx="226" cy="76" r="12" fill="#0f7f80" stroke-width="2" style="stroke:var(--fg)"/><text x="226" y="80" fill="#fff">5</text>
+        <circle cx="128" cy="84" r="10" fill="#9b2335"/><text x="128" y="88" fill="#fff">6</text>
+      </g>
+      <circle cx="204" cy="112" r="6" stroke-width="2.5" style="fill:var(--card);stroke:var(--cut)"/>
+      <text class="t-cut" x="214" y="116">Verona +1 nuit</text>
+      <text class="t-s" x="48" y="46">Paris</text>
+      <text class="t-s" x="252" y="196">Rome</text>
+      <text class="t-s" x="104" y="150">Littoral</text>
+      <text class="t-s" x="242" y="64">St. Peter</text>
+      <text class="t-s" x="96" y="72">Jungfrau</text>
+    </svg>
+    <div class="cap">Une journée de 8 h 30 devient deux journées plus faciles</div>
+  </div>
+</section>
+
+<section class="step" aria-labelledby="h7s">
+  <div class="txt">
+    <div class="hd"><span class="num">7</span><h2 id="h7s">Planifier les journées</h2><span class="who us">Lise et David</span></div>
+    <p>Pour chaque Base, répartissez les sorties sur des journées précises. Gardez quelques journées libres en cas de pluie ou pour vous reposer. L’app signale aussi les activités qui nécessitent un billet pour une date précise.</p>
+  </div>
+  <div class="pic">
+    <div class="days" aria-label="Image : quatre journées à St. Peter">
+      <div class="day"><b>Jour 1</b>Arrivée de Verona</div>
+      <div class="day"><b>Jour 2</b>Seceda, le premier matin dégagé</div>
+      <div class="day"><b>Jour 3</b>Alpe di Siusi</div>
+      <div class="day"><b>Jour 4</b>Resciesa<span class="rain">S’il pleut : musée à Bolzano</span></div>
+    </div>
+    <div class="cap">St.&nbsp;Peter, 4 jours</div>
+  </div>
+</section>
+
+<section class="step" aria-labelledby="h8s">
+  <div class="txt">
+    <div class="hd"><span class="num">8</span><h2 id="h8s">Réserver et classer toutes les informations</h2><span class="who both">Vous, avec l’aide de Claude</span></div>
+    <p>Réservez vos hébergements et activités sur les sites que vous utilisez habituellement. Déposez ensuite chaque confirmation (courriel ou PDF) dans la section Logistique de l’app. Claude lit la confirmation et remplit les champs correspondants : dates, adresse et numéro de réservation. Vérifiez les renseignements saisis.</p>
+  </div>
+  <div class="pic">
+    <div class="logi" aria-label="Image : une confirmation de réservation devient une fiche remplie">
+      <div class="pdf"><span>PDF</span>Confirmation de réservation</div>
+      <span class="arrow" aria-hidden="true">→</span>
+      <div class="form">
+        <div><i>Quoi</i><span>Chalet, St.&nbsp;Peter</span></div>
+        <div><i>Nuits</i><span>4</span></div>
+        <div><i>Arrivée</i><span>[date], 15 h</span></div>
+        <div><i>Adresse</i><span>[adresse]</span></div>
+        <div><i>N° de réservation</i><span>[numéro]</span></div>
+      </div>
+    </div>
+    <div class="cap">Claude remplit la fiche ; vous la vérifiez</div>
+  </div>
+</section>
+
+<section class="step" aria-labelledby="h9s">
+  <div class="txt">
+    <div class="hd"><span class="num">9</span><h2 id="h9s">Imprimer le rapport de voyage et partir</h2><span class="who us">Lise et David</span></div>
+    <p>L’app rassemble les renseignements dans un rapport de voyage organisé jour par jour, avec les adresses et les détails des réservations. Vous pouvez l’imprimer et le consulter sur vos téléphones, même sans connexion Internet.</p>
+  </div>
+  <div class="pic">
+    <div class="rep" aria-label="Image : le rapport de voyage sur papier et sur un téléphone">
+      <div class="paper"><b>St. Peter · jour 2</b>Remontée de Seceda, premier matin dégagé<span class="ln"></span><span class="ln" style="width:80%"></span>Chalet : [adresse]<span class="ln" style="width:60%"></span></div>
+      <div class="phone"><b>Jour 2</b>Seceda<span class="ln"></span><span class="ln" style="width:70%"></span><span class="ln"></span><span class="ln" style="width:50%"></span></div>
+    </div>
+    <div class="cap">Le même rapport, sur papier et sur téléphone</div>
+  </div>
+</section>
+
+
+</main>
+<nav class="bar" aria-label="Navigation">
+  <button id="prev" class="nb" aria-label="Précédent">&#8592;</button>
+  <div id="dots" class="dots"></div>
+  <button id="next" class="nb" aria-label="Suivant">&#8594;</button>
+</nav>
+<script>
+(function(){
+  var sl=[].slice.call(document.querySelectorAll('#deck > section')), n=sl.length, cur=0;
+  sl.forEach(function(x){var r=document.createElement('div');r.className='row';while(x.firstChild)r.appendChild(x.firstChild);x.appendChild(r);});
+  var dots=document.getElementById('dots');
+  sl.forEach(function(_,i){var d=document.createElement('button');d.className='dot';d.setAttribute('aria-label','Diapo '+(i+1));d.onclick=function(){go(i)};dots.appendChild(d);});
+  function fit(){
+    var w=innerWidth, h=innerHeight-64, de=document.documentElement;
+    if(w>=900&&w>h){
+      var sc=Math.min(w/1120,h/690); de.classList.add('stage');
+      de.style.setProperty('--s',sc); de.style.setProperty('--x',((w-1120*sc)/2)+'px'); de.style.setProperty('--y',((h-690*sc)/2)+'px');
+    } else de.classList.remove('stage');
+  }
+  addEventListener('resize',function(){fit()});
+  function go(i){
+    cur=Math.max(0,Math.min(n-1,i));
+    sl.forEach(function(x,j){x.classList.toggle('on',j===cur);x.setAttribute('aria-hidden',j===cur?'false':'true');});
+    [].forEach.call(dots.children,function(d,j){d.classList.toggle('on',j===cur);});
+    document.getElementById('prev').disabled=cur===0; document.getElementById('next').disabled=cur===n-1;
+    sl[cur].scrollTop=0; fit();
+    try{history.replaceState(null,'','#'+(cur+1));}catch(e){}
+  }
+  document.getElementById('prev').onclick=function(){go(cur-1)};
+  document.getElementById('next').onclick=function(){go(cur+1)};
+  document.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();go(cur+1)} if(e.key==='ArrowLeft'){go(cur-1)}});
+  var x0=null,y0=null;
+  document.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
+  document.addEventListener('touchend',function(e){if(x0===null)return;var dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5){go(cur+(dx<0?1:-1))}x0=null},{passive:true});
+  function fromHash(){var h=parseInt((location.hash||'').slice(1),10); if(!(h>0&&h-1===cur)) go(h>0?h-1:0);}
+  window.addEventListener('hashchange',fromHash); cur=-1; fromHash();
+})();
+</script>
+
+</body></html>
