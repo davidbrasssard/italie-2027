@@ -377,6 +377,25 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 .maplegend i{ width:11px; height:11px; border-radius:50%; display:inline-block; box-sizing:border-box; flex:none; }
 .maplegend i.big{ width:14px; height:14px; }
 .maplegend .sep{ margin-top:4px; padding-top:4px; border-top:1px solid #ddd; font-size:12px; color:#555; }
+.hubpin.prop{ opacity:.6; border-style:dashed; }
+.basepin{ width:28px; height:28px; border-radius:50%; background:#fff; border:2.5px solid; display:grid; place-items:center; box-shadow:0 1px 4px rgba(0,0,0,.35); }
+.ptag{ position:absolute; left:14px; top:0; transform:translateY(-50%); white-space:nowrap; font:500 15px/1.25 var(--sans); color:#1c2422; padding:3px 9px; background:rgba(255,255,255,.94); border-left:4px solid; box-shadow:0 1px 2px rgba(0,0,0,.2); cursor:pointer; }
+.bwrap{ position:relative; width:28px; height:28px; }
+.bname{ position:absolute; left:38px; top:50%; transform:translateY(-50%); white-space:nowrap; font:700 17px/1.2 var(--sans); color:#1c2422; padding:4px 11px 5px; border-radius:0; border-left:5px solid; background:rgba(255,255,255,.94); box-shadow:0 1px 3px rgba(0,0,0,.25); }
+.bname small{ display:block; font-size:14px; font-weight:500; }
+.basepin .ic{ width:15px; height:15px; }
+.basepin.prop{ border-style:dashed; opacity:.85; }
+.rlabel{ position:absolute; transform:translate(-50%,-50%); white-space:nowrap; font:700 15px/1.2 var(--sans); padding:2px 8px; border-radius:10px; background:rgba(255,255,255,.88); box-shadow:0 1px 3px rgba(0,0,0,.25); cursor:pointer; }
+.mapmode{ display:flex; background:#fff; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.3); overflow:hidden; }
+.mapmode button{ font:15px var(--sans); border:0; background:#fff; color:#1c2422; padding:6px 12px; cursor:pointer; }
+.mapmode button[aria-pressed="true"]{ background:#1c2422; color:#fff; }
+.blines{ display:flex; flex-direction:column; gap:4px; margin:8px 0 2px; }
+.bline{ display:flex; align-items:center; gap:6px; font-size:15px; flex-wrap:wrap; }
+.bline .ic{ color:var(--muted); }
+.bst{ font-size:12px; font-weight:700; padding:1px 7px; border-radius:10px; background:#fbefd5; color:#7a5300; }
+.bst.ret{ background:#e3f1e8; color:#2e7d4f; }
+.bline .btn{ padding:3px 6px; }
+.st-far{ color:#b5541c; }
 .carpin{ background:#fff; color:#1c2422; border-radius:50%; width:30px; height:30px; display:grid; place-items:center; border:1.5px solid #bbb; }
 .leaflet-popup-content{ font-family:var(--sans); font-size:15px; margin:10px 12px; }
 .leaflet-popup-content img{ width:200px; max-height:130px; object-fit:cover; border-radius:6px; display:block; margin-bottom:6px; }
@@ -448,12 +467,13 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   <div class="cfact"><button class="btn" id="cfCancel">Annuler</button><button class="btn danger" id="cfOk" disabled>Supprimer</button></div>
   <p class="small" id="cfMsg"></p>
 </dialog>
-<dialog id="port" class="help"><div class="dhead"><button class="btn ibtn" id="ptClose" title="Annuler" aria-label="Annuler"><svg class="ic"><use href="#i-x"/></svg></button><h2>Changer le port d’attache</h2><button class="btn primary ibtn" id="ptSave" title="Enregistrer" aria-label="Enregistrer"><svg class="ic"><use href="#i-save"/></svg></button></div>
-  <p class="small">L’endroit où l’on dort pour cette région. Les lieux à moins de 40 km s’y rattachent tout seuls, et ceux de la région passent « À revoir » : leur « Y aller » dépend du port d’attache.</p>
-  <div class="edf"><span class="sub">Nom</span><input id="ptName" aria-label="Nom du port d’attache"></div>
+<dialog id="port" class="help"><div class="dhead"><button class="btn ibtn" id="ptClose" title="Annuler" aria-label="Annuler"><svg class="ic"><use href="#i-x"/></svg></button><h2>Modifier la base</h2><button class="btn primary ibtn" id="ptSave" title="Enregistrer" aria-label="Enregistrer"><svg class="ic"><use href="#i-save"/></svg></button></div>
+  <p class="small" id="ptHint">La ville où l’on dort dans cette région. Si son nom ou son emplacement change, les lieux de la région passent « À revoir » : leur « Comment s’y rendre » part de la base.</p>
+  <div class="edf"><span class="sub">Nom</span><input id="ptName" aria-label="Nom de la base"></div>
   <div class="edf"><span class="sub">Emplacement</span><span class="small" id="ptWhere"></span>
     <div class="ptsearch"><input id="ptQ" placeholder="Chercher une ville ou un village…" aria-label="Chercher l’emplacement"><button class="btn" id="ptFind">Chercher</button></div><div id="ptRes"></div></div>
   <div class="edf" id="ptNightsRow"><span class="sub">Nuits</span><input id="ptNights" type="number" min="0" max="60" aria-label="Nuits"></div>
+  <div class="edf"><span class="sub">Statut</span><span class="small">Proposée : une idée, pas encore décidée. Retenue : on a choisi d’y dormir.</span><select id="ptStatut" aria-label="Statut de la base"><option value="Proposé">Proposée</option><option value="Retenu">Retenue</option></select></div>
   <label class="edkey" id="ptKeyRow" hidden>Code d’accès <input id="ptKey" autocomplete="off"></label>
   <p class="small" id="ptMsg"></p>
 </dialog>
@@ -490,9 +510,11 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <dt>Carte et liste</dt><dd>Sur un ordinateur, la fiche (d'un lieu ou d'une région) est toujours affichée au-dessus de la liste des lieux de la région. La barre entre la carte et la liste se glisse pour changer leur largeur ; la barre entre la fiche et la liste des lieux se glisse pour changer leur hauteur (double-clic : taille de départ). Sur un téléphone, les boutons <b>Carte</b> et <b>Lieux</b> en bas passent de l'un à l'autre.</dd>
     <dt>Photos</dt><dd>L'onglet <b>Photos</b> montre les photos et vidéos choisies pour ce lieu, en grand ; elles défilent avec les flèches (ou en glissant le doigt sur un téléphone). Toucher une photo, ou le bouton en coin, l'ouvre en grand ; les flèches du clavier passent à la suivante.</dd>
     <dt>Boutons</dt><dd>Dans une fiche : l'<b>épingle</b> ouvre le lieu dans Google Maps, le <b>crayon</b> permet de modifier la fiche. En haut de la page : <b>entonnoir</b> = filtres, <b>flèche circulaire</b> = recharger, <b>jumelles</b> = recherche, <b>?</b> = aide. Garder le doigt ou la souris sur un bouton affiche son nom.</dd>
-    <dt>Couleur</dt><dd>Celle du port d'attache. <b>Gris</b> = Hors trajet : à plus de 40 km de tous les ports d'attache.</dd>
-    <dt>Numéro (ex. 3.4)</dt><dd>Port d'attache n° 3, 4<sup>e</sup> lieu. <b>A</b> = Hors trajet.</dd>
-    <dt>Distance</dt><dd>À vol d'oiseau, depuis le port d'attache le plus proche.</dd>
+    <dt>Région et base</dt><dd>Une <b>région</b> regroupe des lieux sous leur nom courant (Dolomites, Toscane, Rome). Une <b>base</b> est la ville où l'on dort dans cette région ; une région peut en avoir plus d'une. Une base est <b>proposée</b> (une idée) ou <b>retenue</b> (choisie).</dd>
+    <dt>Carte</dt><dd>En haut à droite : <b>Régions</b> montre les lieux groupés par région, avec le nom de chaque région et ses bases (maison). <b>Itinéraire</b> montre les bases dans l'ordre du voyage, avec les trajets. En pointillé ou pâle : proposé, pas encore retenu.</dd>
+    <dt>Couleur</dt><dd>Celle de la région. <b>Gris</b> = sans région.</dd>
+    <dt>Numéro (ex. 3.4)</dt><dd>Région n° 3 dans l'itinéraire, 4<sup>e</sup> lieu. Une région pas encore dans l'itinéraire porte sa première lettre. <b>A</b> = sans région.</dd>
+    <dt>Distance</dt><dd>À vol d'oiseau, depuis la base de sa région. À plus de 40 km : « loin de la base ».</dd>
     <dt>Révision</dt><dd><b>Nouveau</b> : ajouté depuis la carte, pas encore de fiche. <b>À revoir</b> : fiche préparée par la recherche, pas encore personnalisée. Les fiches <b>revues</b> n'ont pas d'étiquette. Le bouton <b>Filtres</b> permet de n'afficher que celles à revoir.</dd>
     <dt>Statut</dt><dd>
       <b>À explorer</b> (point creux) : trouvé, pas encore regardé de près.<br>
@@ -500,7 +522,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
       <b>Confirmé</b> (gros point cerclé) : on y va.<br>
       <b>Mis de côté</b> (point pâle) : on n'y va pas.<br>
       Les boutons en haut cachent ou montrent chaque groupe.</dd>
-    <dt>Région</dt><dd>Toucher une région (dans la liste ou son numéro sur la carte) montre sa fiche : Photos et vidéos, Aperçu, Astuces, Liens.</dd>
+    <dt>Région</dt><dd>Toucher une région (dans la liste, son nom ou une base sur la carte) montre sa fiche : ses bases, Photos et vidéos, Notes, Aperçu, Astuces, Liens.</dd>
     <dt>Trajet</dt><dd>Trait plein : train · pointillé : avion · cercle avec auto : en auto.</dd>
   </dl></details>
 
@@ -520,11 +542,11 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
     <dt>Photos</dt><dd>Colonne <b>Photo</b> : une ou plusieurs adresses, séparées par « ; ». Pour une image : clic droit sur l'image, « Copier l'adresse de l'image ». Une vidéo YouTube ou Vimeo joue dans le carrousel ; un lien Facebook, Instagram ou TikTok devient un bouton « Voir la vidéo ». Une page de galerie (pas une image) va plutôt dans Pour en savoir plus.</dd>
     <dt>Liens du groupe</dt><dd>Onglet <b>Liens</b> : Lien, Description (texte affiché), Lieux (écrits exactement comme dans Lieux).</dd>
     <dt>Votes</dt><dd>Onglet <b>Votes</b> : Lieu, Qui, Vote, Commentaire. Le dernier vote de chacun compte.</dd>
-    <dt>Région</dt><dd>Onglet <b>Régions</b> : Région, Aperçu (ou Résumé), Trucs et astuces (ou Astuces), Pour en savoir plus (ou Sources). Le nom doit être exactement le même que le port d'attache dans <b>Trajet</b>.</dd>
+    <dt>Région</dt><dd>Onglet <b>Régions</b> : Région, Aperçu (ou Résumé), Trucs et astuces (ou Astuces), Pour en savoir plus (ou Sources). Notes. Pour renommer une région, utiliser le crayon de sa fiche : le nom change aussi pour ses lieux et ses bases.</dd>
     <dt>Ajouter un lieu</dt><dd>Chercher le lieu, puis <b>Ajouter à la liste de recherche</b> dans la bulle de l'épingle : la ligne est créée avec le nom, les coordonnées, À explorer et la région. Le bouton <b>Research</b> sert ensuite à faire sa fiche.</dd>
     <dt>Sans coordonnées</dt><dd>Un lieu pas encore sur la carte apparaît dans la liste de sa région, avec <b>Placer sur la carte</b> : la recherche s'ouvre avec son nom ; choisir le bon résultat, ou cliquer sur la carte à l'endroit exact (le lac, le sommet, l'église), puis <b>Placer ici</b>.</dd>
     <dt>Supprimer</dt><dd>La corbeille d'une fiche supprime le lieu ; celle de la bande de couleur d'une région la retire du trajet (pour chacun de ses lieux : le garder hors trajet ou le supprimer). Pour éviter les erreurs, il faut taper le code à 4 chiffres affiché. L'historique des versions du Google Sheet permet de tout retrouver.</dd>
-    <dt>Changer le port d'attache</dt><dd>La maison dans la bande de couleur d'une région : nom, emplacement et nuits. Les lieux à moins de 40 km s'y rattachent tout seuls et ceux de la région passent « À revoir ».</dd>
+    <dt>Modifier une base</dt><dd>Le crayon à côté de la base, sous la bande de couleur de la région : nom, emplacement, nuits, proposée ou retenue. Si le nom ou l'emplacement change, les lieux de la région passent « À revoir ». Onglet <b>Trajet</b> : la colonne Port d'attache est le nom de la base, la colonne Région dit à quelle région elle appartient.</dd>
     <dt>Mise à jour</dt><dd>La page lit le Google Sheet chaque fois qu'on l'ouvre. Après une modification, attendre environ 5 minutes, puis cliquer sur <b>Recharger</b>.</dd>
   </dl>
   <a class="btn" href="https://docs.google.com/spreadsheets/d/1mnxZiexvV5cnWcc1inZzZCftosAQsTyMMMLsrFbjyuY/edit" target="_blank" rel="noopener"><svg class="ic"><use href="#i-note"/></svg>Ouvrir le Google Sheet</a>
@@ -539,7 +561,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
       <li><b>Choose places</b><span class="hint">Tick places waiting in the research list and/or type new ones, one per line, as they appear on Google Maps.</span>
         <div id="tlQueue"></div>
         <label class="edf"><textarea id="tlNewPlaces" rows="3" placeholder="One place per line"></textarea></label>
-        <label class="edf"><span class="sub">Region</span><span class="small">Picked automatically from the closest region. The directions in the cards start from there.</span><select id="tlBaseP"></select></label></li>
+        <label class="edf"><span class="sub">Region</span><span class="small">Picked automatically from the closest base. The directions in the cards start from that region's base (or « not decided » if it has none yet).</span><select id="tlBaseP"></select></label></li>
       <li><button class="btn primary" id="tlCopyLieuP">Copy research prompt</button> <span class="small" id="tlMsg3"></span></li>
       <li>Open a new ChatGPT conversation and paste.</li>
       <li>Copy ChatGPT's whole answer (the copy icon under the answer) and paste it to Claude for review.</li>
@@ -549,7 +571,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   </div>
   <div id="tlReg" hidden>
     <ol class="steps">
-      <li><b>Choose the region</b><span class="hint">A region is the area around one of your bases. For a new area, choose « + New region… ».</span>
+      <li><b>Choose the region</b><span class="hint">A region is a named area, by its usual name (Dolomites, Tuscany). For a new area, choose « + New region… ».</span>
         <div class="tlrow"><label class="edf"><span class="sub">Region</span><select id="tlRegion"></select></label><label class="edf tlnew" hidden><span class="sub">New region name</span><input id="tlNew"></label></div></li>
       <li><button class="btn primary" id="tlCopyReg">Copy research prompt</button> <span class="small" id="tlMsg1"></span></li>
       <li>Open a new ChatGPT conversation and paste.</li>
@@ -585,7 +607,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
   </header>
   <div id="map" role="region" aria-label="Carte"></div>
   <footer>
-    <span>Version 0.23.3 · 8 octobre 2026</span>
+    <span>Version 0.24.9 · 9 octobre 2026</span>
     <span id="stamp"></span>
     <span>Trait plein : train · pointillé : avion · cercle avec auto : en auto</span>
     <a href="v0.2/" style="color:inherit">Ancienne version (3 scénarios)</a>
@@ -599,7 +621,7 @@ footer{ padding:6px 18px; color:var(--muted); font-size:13px; border-top:1px sol
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 // ---- Italie 2027 : data logic (no DOM) ----
-const RADIUS_KM = 40; // a place farther than this from every hub goes to "Hors trajet"
+const RADIUS_KM = 40; // a place farther than this from the Base of its Région is flagged « loin de la base »
 
 function parseCSV(text) {
   const rows = []; let row = [], field = '', q = false;
@@ -690,7 +712,7 @@ function applyRaw(p) {
 function applyRegionRaw(reg) {
   const v = reg.raw, more = String(v['Pour en savoir plus'] || '');
   reg.media = String(v['Photo'] || '').split(/\s*;\s*/).map((x) => x.trim()).filter((x) => /^https?:\/\//i.test(x));
-  reg.resume = stripLabel(v['Aperçu'] || ''); reg.tips = splitTips(v['Trucs et astuces']);
+  reg.resume = stripLabel(v['Aperçu'] || ''); reg.tips = splitTips(v['Trucs et astuces']); reg.notes = String(v['Notes'] || '').trim();
   reg.links = /;/.test(more) || !/\|/.test(more) ? splitLabeled(more) : splitSources(more).map((url) => ({ url, label: '' }));
 }
 // statuses (old words still understood)
@@ -712,44 +734,63 @@ function legMode(how) {
 
 function buildModel(lieux, trajet, liens, votes, voyageurs, regions) {
   votes = votes || []; voyageurs = voyageurs || []; regions = regions || [];
-  // regions: matched to hubs by name (optional tab)
-  const regionOf = new Map();
+  // region cards (optional tab Régions)
+  const cardOf = new Map(), cardNames = [];
   for (const r of regions) {
-    const name = r['Région']; if (!name) continue;
-    const more = col(r, 'Pour en savoir plus');
-    const raw = { 'Photo': col(r, 'Photo'), 'Aperçu': col(r, 'Aperçu') || col(r, 'Résumé'), 'Trucs et astuces': col(r, 'Trucs et astuces') || col(r, 'Astuces'), 'Pour en savoir plus': col(r, 'Pour en savoir plus') || col(r, 'Sources') };
-    regionOf.set(norm(name), { raw, media: String(col(r, 'Photo') || '').split(/\s*;\s*/).map((x) => x.trim()).filter((x) => /^https?:\/\//i.test(x)), resume: col(r, 'Aperçu') || col(r, 'Résumé'), tips: splitTips(col(r, 'Trucs et astuces') || col(r, 'Astuces')), links: more ? splitLabeled(more) : splitSources(col(r, 'Sources')).map((url) => ({ url, label: '' })) });
+    const name = (r['Région'] || '').trim(); if (!name) continue;
+    const raw = { 'Photo': col(r, 'Photo'), 'Notes': col(r, 'Notes'), 'Aperçu': col(r, 'Aperçu') || col(r, 'Résumé'), 'Trucs et astuces': col(r, 'Trucs et astuces') || col(r, 'Astuces'), 'Pour en savoir plus': col(r, 'Pour en savoir plus') || col(r, 'Sources') };
+    const card = { raw }; applyRegionRaw(card);
+    cardOf.set(norm(name), card); cardNames.push(name);
   }
-  // stops = route in order; hubs = unique hub names (Paris twice -> one hub)
-  const stops = trajet.map((r) => ({ order: +r['Ordre'] || 0, name: r["Port d'attache"], nights: +r['Nuits'] || 0, at: parseCoords(r['Coordonnées']), how: r['Comment on y arrive'] || '' }))
-    .filter((s) => s.name && s.at).sort((a, b) => a.order - b.order);
+  // stops = the itinerary in order; each stop is a night at a Base, and each Base belongs to a Région
+  const stops = trajet.map((r) => {
+    const name = (r["Port d'attache"] || r['Base'] || '').trim();
+    return { order: +r['Ordre'] || 0, name, region: (r['Région'] || '').trim() || name, statut: norm(r['Statut']) === 'retenu' ? 'retenu' : 'propose',
+      nights: +r['Nuits'] || 0, at: parseCoords(r['Coordonnées']), how: r['Comment on y arrive'] || '' };
+  }).filter((s) => s.name && s.at).sort((a, b) => a.order - b.order);
   stops.forEach((s, i) => { s.mode = legMode(s.how); s.seq = i + 1; });
-  const hubs = [];
+  const bases = [];
   for (const s of stops) {
-    let h = hubs.find((x) => norm(x.name) === norm(s.name));
-    if (!h) { h = { name: s.name, at: s.at, seqs: [], nights: [], places: [], how: [] }; hubs.push(h); }
-    h.seqs.push(s.seq); h.nights.push(s.nights); h.how.push(s.how);
+    let b = bases.find((x) => norm(x.name) === norm(s.name));
+    if (!b) { b = { name: s.name, at: s.at, regionName: s.region, statut: s.statut, seqs: [], nights: [], how: [] }; bases.push(b); }
+    b.seqs.push(s.seq); b.nights.push(s.nights); b.how.push(s.how); s.base = b;
   }
-  hubs.forEach((h, i) => { h.index = i; h.label = h.seqs.join('·'); h.region = regionOf.get(norm(h.name)) || null; });
+  bases.forEach((b, i) => { b.index = i; b.label = b.seqs.join('·'); });
+  // regions, in itinerary order first, then the other region cards, then names only found in Lieux
+  const hubs = [], gOf = new Map();
+  const addG = (name) => {
+    const k = norm(name); if (!k) return null;
+    let g = gOf.get(k);
+    if (!g) { g = { name: String(name).trim(), bases: [], places: [], seqs: [], nights: [], how: [] }; gOf.set(k, g); hubs.push(g); }
+    return g;
+  };
+  for (const b of bases) { const g = addG(b.regionName); g.bases.push(b); b.group = g; g.seqs.push(...b.seqs); g.nights.push(...b.nights); g.how.push(...b.how); }
+  cardNames.forEach(addG);
+  for (const r of lieux) if (r['Lieu'] && r['Région']) addG(r['Région']);
+  hubs.forEach((g, i) => {
+    g.index = i; g.region = cardOf.get(norm(g.name)) || null; g.at = g.bases.length ? g.bases[0].at : null;
+    g.label = g.seqs.length ? [...new Set(g.seqs)].sort((a, b) => a - b).join('·') : g.name.charAt(0).toUpperCase();
+  });
 
   const linkRows = liens.map((r) => ({ url: r['Lien'], desc: r['Description'] || '', places: (r['Lieux'] || '').split(/[,;]/).map(norm).filter(Boolean) })).filter((l) => l.url);
 
-  const other = { name: 'Hors trajet', places: [], other: true };
+  const other = { name: 'Sans région', places: [], other: true, bases: [] };
   const places = [], skipped = [];
   for (const r of lieux) {
     const name = r['Lieu']; if (!name) continue;
     const at = parseCoords(r['Coordonnées']);
     if (!at) { skipped.push({ name, region: r['Région'] || '', row: r._row }); continue; }
+    const home = gOf.get(norm(r['Région'])) || other;
+    // distance: from the closest Base of its own Région (none before step 4)
     let best = null, bd = Infinity;
-    for (const h of hubs) { const d = km(at, h.at); if (d < bd) { bd = d; best = h; } }
+    for (const b of home.bases) { const d = km(at, b.at); if (d < bd) { bd = d; best = b; } }
     const p = { name, at, row: r._row, statut: r['Statut'] || '', by: r['Ajouté par'] || '', wiki: r['Wikipédia'] || r['Wikipedia'] || '',
       raw: Object.fromEntries(EDIT_FIELDS.map((f) => [f, col(r, f)])),
       tips: splitTips(r['Astuces']), sources: splitSources(r['Sources']),
-
-      links: linkRows.filter((l) => l.places.includes(norm(name))), dist: Math.round(bd) };
+      links: linkRows.filter((l) => l.places.includes(norm(name))),
+      dist: best ? Math.round(bd) : null, near: best ? best.name : '', far: !!best && bd > RADIUS_KM };
     applyRaw(p);
-    const home = best && bd <= RADIUS_KM ? best : other;
-    p.hub = home; p.near = best ? best.name : ''; home.places.push(p); places.push(p);
+    p.hub = home; home.places.push(p); places.push(p);
   }
   const unmatched = [];
   const known = new Set(places.map((p) => norm(p.name)));
@@ -781,14 +822,14 @@ function buildModel(lieux, trajet, liens, votes, voyageurs, regions) {
     p.st = key; p.stLabel = ST_LABEL[key]; p.byVotes = byVotes;
     p.waiting = crew.filter((who) => ![...p.votes.keys()].some((k) => norm(k) === norm(who)));
   });
-  // order places in each group: confirmed first, then candidates, to explore, set aside; then by distance
+  // order places in each region: confirmed first, then candidates, to explore, set aside; then by distance
   const rank = (p) => ({ conf: 0, cand: 1, explore: 2, aside: 3 }[p.st]);
   for (const g of [...hubs, other]) {
-    g.places.sort((a, b) => rank(a) - rank(b) || a.dist - b.dist || a.name.localeCompare(b.name, 'fr'));
+    g.places.sort((a, b) => rank(a) - rank(b) || (a.dist ?? 0) - (b.dist ?? 0) || a.name.localeCompare(b.name, 'fr'));
     g.places.forEach((p, i) => { p.num = g.other ? `A${i + 1}` : `${g.label.split('·')[0]}.${i + 1}`; });
   }
   const totalNights = stops.reduce((s, x) => s + x.nights, 0);
-  return { stops, hubs, other, places, skipped, unmatched, voteUnmatched, people, totalNights, hasVotes: places.some((p) => p.votes.size) };
+  return { stops, bases, hubs, other, places, skipped, unmatched, voteUnmatched, people, totalNights, hasVotes: places.some((p) => p.votes.size) };
 }
 
 if (typeof module !== 'undefined') module.exports = { parseCSV, parseCoords, buildModel, km, norm, splitSources, splitTips };
@@ -810,9 +851,26 @@ legend.onAdd = () => { const d = L.DomUtil.create('div', 'maplegend'); d.innerHT
   <div><i style="background:#555"></i>Bon candidat</div>
   <div><i class="big" style="background:#555;box-shadow:0 0 0 2px #1c2422"></i>Confirmé</div>
   <div><i style="background:#555;opacity:.35"></i>Mis de côté</div>
-  <div class="sep">Couleur = port d'attache · gris = hors trajet</div>`; return d; };
+  <div class="sep">Couleur = région · gris = sans région<br>Maison = base · pointillé = proposée</div>`; return d; };
 legend.addTo(map);
-let layers = { route: L.layerGroup().addTo(map), hubs: L.layerGroup().addTo(map), places: L.layerGroup().addTo(map), other: L.layerGroup().addTo(map) };
+let layers = { route: L.layerGroup().addTo(map), hubs: L.layerGroup().addTo(map), places: L.layerGroup().addTo(map), other: L.layerGroup().addTo(map), labels: L.layerGroup().addTo(map), flabels: L.layerGroup().addTo(map), pnames: L.layerGroup() };
+// map view: Régions (places grouped by région, bases as houses) or Itinéraire (bases in order, with the travel lines)
+let mapMode = (() => { try { return localStorage.getItem('mapmode2027') === 'trip' ? 'trip' : 'regions'; } catch { return 'regions'; } })();
+const modeCtl = L.control({ position: 'topright' });
+modeCtl.onAdd = () => {
+  const d = L.DomUtil.create('div', 'mapmode');
+  d.innerHTML = '<button data-mm="regions">Régions</button><button data-mm="trip">Itinéraire</button>';
+  L.DomEvent.disableClickPropagation(d);
+  d.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-mm]'); if (!b || !model) return;
+    mapMode = b.dataset.mm; try { localStorage.setItem('mapmode2027', mapMode); } catch {}
+    syncMode(); drawMap(); applyFilter();
+  });
+  return d;
+};
+modeCtl.addTo(map);
+function syncMode() { document.querySelectorAll('.mapmode button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.mm === mapMode)); }
+syncMode();
 let model = null, markerOf = new Map();
 
 async function getCSV(gid) {
@@ -832,16 +890,18 @@ function applyOp(R, o) {
   else if (o.t === 'rmreg') {
     R.l = R.l.filter((r) => !has(o.del, r['Lieu']));
     R.l.forEach((r) => { if (has(o.keep, r['Lieu'])) r['Région'] = ''; });
-    R.t = R.t.filter((r) => !same(r["Port d'attache"], o.region));
+    R.t = R.t.filter((r) => !same(r['Région'] || r["Port d'attache"], o.region));
     R.rg = R.rg.filter((r) => !same(r['Région'], o.region));
-  } else if (o.t === 'port') {
-    const stops = R.t.filter((r) => same(r["Port d'attache"], o.region));
-    stops.forEach((r) => { if (o.nom) r["Port d'attache"] = o.nom; if (o.coords) r['Coordonnées'] = o.coords; });
+  } else if (o.t === 'port') { // a Base: name, location, nights, status (its Région does not change)
+    const stops = R.t.filter((r) => same(r["Port d'attache"], o.base || o.region)); if (!stops.length) return;
+    const region = stops[0]['Région'] || stops[0]["Port d'attache"];
+    stops.forEach((r) => { if (!r['Région']) r['Région'] = region; if (o.nom) r["Port d'attache"] = o.nom; if (o.coords) r['Coordonnées'] = o.coords; if (o.statut) r['Statut'] = o.statut; });
     if (o.nuits !== '' && o.nuits != null && stops.length === 1) stops[0]['Nuits'] = String(o.nuits);
-    if (o.nom) {
-      R.rg.forEach((r) => { if (same(r['Région'], o.region)) r['Région'] = o.nom; });
-      R.l.forEach((r) => { if (same(r['Région'], o.region)) { r['Région'] = o.nom; r['Révision'] = 'À revoir'; } });
-    }
+    if (o.nom || o.coords) R.l.forEach((r) => { if (same(r['Région'], region)) r['Révision'] = 'À revoir'; });
+  } else if (o.t === 'rnreg') { // rename a Région everywhere
+    R.rg.forEach((r) => { if (same(r['Région'], o.from)) r['Région'] = o.to; });
+    R.l.forEach((r) => { if (same(r['Région'], o.from)) r['Région'] = o.to; });
+    R.t.forEach((r) => { if (same(r['Région'] || r["Port d'attache"], o.from)) r['Région'] = o.to; });
   } else if (o.t === 'set') { // a place: change some columns, or create it
     let r = R.l.find((x) => same(x['Lieu'], o.lieu));
     if (!r) { if (!o.create) return; r = { 'Lieu': o.lieu }; R.l.push(r); }
@@ -1109,24 +1169,33 @@ function zoneHtml(g) {
   return `<div class="zone">${r.resume ? richText(r.resume) : ''}${tipsHtml(r.tips, 'Trucs et astuces')}${r.links.length ? `<details class="src"><summary>Pour en savoir plus (${r.links.length})</summary>${labeledHtml(r.links)}</details>` : ''}</div>`;
 }
 
-function render() {
-  const m = model;
-  Object.values(layers).forEach((g) => g.clearLayers()); markerOf.clear();
-  $('sum').textContent = `Brouillon de trajet · ${m.totalNights} nuits`;
-
-  // route lines
-  for (let i = 1; i < m.stops.length; i++) {
-    const a = m.stops[i - 1], b = m.stops[i];
-    const style = b.mode === 'avion' ? { color: '#666', weight: 3, dashArray: '2 8' } : b.mode === 'nuit' ? { color: '#444', weight: 4, dashArray: '12 8' } : { color: '#1c2422', weight: 3.5, opacity: .75 };
+const centroid = (pts) => [pts.reduce((t, p) => t + p[0], 0) / pts.length, pts.reduce((t, p) => t + p[1], 0) / pts.length];
+function drawMap() {
+  const m = model, trip = mapMode === 'trip';
+  Object.values(layers).forEach((g) => g.clearLayers()); markerOf.clear(); labelMarks = [];
+  // travel lines (Itinéraire only); a leg touching a proposed base is drawn faded
+  if (trip) for (let i = 1; i < m.stops.length; i++) {
+    const a = m.stops[i - 1], b = m.stops[i], firm = a.base.statut === 'retenu' && b.base.statut === 'retenu';
+    const style = b.mode === 'avion' ? { color: '#666', weight: 3, dashArray: '2 8' } : b.mode === 'nuit' ? { color: '#444', weight: 4, dashArray: '12 8' } : { color: '#1c2422', weight: 3.5 };
+    style.opacity = firm ? .8 : .35;
     L.polyline([a.at, b.at], style).bindTooltip(`${a.name} → ${b.name} : ${b.how}`).addTo(layers.route);
     if (b.mode === 'auto') L.marker([(a.at[0] + b.at[0]) / 2, (a.at[1] + b.at[1]) / 2], { icon: L.divIcon({ className: '', html: '<div class="carpin"><svg class="ic"><use href="#i-car"/></svg></div>', iconSize: [30, 30] }), interactive: false }).addTo(layers.route);
   }
-  // hubs
-  for (const h of m.hubs) {
-    const size = 34, html = `<div class="hubpin" style="width:${size}px;height:${size}px;background:${colorOf(h)}">${esc(h.label)}</div>`;
-    L.marker(h.at, { icon: L.divIcon({ className: '', html, iconSize: [size, size] }), zIndexOffset: 1000 })
-      .bindTooltip(`${h.name} · ${h.nights.join(' + ')} n.`, { direction: 'top', offset: [0, -16] })
-      .on('click', () => openGroup(h.index, true)).addTo(layers.hubs);
+  // bases: numbered in the itinerary, a house in the regions view; dashed = proposed
+  for (const bs of m.bases) {
+    const g = bs.group, prop = bs.statut !== 'retenu', col = colorOf(g), size = trip ? 34 : 28;
+    const html = trip ? `<div class="hubpin${prop ? ' prop' : ''}" style="width:${size}px;height:${size}px;background:${col}">${esc(bs.label)}</div>`
+      : `<div class="bwrap"><div class="basepin${prop ? ' prop' : ''}" style="border-color:${col};color:${col}"><svg class="ic"><use href="#i-home"/></svg></div><span class="bname" style="border-left-color:${col}">${esc(bs.name)}<small style="color:${col}">${esc(g.name)}</small></span></div>`;
+    L.marker(bs.at, { icon: L.divIcon({ className: '', html, iconSize: [size, size] }), zIndexOffset: 1000 })
+      .bindTooltip(`Base : ${bs.name} · ${g.name} · ${bs.nights.join(' + ')} n. · ${prop ? 'Proposée' : 'Retenue'}`, { direction: 'top', offset: [0, -16] })
+      .on('click', () => { openRegion(g); if (!isMobile()) fitGroup(g); }).addTo(layers.hubs);
+  }
+  // région names, in the middle of their places (Régions view)
+  if (!trip) for (const g of m.hubs) {
+    const pts = g.places.map((p) => p.at); if (!pts.length && g.at) pts.push(g.at); if (!pts.length) continue;
+    const lm = L.marker(centroid(pts), { icon: L.divIcon({ className: '', html: `<div class="rlabel" style="color:${colorOf(g)}">${esc(g.name)}</div>`, iconSize: [0, 0] }), zIndexOffset: 500, keyboard: false })
+      .on('click', () => { openRegion(g); if (!isMobile()) fitGroup(g); }).addTo(g.bases.length ? layers.labels : layers.flabels);
+    labelMarks.push({ mk: lm, c: centroid(pts), box: L.latLngBounds(pts).pad(0.5) });
   }
   // places
   for (const p of m.places) {
@@ -1140,7 +1209,37 @@ function render() {
       .on('popupopen', async (e) => { if (!WIKI.has(p)) { await wikiFor(p); e.popup.setContent(popupHtml(p)); } })
       .on('click', () => { if (!matchMedia('(max-width:900px)').matches) highlight(p, false); });
     mk.addTo(g.other ? layers.other : layers.places); markerOf.set(p, mk); mk._st = p.st;
+    // its name, shown when zoomed in close
+    mk._lbl = L.marker(p.at, { icon: L.divIcon({ className: '', html: `<span class="ptag" style="border-left-color:${colorOf(g)}">${esc(p.name)}</span>`, iconSize: [0, 0] }), keyboard: false })
+      .on('click', () => { if (isMobile()) showCard(model.places.indexOf(p)); else highlight(p, false); });
+    layers.pnames.addLayer(mk._lbl);
   }
+  syncZoom(); placeLabels();
+}
+// a région's name stays on screen while any part of the région is in view (it slides along the edge)
+let labelMarks = [];
+function placeLabels() {
+  const vb = map.getBounds(), inner = vb.pad(-0.1);
+  for (const x of labelMarks) {
+    if (!vb.intersects(x.box)) { x.mk.setLatLng(x.c); continue; }
+    x.mk.setLatLng([Math.min(Math.max(x.c[0], inner.getSouth()), inner.getNorth()), Math.min(Math.max(x.c[1], inner.getWest()), inner.getEast())]);
+  }
+}
+map.on('move zoomend', placeLabels);
+// zoomed out: the région names win; zoomed in: the bases (houses) win
+const ZOOM_CUT = 9;
+function syncZoom() {
+  if (!model) return;
+  const near = map.getZoom() >= ZOOM_CUT, trip = mapMode === 'trip';
+  const show = (layer, on) => { if (on && !map.hasLayer(layer)) map.addLayer(layer); if (!on && map.hasLayer(layer)) map.removeLayer(layer); };
+  show(layers.labels, !trip && !near); show(layers.flabels, !trip); show(layers.pnames, map.getZoom() >= 12);
+  show(layers.hubs, trip || near);
+}
+map.on('zoomend', syncZoom);
+function render() {
+  const m = model;
+  $('sum').textContent = m.totalNights ? `Itinéraire : ${m.totalNights} nuits` : '';
+  drawMap();
   // panel: a row of regions, then the places of the selected region
   const hubSet = new Set(m.hubs.map((h) => norm(h.name)));
   const groupsAll = [...m.hubs, m.other].filter((g) => !g.other || g.places.length || m.skipped.some((x) => !hubSet.has(norm(x.region))));
@@ -1192,7 +1291,7 @@ function rowHtml(p) {
 function placeHtml(p, want) {
   const i = model.places.indexOf(p);
   const facts = [`Statut : <b class="st-${p.st}">${esc(p.stLabel)}</b>${p.byVotes ? ' <span class="small">(selon les votes)</span>' : ''}`, p.type ? `Type : <b>${esc(p.type)}</b>` : '',
-    p.dist < 1 ? '<b>Port d\'attache</b>' : `À <b>${p.dist} km</b> de ${esc(p.near)}`].filter(Boolean).join(' · ');
+    p.hub.other ? 'Sans région' : p.dist == null ? 'Base pas encore choisie' : `À <b>${p.dist} km</b> de la base ${esc(p.near)}${p.far ? ' <b class="st-far">· loin de la base</b>' : ''}`].filter(Boolean).join(' · ');
   const q = encodeURIComponent(p.name);
   const isNew = !!(p.apercu || p.acces || p.faire || p.trucs.length);
   const hasLinks = p.plus.length || p.sources.length || p.links.length, hasVotes = p.votes && p.votes.size;
@@ -1208,7 +1307,6 @@ function placeHtml(p, want) {
     .concat([hasLinks ? ['lnk', 'Liens', linksPane] : null, hasVotes ? ['avis', 'Avis', avisPane] : null]).filter(Boolean);
   // open on the requested tab, else the first text tab (not Photos)
   let sel = panes.findIndex(([k]) => k === want); if (sel < 0) sel = panes.length > 1 ? 1 : 0;
-  const zone = p.hub.other ? 'Hors trajet' : p.hub.name;
   return `<article class="place all" data-i="${i}">
     <div class="hd">
       ${bandHtml(p.hub, true)}
@@ -1225,17 +1323,18 @@ function placeHtml(p, want) {
 function bandHtml(g, link) {
   const key = g.other ? 'o' : g.index;
   const label = `${g.other ? 'A' : esc(g.label)} · ${esc(g.name)}`;
-  const pen = !link && !g.other ? `<button class="btn ibtn rbbtn" data-redit="${key}" title="Modifier la région" aria-label="Modifier la région">${ico('pencil')}</button><button class="btn ibtn rbbtn" data-port="${key}" title="Changer le port d’attache (nom, emplacement, nuits)" aria-label="Changer le port d’attache">${ico('home')}</button><button class="btn ibtn rbbtn" data-rdel="${key}" title="Retirer la région du trajet" aria-label="Retirer la région du trajet">${ico('trash')}</button>` : '';
+  const pen = !link && !g.other ? `<button class="btn ibtn rbbtn" data-redit="${key}" title="Modifier la région" aria-label="Modifier la région">${ico('pencil')}</button><button class="btn ibtn rbbtn" data-rdel="${key}" title="Retirer la région" aria-label="Retirer la région">${ico('trash')}</button>` : '';
   return `<div class="rband" style="background:${colorOf(g)}">${link ? `<button class="rbname" data-region="${key}" title="Voir la fiche de la région">${label} ›</button>` : `<span class="rbname">${label}</span>`}${pen}</div>`;
 }
 function regionHtml(g, want) {
   const r = g.region || { resume: '', tips: [], links: [], media: [] };
   const media = r.media || [];
   const photosPane = `<div class="ph">${carouselHtml({ media, name: g.name })}</div>${media.length ? '' : `<p class="small">Pas encore de photos ni de vidéos pour cette région. <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(g.name)}" target="_blank" rel="noopener">Chercher des vidéos sur YouTube ↗</a></p>`}`;
-  const panes = [['ph', 'Photos', photosPane], ['ap', 'Aperçu', r.resume ? richText(r.resume) : '<p class="small">Pas encore de description de la région.</p>'],
+  const panes = [['ph', 'Photos', photosPane], r.notes ? ['nt', 'Notes', richText(r.notes)] : null, ['ap', 'Aperçu', r.resume ? richText(r.resume) : '<p class="small">Pas encore de description de la région.</p>'],
     r.tips.length ? ['tip', 'Astuces', tipsHtml(r.tips, '')] : null, r.links.length ? ['lnk', 'Liens', labeledHtml(r.links)] : null].filter(Boolean);
   let sel = panes.findIndex(([k]) => k === want); if (sel < 0) sel = 1;
-  const meta = g.other ? 'Lieux à plus de 40 km de tous les ports d’attache' : `${g.nights.join(' + ')} n. · ${esc(g.how.filter(Boolean).join(' / '))} · ${g.places.length} lieu${g.places.length > 1 ? 'x' : ''}`;
+  const nb = `${g.places.length} lieu${g.places.length > 1 ? 'x' : ''}`;
+  const meta = g.other ? `Lieux qui n’ont pas encore de région · ${nb}` : `<div class="blines">${g.bases.length ? g.bases.map((b) => `<div class="bline">${ico('home')}<span>Base : <b>${esc(b.name)}</b> · ${b.nights.join(' + ')} n.</span><span class="bst${b.statut === 'retenu' ? ' ret' : ''}">${b.statut === 'retenu' ? 'Retenue' : 'Proposée'}</span><button class="btn ibtn" data-port="${b.index}" title="Modifier la base (nom, emplacement, nuits, statut)" aria-label="Modifier la base ${esc(b.name)}">${ico('pencil')}</button></div>`).join('') : `<div class="bline">${ico('home')}<span>Base : à choisir</span></div>`}</div>${nb}`;
   return `<article class="place region all" data-g="${g.other ? 'o' : g.index}">
     <div class="hd">
       ${bandHtml(g, false)}
@@ -1254,7 +1353,7 @@ function selectRegion(g, scroll = true) {
   document.querySelectorAll('.rchip').forEach((c) => c.setAttribute('aria-pressed', c.dataset.gr === String(curG)));
   const chip = document.querySelector(`.rchip[data-gr="${curG}"]`);
   if (chip && scroll) chip.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  const meta = g.other ? 'À plus de 40 km de tous les ports d’attache. Si on ajoute un port d’attache tout près, ces lieux s’y rattachent tout seuls.' : `${g.nights.join(' + ')} n. · ${esc(g.how.filter(Boolean).join(' / '))}`;
+  const meta = g.other ? 'Ces lieux n’ont pas encore de région. Le crayon de la fiche permet de leur en donner une.' : '';
   const hubNames = new Set(model.hubs.map((h) => norm(h.name)));
   const off = model.skipped.filter((x) => (g.other ? !hubNames.has(norm(x.region)) : norm(x.region) === norm(g.name)));
   const offHtml = off.map((x) => `<div class="offrow"><span class="ofname">${esc(x.name)}</span><span class="small">pas encore sur la carte</span><button class="btn" data-place="${esc(x.name)}" title="Placer ce lieu sur la carte">${ico('mappin')}Placer sur la carte</button><button class="btn ibtn" data-delname="${esc(x.name)}" title="Supprimer ce lieu" aria-label="Supprimer ce lieu">${ico('trash')}</button></div>`).join('');
@@ -1400,7 +1499,7 @@ $('panel').addEventListener('click', (e) => {
   const pl = e.target.closest('[data-place]');
   if (pl) { startPlacing(pl.dataset.place); return; }
   const po = e.target.closest('[data-port]');
-  if (po) { openPort(groupOf(po.dataset.port)); return; }
+  if (po) { openPort(model.bases[+po.dataset.port]); return; }
   const rd = e.target.closest('[data-rdel]');
   if (rd) { removeRegion(groupOf(rd.dataset.rdel)); return; }
   const re = e.target.closest('[data-redit]');
@@ -1539,6 +1638,8 @@ let editing = null, edUI = [];
 let edRetry = null, edRetryAt = 0; // changes from a save that failed: sent again with the next save
 function edError(msg) { $('edMsg').className = 'ederr'; $('edMsg').textContent = msg; const h = $('edit').querySelector('.help'); if (h) h.scrollTop = 0; }
 const EDIT_UI_REGION = [
+  ['__nom', 'Nom de la région', 'Le nom courant, celui qu’on voit partout : Dolomites, Toscane, Rome. Ses lieux et ses bases restent dans la région ; le nom des bases ne change pas.', 'short', 1],
+  ['Notes', 'Notes', 'Ce qu’on sait déjà de cette région, pourquoi elle est là (un conseil reçu, une envie).', 'text', 3],
   ['Photo', 'Photos et vidéos', 'Une adresse par ligne : vidéos YouTube (« 9 randonnées dans les Dolomites »), images. Elles s’affichent en haut de la fiche de la région.', 'lines', 3],
   ['Aperçu', 'Aperçu', 'Quel genre de voyage cette région offre (montagne et randonnée, vignobles et culture, mer…), comment on s’y déplace, à quoi s’attendre en septembre.', 'text', 5],
   ['Trucs et astuces', 'Trucs et astuces', 'Une puce par conseil : cartes de transport, fermetures de fin de saison, réservations.', 'tips', 4],
@@ -1587,8 +1688,9 @@ const rteValue = (el) => cleanHtml(el.innerHTML);
 const fieldValue = (el) => (el.classList.contains('rte') ? rteValue(el) : el.value);
 function openRegionEditor(g) {
   if (!g || g.other) return;
-  if (!g.region) { g.region = { raw: { 'Photo': '', 'Aperçu': '', 'Trucs et astuces': '', 'Pour en savoir plus': '' } }; applyRegionRaw(g.region); }
+  if (!g.region) { g.region = { raw: { 'Photo': '', 'Notes': '', 'Aperçu': '', 'Trucs et astuces': '', 'Pour en savoir plus': '' } }; applyRegionRaw(g.region); }
   editing = { region: g }; lastBox = null; edUI = EDIT_UI_REGION; edRetry = null; edRetryAt = 0;
+  g.region.raw['__nom'] = g.name; if (g.region.raw['Notes'] == null) g.region.raw['Notes'] = '';
   $('edTitle').textContent = g.name;
   $('edMsg').textContent = ''; $('edMsg').className = 'small';
   let k = ''; try { k = localStorage.getItem(KEYSTORE) || ''; } catch {}
@@ -1612,7 +1714,7 @@ function openEditor(p) {
 }
 async function saveEditor() {
   const ed = editing; if (!ed) return;
-  const g = ed.region || null, p = g ? null : ed, raw = g ? g.region.raw : p.raw, name = g ? g.name : p.name;
+  let g = ed.region || null, p = g ? null : ed, raw = g ? g.region.raw : p.raw, name = g ? g.name : p.name;
   const cle = $('edKey').value.trim();
   if (!cle) { $('edKeyRow').hidden = false; $('edKey').focus(); edError('Entrer le code d’accès (le demander à David).'); return; }
   const champs = Object.assign({}, edRetry || {});
@@ -1624,6 +1726,28 @@ async function saveEditor() {
   });
   if (p) { const rvNow = $('edRev').checked ? 'Revu' : (p.rvk === 'done' ? 'À revoir' : ''); if (rvNow && rvNow !== String(p.raw['Révision'] || '')) champs['Révision'] = rvNow; }
   if (!Object.keys(champs).length) { $('edit').close(); return; }
+  if (g && champs['__nom'] !== undefined) {
+    const nom = String(champs['__nom'] || '').trim(); delete champs['__nom'];
+    if (!nom) { edError('Donner un nom à la région.'); return; }
+    if (model.hubs.some((h) => h !== g && norm(h.name) === norm(nom))) { edError('Une autre région porte déjà ce nom.'); return; }
+    edBusy(true);
+    try {
+      const j = await bridgeFetch({ cle, action: 'renommerRegion', region: g.name, nom });
+      if (!j.ok) { const e = new Error(j.erreur || 'erreur'); e.badKey = /code/i.test(j.erreur || ''); throw e; }
+      try { localStorage.setItem(KEYSTORE, cle); } catch {}
+    } catch (err) {
+      edBusy(false);
+      if (err.badKey) { try { localStorage.removeItem(KEYSTORE); } catch {} $('edKeyRow').hidden = false; $('edKey').value = ''; $('edKey').focus(); }
+      edError(err.badKey ? failMsg(true) : 'Nom pas changé : Google n’a pas répondu. Vos changements sont gardés ici. Touchez la disquette pour réessayer.');
+      return;
+    }
+    edBusy(false);
+    pushOp({ t: 'rnreg', from: g.name, to: nom });
+    g = hubByName(nom); name = nom;
+    if (!g.region) { g.region = { raw: { 'Photo': '', 'Notes': '', 'Aperçu': '', 'Trucs et astuces': '', 'Pour en savoir plus': '' } }; applyRegionRaw(g.region); }
+    raw = g.region.raw; editing = { region: g }; $('edKeyRow').hidden = true; $('edTitle').textContent = nom;
+    if (!Object.keys(champs).length) { $('edit').close(); openRegion(g, null, false); toast(`Région renommée · ${nom}`); return; }
+  }
   const body = g ? { cle, action: 'modifierRegion', region: name, champs } : { cle, action: 'modifier', ligne: p.row, lieu: name, champs };
   const onOk = (j) => { if (!g && j.ligne) { const q = model.places.find((x) => norm(x.name) === norm(name)); if (q) q.row = j.ligne; } };
   // show the change on the card (and keep it on this device for 15 minutes)
@@ -1701,21 +1825,23 @@ function deletePlace(name) {
 function removeRegion(g) {
   const names = [...g.places.map((p) => p.name), ...model.skipped.filter((x) => norm(x.region) === norm(g.name)).map((x) => x.name)];
   const rows = names.map((n, j) => `<div class="cfrow"><span>${esc(n)}</span><select data-n="${j}" aria-label="${esc(n)}"><option value="keep">Garder (hors trajet)</option><option value="del">Supprimer</option></select></div>`).join('');
-  askDelete('Retirer la région du trajet', `<p>Retirer <b>${esc(g.name)}</b> du trajet : son étape, ses nuits et sa fiche de région sont supprimées.</p>${names.length ? `<p class="small">Ses lieux : garder un lieu le met « Hors trajet » avec sa fiche ; supprimer l’efface.</p><div class="cflist">${rows}</div>` : '<p class="small">Cette région n’a pas de lieux.</p>'}`, 'Retirer', async () => {
+  askDelete('Retirer la région', `<p>Retirer <b>${esc(g.name)}</b> : sa fiche, ses bases et leurs nuits sont supprimées.</p>${names.length ? `<p class="small">Ses lieux : garder un lieu le met « Sans région » avec sa fiche ; supprimer l’efface.</p><div class="cflist">${rows}</div>` : '<p class="small">Cette région n’a pas de lieux.</p>'}`, 'Retirer', async () => {
     const keep = [], del = [];
     document.querySelectorAll('#cfBody select[data-n]').forEach((sel) => (sel.value === 'del' ? del : keep).push(names[+sel.dataset.n]));
     await bridgePost({ action: 'retirerRegion', region: g.name, garder: keep, supprimer: del }, $('cfKey'), $('cfKeyRow'));
     pushOp({ t: 'rmreg', region: g.name, keep, del });
-    toast(`${g.name} retiré du trajet${del.length ? ` · ${del.length} lieu${del.length > 1 ? 'x' : ''} supprimé${del.length > 1 ? 's' : ''}` : ''}.`);
+    toast(`${g.name} retirée${del.length ? ` · ${del.length} lieu${del.length > 1 ? 'x' : ''} supprimé${del.length > 1 ? 's' : ''}` : ''}.`);
   });
 }
 // ---- change a hub: name, location, nights ----
 let ptHub = null, ptAt = null;
 function openPort(g) {
+  if (!g) return;
   ptHub = g; ptAt = null;
   $('ptName').value = g.name; $('ptQ').value = ''; $('ptRes').innerHTML = ''; $('ptMsg').textContent = ''; $('ptMsg').className = 'small';
   $('ptWhere').textContent = `Actuellement : ${g.at[0].toFixed(4)}, ${g.at[1].toFixed(4)}`;
   const single = g.seqs.length === 1; $('ptNightsRow').hidden = !single; $('ptNights').value = single ? (g.nights[0] || 0) : '';
+  $('ptStatut').value = g.statut === 'retenu' ? 'Retenu' : 'Proposé';
   let k = ''; try { k = localStorage.getItem(KEYSTORE) || ''; } catch {}
   $('ptKey').value = k; $('ptKeyRow').hidden = !!k;
   $('port').showModal();
@@ -1739,15 +1865,17 @@ async function ptFind() {
 async function ptSave() {
   const g = ptHub; if (!g) return;
   const nom = $('ptName').value.trim(), coords = ptAt ? `${ptAt[0]}, ${ptAt[1]}` : '', nuits = $('ptNightsRow').hidden ? '' : $('ptNights').value;
-  const changed = (nom && nom !== g.name) || coords || (nuits !== '' && +nuits !== +(g.nights[0] || 0));
+  const statut = $('ptStatut').value, wasStatut = g.statut === 'retenu' ? 'Retenu' : 'Proposé';
+  const changed = (nom && nom !== g.name) || coords || (nuits !== '' && +nuits !== +(g.nights[0] || 0)) || statut !== wasStatut;
   if (!changed) { $('port').close(); return; }
   $('ptSave').disabled = true; $('ptSave').classList.add('busy'); $('ptMsg').className = 'edbusy'; $('ptMsg').textContent = 'Enregistrement en cours… (quelques secondes)';
   try {
-    const j = await bridgePost({ action: 'changerPort', region: g.name, nom, coords, nuits }, $('ptKey'), $('ptKeyRow'));
-    pushOp({ t: 'port', region: g.name, nom: nom !== g.name ? nom : '', coords, nuits });
+    const j = await bridgePost({ action: 'changerPort', base: g.name, nom, coords, nuits, statut: statut !== wasStatut ? statut : '' }, $('ptKey'), $('ptKeyRow'));
+    const region = g.group.name;
+    pushOp({ t: 'port', base: g.name, nom: nom !== g.name ? nom : '', coords, nuits, statut: statut !== wasStatut ? statut : '' });
     $('port').close();
-    const h = hubByName(nom || g.name); if (h) { openRegion(h); fitGroup(h); }
-    toast(`Port d’attache enregistré${j.lieux ? ` · ${j.lieux} lieu${j.lieux > 1 ? 'x' : ''} à revoir (leur « Y aller »)` : ''}.`);
+    const h = hubByName(region); if (h) { openRegion(h); fitGroup(h); }
+    toast(`Base enregistrée${j.lieux ? ` · ${j.lieux} lieu${j.lieux > 1 ? 'x' : ''} à revoir (leur « Comment s’y rendre »)` : ''}.`);
   } catch (err) { $('ptMsg').className = 'small err'; $('ptMsg').textContent = 'Pas enregistré : ' + err.message; }
   finally { $('ptSave').disabled = false; $('ptSave').classList.remove('busy'); }
 }
@@ -2078,7 +2206,7 @@ function tlAutoBase() {
   const pts = tl.items.filter((q) => tl.checked.has(norm(q.name)) && q.at).map((q) => q.at);
   if (!pts.length) return;
   const votes = {};
-  for (const at of pts) { let best = null, bd = Infinity; for (const h of model.hubs) { const d = km(at, h.at); if (d < bd) { bd = d; best = h; } } if (best && bd <= RADIUS_KM) votes[best.name] = (votes[best.name] || 0) + 1; }
+  for (const at of pts) { let best = null, bd = Infinity; for (const b of model.bases) { const d = km(at, b.at); if (d < bd) { bd = d; best = b; } } if (best && bd <= RADIUS_KM) votes[best.group.name] = (votes[best.group.name] || 0) + 1; }
   const top = Object.entries(votes).sort((a, b) => b[1] - a[1])[0];
   $('tlBaseP').value = top ? top[0] : NOT_DECIDED;
 }
@@ -2152,7 +2280,8 @@ function tlSyncRegion() {
   document.querySelectorAll('#tools .tlnew').forEach((el) => { el.hidden = !isNew; });
 }
 // where the directions start from: the region's own base, or the town typed for a new region
-const tlRegionBase = () => tlRegionName() || NOT_DECIDED;
+const baseOfRegion = (name) => { const g = name && hubByName(name); return g && g.bases[0] ? g.bases[0].name : NOT_DECIDED; };
+const tlRegionBase = () => baseOfRegion(tlRegionName());
 function tlReadAnswer() {
   const rows = tsvRows($('tlPaste1').value), name = tlRegionName();
   const reg = rows.find((r) => r.length >= 4 && norm(r[0]) === norm(name)) || rows.find((r) => r.length >= 4);
@@ -2176,7 +2305,9 @@ async function tlRegSave() {
     try { localStorage.setItem(KEYSTORE, cle); } catch {}
     const picks = [...$('tlParsed1').querySelectorAll('[data-pk]:checked')].map((c) => tl.list[+c.dataset.pk].name);
     for (const n of picks) { if (!tl.queue.some((q) => norm(q.name) === norm(n))) tl.queue.push({ name: n, at: null, by: '' }); tl.checked.add(norm(n)); }
-    const rb = tlRegionBase(); $('tlBaseP').value = model.hubs.some((h) => h.name === rb) ? rb : NOT_DECIDED; tl.baseTouched = true;
+    pushOp({ t: 'rset', region: tl.region['Région'], fields: { 'Aperçu': tl.region['Aperçu'], 'Trucs et astuces': tl.region['Trucs et astuces'], 'Pour en savoir plus': tl.region['Pour en savoir plus'] } });
+    $('tlBaseP').innerHTML = baseOptions();
+    const rn = tl.region['Région']; $('tlBaseP').value = hubByName(rn) ? hubByName(rn).name : NOT_DECIDED; tl.baseTouched = true;
     res.textContent = `Region ${j.region === 'ajoutée' ? 'added' : 'updated'}.`;
     tlRenderQueue(); tlSetPath('pl');
     $('tlMsg3').textContent = `${picks.length} place${picks.length === 1 ? '' : 's'} from ${tl.region['Région']} ticked below. Continue with step 2.`;
@@ -2194,7 +2325,7 @@ $('tlCopyLieuP').addEventListener('click', () => {
   const names = tl.items.filter((q) => tl.checked.has(norm(q.name))).map((q) => q.name)
     .concat($('tlNewPlaces').value.split('\n').map((x) => x.trim()).filter(Boolean));
   if (!names.length) { $('tlMsg3').textContent = 'Tick or type at least one place.'; return; }
-  tlCopy('lieu', { LIEUX: names.join(', '), BASE: $('tlBaseP').value || NOT_DECIDED }, 'tlMsg3');
+  tlCopy('lieu', { LIEUX: names.join(', '), BASE: baseOfRegion($('tlBaseP').value) }, 'tlMsg3');
 });
 $('tlPaste2').addEventListener('input', tlSummary);
 $('tlSave').addEventListener('click', tlSave);
@@ -2257,12 +2388,12 @@ function highlight(p, fly) {
 const mapShown = () => $('map').offsetWidth > 0 && $('map').offsetHeight > 0;
 function fitGroup(g) {
   if (!mapShown()) return;
-  const pts = g.places.map((p) => p.at).concat(g.at ? [g.at] : []);
+  const pts = g.places.map((p) => p.at).concat((g.bases || []).map((b) => b.at));
   if (pts.length) map.flyToBounds(L.latLngBounds(pts).pad(0.15), { duration: .8, maxZoom: 12 });
 }
 function fitAll() {
   if (!mapShown()) return;
-  const pts = model.stops.map((s) => s.at);
+  let pts = model.stops.map((s) => s.at); if (!pts.length) pts = model.places.map((p) => p.at);
   if (pts.length) map.fitBounds(L.latLngBounds(pts).pad(0.12));
 }
 const STS = [['explore', 'À explorer'], ['cand', 'Bon candidat'], ['conf', 'Confirmé'], ['aside', 'Mis de côté']];
@@ -2280,7 +2411,7 @@ function renderFilter() {
     <div class="fltpanel" ${fltOpen ? '' : 'hidden'}>
       <div class="small">Statut</div>
       ${STS.map(([k, t]) => row(`data-k="${k}"`, stOn[k], t, cnt((p) => p.st === k, 'st'))).join('')}
-      ${row('data-ht', $('showOther').checked, 'Hors trajet', cnt((p) => p.hub.other, 'other'))}
+      ${row('data-ht', $('showOther').checked, 'Sans région', cnt((p) => p.hub.other, 'other'))}
       <div class="sep small">Révision des fiches</div>
       ${Object.entries(RV_LABEL).map(([k, t]) => row(`data-rv="${k}"`, rvOn[k], t, cnt((p) => p.rvk === k, 'rv'))).join('')}
       ${model.hasVotes ? `<div class="sep"></div>${row('data-disc', onlyDisc, 'Seulement « À discuter »', model.places.filter((p) => p.disputed && passes(p)).length)}` : ''}
@@ -2309,6 +2440,7 @@ function applyFilter() {
   renderFilter();
   const vis = (st, disc, rv) => stOn[st] && rvOn[rv] && (!onlyDisc || disc);
   for (const [p, mk] of markerOf) { const grp = p.hub.other ? layers.other : layers.places; if (vis(mk._st, p.disputed, p.rvk)) { if (!grp.hasLayer(mk)) grp.addLayer(mk); } else if (grp.hasLayer(mk)) grp.removeLayer(mk); }
+  for (const [p, mk] of markerOf) { if (!mk._lbl) continue; const on = vis(mk._st, p.disputed, p.rvk) && (!p.hub.other || $('showOther').checked); if (on && !layers.pnames.hasLayer(mk._lbl)) layers.pnames.addLayer(mk._lbl); else if (!on && layers.pnames.hasLayer(mk._lbl)) layers.pnames.removeLayer(mk._lbl); }
   document.querySelectorAll('.prow').forEach((c) => { c.style.display = vis(c.dataset.st, !!c.dataset.disc, c.dataset.rv) ? '' : 'none'; });
   document.querySelectorAll('.rchip').forEach((c) => {
     const g = groupOf(c.dataset.gr); if (!g) return;
@@ -2402,19 +2534,19 @@ function showGeo(g) {
   const lat = (+g.lat).toFixed(4), lon = (+g.lon).toFixed(4), name = g.name || g.display_name.split(',')[0];
   if (geoPin) map.removeLayer(geoPin);
   let best = null, bd = Infinity;
-  for (const h of model.hubs) { const d = km([+g.lat, +g.lon], h.at); if (d < bd) { bd = d; best = h; } }
-  const inHub = best && bd <= RADIUS_KM, col = inHub ? colorOf(best) : GREY;
+  for (const b of model.bases) { const d = km([+g.lat, +g.lon], b.at); if (d < bd) { bd = d; best = b; } }
+  const inHub = best && bd <= RADIUS_KM, col = inHub ? colorOf(best.group) : GREY;
   const type = TYPE_FR[g.type] || TYPE_FR[g.addresstype] || '';
-  const where = inHub ? `Se rattacherait à <b>${esc(best.name)}</b> (${Math.round(bd)} km)` : best ? `Hors trajet : ${Math.round(bd)} km de ${esc(best.name)}` : '';
+  const where = inHub ? `Région : <b>${esc(best.group.name)}</b> (${Math.round(bd)} km de la base ${esc(best.name)})` : best ? `Sans région : ${Math.round(bd)} km de la base la plus proche (${esc(best.name)})` : '';
   // full Lieux row: Lieu, Coordonnées, Statut, Type, Photo, Note, Ajouté par, Région
-  const row = [name, `${lat}, ${lon}`, 'À explorer', type, '', '', '', inHub ? best.name : ''].join('\t');
+  const row = [name, `${lat}, ${lon}`, 'À explorer', type, '', '', '', inHub ? best.group.name : ''].join('\t');
   const pin = `<svg width="30" height="42" viewBox="0 0 30 42"><path d="M15 1C7.3 1 1 7.2 1 14.8 1 25.5 15 41 15 41s14-15.5 14-26.2C29 7.2 22.7 1 15 1z" fill="${col}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="15" r="5.5" fill="#fff"/></svg>`;
   geoPin = L.marker([+g.lat, +g.lon], { icon: L.divIcon({ className: '', html: pin, iconSize: [30, 42], iconAnchor: [15, 41], popupAnchor: [0, -36] }), zIndexOffset: 2000 })
     .addTo(map).bindPopup(`<b>${esc(name)}</b>${type ? ` <span class="small">(${esc(type)})</span>` : ''}<br><span class="small">${esc(g.display_name.split(',').slice(1, 4).join(',').trim())}</span><br>${where}<br>${lat}, ${lon}
     <br>${placing ? `<button class="btn pbtn" id="copyGeo">Placer « ${esc(placing)} » ici</button><div class="small" id="copyMsg">Ses coordonnées seront enregistrées.</div>` : `<button class="btn pbtn" id="copyGeo">Ajouter à la liste de recherche</button><div class="small" id="copyMsg">Ce lieu attendra dans la liste de recherche, avec un point sur la carte. On fera sa fiche plus tard.</div>`}`, { maxWidth: 260 });
   map.flyTo([+g.lat, +g.lon], 11, { duration: .8 });
   const target = placing;
-  setTimeout(() => { geoPin.openPopup(); const b = $('copyGeo'); if (b) b.onclick = () => (target ? placeAt(target, lat, lon) : addPinPlace(name, lat, lon, inHub ? best.name : '')); }, 850);
+  setTimeout(() => { geoPin.openPopup(); const b = $('copyGeo'); if (b) b.onclick = () => (target ? placeAt(target, lat, lon) : addPinPlace(name, lat, lon, inHub ? best.group.name : '')); }, 850);
 }
 async function copyText(t, msgId = 'copyMsg', done = 'Copié ! Coller dans la colonne Lieu d’une nouvelle ligne.') {
   try { await navigator.clipboard.writeText(t); }
@@ -2435,7 +2567,7 @@ async function findCoords() {
   const list = model.skipped, out = $('coordOut'), btn = $('findCoords');
   btn.disabled = true; const res = [];
   for (let i = 0; i < list.length; i++) {
-    const x = list[i], hub = model.hubs.find((h) => norm(h.name) === norm(x.region)) || null;
+    const xg = hubByName(x.region), x = list[i], hub = (xg && xg.bases[0]) || null;
     out.innerHTML = `<p class="small">Recherche ${i + 1} sur ${list.length} : ${esc(x.name)}…</p>`;
     const tries = [...new Set([x.name, x.name.split(' - ')[0], x.name.replace(/\s*\(.*?\)\s*/g, ' ').trim()])];
     let g = null;
